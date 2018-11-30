@@ -15,7 +15,7 @@ f = open("/home/pi/Measurements/"+time.ctime()+".txt", 'w')
 # Print readings
 while True:
         next = int(time.time())
-        if next == current+0.25*60:
+        if next == current+0.25*60:         #use the decimal to indicate how many minutes you want
             f = open("/home/pi/Measurements/"+time.ctime()+".txt", 'w')
             print("pulse")
             current = next
