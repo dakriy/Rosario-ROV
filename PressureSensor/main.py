@@ -1,7 +1,7 @@
 import ms5837py3 as ms5837
 import time
 
-current = time.time()
+
 sensor = ms5837.MS5837_30BA() # Default I2C bus is 1 (Raspberry Pi 3)
 
 # We must initialize the sensor before reading it
@@ -11,13 +11,11 @@ if not sensor.init():
 
 sensor.setFluidDensity(ms5837.DENSITY_SALTWATER)
 current = int(time.time())
-#fileno = 0
 f = open("/home/pi/Measurements/"+time.ctime()+".txt", 'w') 
 # Print readings
 while True:
         next = int(time.time())
         if next == current+0.25*60:
-            #fileno = fileno + 1
             f = open("/home/pi/Measurements/"+time.ctime()+".txt", 'w')
             print("pulse")
             current = next
