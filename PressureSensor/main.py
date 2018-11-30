@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import ms5837py3 as ms5837
 import time
 
@@ -15,7 +17,7 @@ f = open("/home/pi/Measurements/"+time.ctime()+".txt", 'w')
 # Print readings
 while True:
         next = int(time.time())
-        if next == current+0.25*60:         #use the decimal to indicate how many minutes you want
+        if next == current+10*60:         #use the decimal to indicate how many minutes you want
             f = open("/home/pi/Measurements/"+time.ctime()+".txt", 'w')
             print("pulse")
             current = next
@@ -26,7 +28,8 @@ while True:
             sensor.temperature(), # Default is degrees C (no arguments)
             sensor.temperature(ms5837.UNITS_Farenheit))) # Request Farenheit
         else:
-                print("Sensor read failed!")
-                exit(1)
+            print("Sensor read failed!")
+            f.close()
+            exit(1)
 
 

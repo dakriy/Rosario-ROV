@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+
 import cv2
 import time
 
 framerate = 25
 fourcc = "DIVX"
-file = "whee.avi"
+file = "/home/pi/Measurements/Video/zucc.avi"
 cap = cv2.VideoCapture(0)
 resolution = (640, 480)
 
@@ -24,9 +26,6 @@ try:
             break
 except KeyboardInterrupt:
     pass
-
-print("Length should be:")
-print (time.time() - start)
 
 cap.release()
 out.release()
