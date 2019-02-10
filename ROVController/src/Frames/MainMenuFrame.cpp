@@ -19,10 +19,14 @@ Frames::MainMenuFrame::MainMenuFrame(const char * text)
 
 void Frames::MainMenuFrame::update_bounds()
 {
+	// Start 1/8th over
 	content_bounds_.left = window_->getSize().x * 1.f / 8.f;
+	// Start a quarter of the way down
 	content_bounds_.top = window_->getSize().y * 0.25f;
-	content_bounds_.width = window_->getSize().x * 7.f / 8.f - window_->getSize().x * 1.f / 8.f;
-	content_bounds_.height = window_->getSize().y * 0.9f - window_->getSize().y * 0.25f;
+	// Width is 3/4th of the screen, because 1/8th of screen on either side
+	content_bounds_.width = window_->getSize().x * 3.f / 4.f;
+	// Height is 65% of the screen
+	content_bounds_.height = window_->getSize().y * (0.9f - 0.25f);
 }
 
 void Frames::MainMenuFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const

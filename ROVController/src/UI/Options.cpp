@@ -8,12 +8,12 @@ void Controls::Options::position_options()
 {
 	const auto row_height = bounds_.height / static_cast<float>(rows_);
 
-	const auto col_width = (bounds_.width - row_height) / static_cast<float>(cols_);
+	const auto col_width = bounds_.width / static_cast<float>(cols_);
 
 	iterate_over_visible_elements([&](unsigned index, unsigned i, unsigned j)
 	{
 		options_[index]->set_position_width_height(
-			bounds_.left + row_height + col_width * j,					// start x changes with column, start shifted 1 row_height becuase of the selector wheel
+			bounds_.left + col_width * j,								// start x changes with column
 			bounds_.top + (i - row_scroll_position_) * row_height,		// start y changes with row
 			col_width,													// width changes with number of columns
 			row_height													// height changes with number of rows
