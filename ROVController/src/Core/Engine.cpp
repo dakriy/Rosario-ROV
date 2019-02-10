@@ -99,6 +99,8 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler* ev, sf::Clock* glbClk)
 
 void Core::Engine::Loop()
 {
+	GlobalContext::get_network()->process_packets();
+
 	Events();
 	
 	Update();

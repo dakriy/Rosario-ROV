@@ -148,6 +148,11 @@ namespace Controls
 		void add_option(UIElement * element);
 
 		/**
+		 * Clears the options list
+		 */
+		void remove_options();
+
+		/**
 		 * The draw method for an options instance. Overloads from sf::Drawable
 		 * 
 		 * @param target rendertarget instance to draw on

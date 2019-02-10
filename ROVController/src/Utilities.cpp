@@ -7,10 +7,10 @@ unsigned GetSeed(const std::string& seed) {
 void QuitWithError(const char* error, int exit_code)
 {
 #ifdef _WIN32
-	MessageBox(nullptr, error, "City Generator Runtime Error", MB_OK | MB_ICONINFORMATION);
+	MessageBox(nullptr, error, "ROV Controller Runtime Error", MB_OK | MB_ICONINFORMATION);
 #else
 #include <iostream>
-    std::cerr<< "City Generator Runtime Error" << std::endl;
+    std::cerr<< error << std::endl;
 #endif//_WIN32
 	exit(exit_code);
 }

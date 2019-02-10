@@ -4,6 +4,7 @@ Core::Engine * GlobalContext::engine_ = nullptr;
 sf::Clock * GlobalContext::global_clock_ = nullptr;
 sf::RenderWindow * GlobalContext::window_ = nullptr;
 Core::EventHandler * GlobalContext::event_handler_ = nullptr;
+Core::Network * GlobalContext::network_ = nullptr;
 
 sf::Clock * GlobalContext::get_clock()
 {
@@ -30,6 +31,22 @@ void GlobalContext::set_window(sf::RenderWindow * w)
 Core::EventHandler * GlobalContext::get_event_handler()
 {
 	return event_handler_;
+}
+
+Core::Network* GlobalContext::get_network()
+{
+	return network_;
+}
+
+void GlobalContext::set_network(Core::Network* ptr)
+{
+	if (network_ == nullptr && ptr != nullptr)
+		network_ = ptr;
+}
+
+void GlobalContext::clear_network()
+{
+	network_ = nullptr;
 }
 
 void GlobalContext::set_event_handler(Core::EventHandler * e)

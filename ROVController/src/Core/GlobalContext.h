@@ -13,6 +13,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Event.h"
 #include "Engine.h"
+#include "Network.h"
 
 class GlobalContext
 {
@@ -28,6 +29,10 @@ private:
 
 	// Global event handler instance
 	static Core::EventHandler * event_handler_;
+
+	// Networkmodule
+	static Core::Network * network_;
+
 public:
 	/**
 	 * Returns the global clock if it exists
@@ -48,6 +53,11 @@ public:
 	 * Returns the global event handler
 	 */
 	static Core::EventHandler * get_event_handler();
+
+	/**
+	 * Returns the network module
+	 */
+	static Core::Network * get_network();
 
 
 	/**
@@ -78,6 +88,13 @@ public:
 	 */
 	static void set_event_handler(Core::EventHandler * ptr);
 
+	/**
+	 * Sets the global network module
+	 * 
+	 * @param ptr Network object pointer
+	 */
+	static void set_network(Core::Network * ptr);
+
 
 	/**
 	 * Clears the global clock
@@ -98,4 +115,9 @@ public:
 	 * Clears the global event handler
 	 */
 	static void clear_event_handler();
+
+	/**
+	 * Clears the global network object
+	 */
+	static void clear_network();
 };

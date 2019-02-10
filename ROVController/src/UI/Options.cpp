@@ -148,6 +148,11 @@ void Controls::Options::add_option(UIElement* element)
 	position_options();
 }
 
+void Controls::Options::remove_options()
+{
+	options_.clear();
+}
+
 void Controls::Options::draw(sf::RenderTarget& target, const sf::RenderStates states) const
 {
 	iterate_over_visible_elements([&](unsigned index, unsigned, unsigned)

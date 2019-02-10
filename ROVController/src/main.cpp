@@ -73,6 +73,10 @@ int main(int argc, char* argv[])
 		return true;
 	}, sf::Event::Closed);
 
+	Core::Network net;
+
+	GlobalContext::set_network(&net);
+
 	while (Window.isOpen())
 	{
 		engine.Loop();
@@ -80,7 +84,9 @@ int main(int argc, char* argv[])
 
 	eventHandler.unhook_event_callback(ev1handle, sf::Event::Closed);
 
+	GlobalContext::clear_network();
 	GlobalContext::clear_window();
+
 	ImGui::SFML::Shutdown();
 	return 0;
 }

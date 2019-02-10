@@ -50,5 +50,10 @@ namespace Frames
 		 * @return TitleFrame
 		 */
 		FrameType get_type() const override;
+
+		/**
+		 * Connection frame destructor.
+		 */
+		~ConnectFrame() override;
 	};
 }

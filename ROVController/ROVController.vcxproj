@@ -27,6 +27,7 @@
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Core\Event.cpp" />
     <ClCompile Include="src\Core\GlobalContext.cpp" />
+    <ClCompile Include="src\Core\Network.cpp" />
     <ClCompile Include="src\Factories\TextFactory.cpp" />
     <ClCompile Include="src\Frames\ConnectFrame.cpp" />
     <ClCompile Include="src\Frames\IFrame.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="src\Core\Engine.h" />
     <ClInclude Include="src\Core\Event.h" />
     <ClInclude Include="src\Core\GlobalContext.h" />
+    <ClInclude Include="src\Core\Network.h" />
     <ClInclude Include="src\Factories\TextFactory.h" />
     <ClInclude Include="src\Frames\ConnectFrame.h" />
     <ClInclude Include="src\Frames\IFrame.h" />
