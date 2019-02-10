@@ -21,10 +21,9 @@ namespace Frames
 	enum FrameType
 	{
 		MainMenu,
-		Map,
-		Loading,
-		Database,
-		Settings,
+		Connect,
+		View,
+		Credits,
 
 		// FrameType Count, Leave last
 		Count

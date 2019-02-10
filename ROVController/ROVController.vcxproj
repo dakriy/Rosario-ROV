@@ -28,9 +28,11 @@
     <ClCompile Include="src\Core\Event.cpp" />
     <ClCompile Include="src\Core\GlobalContext.cpp" />
     <ClCompile Include="src\Factories\TextFactory.cpp" />
+    <ClCompile Include="src\Frames\ConnectFrame.cpp" />
     <ClCompile Include="src\Frames\IFrame.cpp" />
     <ClCompile Include="src\Frames\MainMenuFrame.cpp" />
     <ClCompile Include="src\Frames\TitleFrame.cpp" />
+    <ClCompile Include="src\Frames\ViewFrame.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\UI\Button.cpp" />
     <ClCompile Include="src\UI\Options.cpp" />
@@ -43,9 +45,11 @@
     <ClInclude Include="src\Core\Event.h" />
     <ClInclude Include="src\Core\GlobalContext.h" />
     <ClInclude Include="src\Factories\TextFactory.h" />
+    <ClInclude Include="src\Frames\ConnectFrame.h" />
     <ClInclude Include="src\Frames\IFrame.h" />
     <ClInclude Include="src\Frames\MainMenuFrame.h" />
     <ClInclude Include="src\Frames\TitleFrame.h" />
+    <ClInclude Include="src\Frames\ViewFrame.h" />
     <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Interfaces\IUpdateable.h" />
     <ClInclude Include="src\UI\Button.h" />

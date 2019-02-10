@@ -6,11 +6,15 @@
 #include "../Globals.h"
 #include "../Utilities.h"
 #include <imgui-SFML.h>
+#include <imgui.h>
 
 void Core::Engine::Events() const
 {
 	sf::Event event;
 	while (window_->pollEvent(event)) {
+		// Let ImGUI have a round at the event
+		ImGui::SFML::ProcessEvent(event);
+
 		ev_->handle_event(&event);
 	}
 }
@@ -87,7 +91,7 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler* ev, sf::Clock* glbClk)
 	let firstFrame = new Frames::TitleFrame;
 	assert(firstFrame);
 	if (!firstFrame)
-		QuitWithError("Could not initialze the game", EXIT_FAILURE);
+		QuitWithError("Could not initialze the application", EXIT_FAILURE);
 	frame_stack_.emplace_back(firstFrame);
 
 	GlobalContext::set_engine(this);
@@ -105,7 +109,12 @@ void Core::Engine::Loop()
 
 	// If we changed frames, we need to update again.
 	if (!frame_action_list_.empty())
+	{
+		// Need to end imgui frame before we update, otherwise it thinks we skipped a frame, which... ok... That's kinda fair
+		// I could probably do this slightly better... But I haven't thought of a better way yet.
+		ImGui::EndFrame();
 		Update();
+	}
 
 	frame_action_list_.clear();
 

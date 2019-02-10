@@ -35,7 +35,7 @@ public:
 	static sf::Clock * get_clock();
 	
 	/**
-	 * Returns the game engine if it exists
+	 * Returns the engine if it exists
 	 */
 	static Core::Engine * get_engine();
 
@@ -58,7 +58,7 @@ public:
 	static void set_clock(sf::Clock * ptr);
 
 	/**
-	 * Sets the global game engine
+	 * Sets the global engine
 	 * 
 	 * @param ptr Engine pointer
 	 */
@@ -90,7 +90,7 @@ public:
 	static void clear_window();
 
 	/**
-	 * clears the globl game engine
+	 * clears the globl engine
 	 */
 	static void clear_engine();
 

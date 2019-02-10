@@ -1,6 +1,8 @@
 #include "TitleFrame.h"
 #include "../UI/Button.h"
 #include "../Core/GlobalContext.h"
+#include "ConnectFrame.h"
+#include "ViewFrame.h"
 
 Frames::TitleFrame::TitleFrame() : 
     options_(this, content_bounds_)
@@ -18,6 +20,18 @@ Frames::TitleFrame::TitleFrame() :
 
 void Frames::TitleFrame::create_options()
 {
+	options_.add_option(new Controls::Button(option_text_[Connect], [&]()
+	{
+		hide();
+		pause();
+		GlobalContext::get_engine()->frame_action(Core::PushFrame, new ConnectFrame);
+	}));
+	options_.add_option(new Controls::Button(option_text_[View], [&]()
+	{
+		hide();
+		pause();
+		GlobalContext::get_engine()->frame_action(Core::PushFrame, new ViewFrame);
+	}));
 	options_.add_option(new Controls::Button(option_text_[Exit], []() { GlobalContext::get_window()->close(); }));
 }
 

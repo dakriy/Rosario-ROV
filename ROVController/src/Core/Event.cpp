@@ -10,9 +10,6 @@ Core::EventHandler::EventHandler()
 
 void Core::EventHandler::handle_event(sf::Event* e)
 {
-	// Let ImGUI have a round at the event
-	ImGui::SFML::ProcessEvent(*e);
-
 	// Process the regular application event chain
 	for (auto hook : event_hooks_)
 		if (hook && hook->event_type_enable_flag[e->type])

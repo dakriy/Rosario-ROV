@@ -99,6 +99,12 @@
     <ClCompile Include="src\Factories\TextFactory.cpp">
       <Filter>Source Files\Factories</Filter>
     </ClCompile>
+    <ClCompile Include="src\Frames\ConnectFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frames\ViewFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Engine.h">
@@ -142,6 +148,12 @@
     </ClInclude>
     <ClInclude Include="src\Factories\TextFactory.h">
       <Filter>Header Files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\ConnectFrame.h">
+      <Filter>Header Files\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\ViewFrame.h">
+      <Filter>Header Files\Frames</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
