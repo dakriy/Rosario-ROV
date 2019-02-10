@@ -4,62 +4,83 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
+#include "Frames/MainMenuFrame.h"
+#include "Factories/TextFactory.h"
+#include "Utilities.h"
+#include "Core/GlobalContext.h"
 
-int main()
+bool LoadResources()
 {
-	sf::RenderWindow window(sf::VideoMode(640, 480), "");
-	window.setVerticalSyncEnabled(true);
-	ImGui::SFML::Init(window);
+	// Load fonts
+	if (!Factory::TextFactory::load_assets()) {
+		return false;
+	}
+	if (!Frames::MainMenuFrame::background_tex.loadFromFile("Resources/background.png")) {
+		return false;
+	}
+	return true;
+}
 
-	sf::Color bgColor;
+int main(int argc, char* argv[])
+{
+	// SEED
+	srand(GetSeed("A seed, I don't really care what goes here atm..."));
 
-	float color[3] = { 0.f, 0.f, 0.f };
+	sf::Clock elapsedTime;
+	GlobalContext::set_clock(&elapsedTime);
 
-	// let's use char array as buffer, see next part
-	// for instructions on using std::string with ImGui
-	char windowTitle[255] = "ImGui + SFML = <3";
+	auto vidmode = sf::VideoMode::getFullscreenModes()[0];
+	auto vidstyle = sf::Style::Fullscreen;
 
-	window.setTitle(windowTitle);
-	window.resetGLStates(); // call it if you only draw ImGui. Otherwise not needed.
-	sf::Clock deltaClock;
-	while (window.isOpen()) {
-		sf::Event event;
-		while (window.pollEvent(event)) {
-			ImGui::SFML::ProcessEvent(event);
-
-			if (event.type == sf::Event::Closed) {
-				window.close();
-			}
+	if (!vidmode.isValid())
+	{
+		vidmode = sf::VideoMode::getDesktopMode();
+		vidstyle = sf::Style::Default;
+		if (!vidmode.isValid())
+		{
+			vidmode = sf::VideoMode(100, 100);
+			if (!vidmode.isValid())
+				QuitWithError("Could not find a compatable Video Mode", EXIT_FAILURE);
 		}
-
-		ImGui::SFML::Update(window, deltaClock.restart());
-
-		ImGui::Begin("Sample window"); // begin window
-
-									   // Background color edit
-		if (ImGui::ColorEdit3("Background color", color)) {
-			// this code gets called if color value changes, so
-			// the background color is upgraded automatically!
-			bgColor.r = static_cast<sf::Uint8>(color[0] * 255.f);
-			bgColor.g = static_cast<sf::Uint8>(color[1] * 255.f);
-			bgColor.b = static_cast<sf::Uint8>(color[2] * 255.f);
-		}
-
-		// Window title text edit
-		ImGui::InputText("Window title", windowTitle, 255);
-
-		if (ImGui::Button("Update window title")) {
-			// this code gets if user clicks on the button
-			// yes, you could have written if(ImGui::InputText(...))
-			// but I do this to show how buttons work :)
-			window.setTitle(windowTitle);
-		}
-		ImGui::End(); // end window
-
-		window.clear(bgColor); // fill background with color
-		ImGui::SFML::Render(window);
-		window.display();
 	}
 
+	if (!LoadResources())
+	{
+		QuitWithError("Required resources failed to load", EXIT_FAILURE);
+	}
+
+	sf::ContextSettings settings;
+
+	settings.antialiasingLevel = 8;
+	
+
+	// Must be kept alive in the root scope for everything else to be able to access it.
+	// It adds itself to the global context.
+	Core::EventHandler eventHandler;
+
+	// Start up main rendering window
+
+	sf::RenderWindow Window(vidmode, APP_NAME, vidstyle, settings);
+	Window.setVerticalSyncEnabled(true);
+	ImGui::SFML::Init(Window);
+
+	GlobalContext::set_window(&Window);
+
+	Core::Engine engine(&Window, &eventHandler, &elapsedTime);
+
+	const auto ev1handle = eventHandler.add_event_callback([&](const sf::Event* e) -> bool {
+		Window.close();
+		return true;
+	}, sf::Event::Closed);
+
+	while (Window.isOpen())
+	{
+		engine.Loop();
+	}
+
+	eventHandler.unhook_event_callback(ev1handle, sf::Event::Closed);
+
+	GlobalContext::clear_window();
 	ImGui::SFML::Shutdown();
+	return 0;
 }

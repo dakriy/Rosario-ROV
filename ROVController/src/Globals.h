@@ -12,6 +12,4 @@
 #define let const auto
 #define var auto
 
-constexpr auto APP_NAME = "City Simulator 2018";
-constexpr auto WHEEL_SPOKE_NUMBER = 8;
-constexpr auto NUMBER_OF_MAIN_MENU_OPTIONS = 5;
+constexpr auto APP_NAME = "ROV Controller";

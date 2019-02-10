@@ -54,6 +54,13 @@
     <ClInclude Include="src\UI\UIElement.h" />
     <ClInclude Include="src\Utilities.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\ProggyClean.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\background.png" />
+    <Image Include="Resources\lester.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{3A912DFA-E14B-4223-8432-49C445FC535C}</ProjectGuid>

@@ -33,7 +33,7 @@ void Factory::TextFactory::apply_text_style(sf::Text& t, TextStyles style)
 bool Factory::TextFactory::load_assets()
 {
 	// Load all assets and return success or failure
-	return font[DefaultFont].loadFromFile("Resources/Papyrus.ttf");
+	return font[DefaultFont].loadFromFile("Resources/ProggyClean.ttf");
 }
 
 sf::Text Factory::TextFactory::create_displayable_string(const char* str, const TextStyles style, FontTypes type)

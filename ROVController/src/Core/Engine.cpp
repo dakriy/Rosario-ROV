@@ -5,6 +5,7 @@
 #include "../Frames/TitleFrame.h"
 #include "../Globals.h"
 #include "../Utilities.h"
+#include <imgui-SFML.h>
 
 void Core::Engine::Events() const
 {
@@ -17,6 +18,10 @@ void Core::Engine::Events() const
 void Core::Engine::Update()
 {	
 	auto dt = sf::Time::Zero;
+	
+	// Update ImGUI
+	ImGui::SFML::Update(*window_, dt += rate_clock_.restart());
+	
 	// Update all frames except paused ones.
 	for (auto f : frame_stack_)
 		if(!f->isPaused())
@@ -37,6 +42,10 @@ void Core::Engine::Render()
 	}
 	// Make sure all frames are not hidden.
 	assert(t);
+	
+	// Render imgui on top
+	ImGui::SFML::Render(*window_);
+
 	window_->display();
 }
 
