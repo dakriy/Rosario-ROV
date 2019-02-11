@@ -115,8 +115,10 @@ with socket(AF_INET, SOCK_DGRAM) as conn:
 
                                 cap = cv2.VideoCapture(0)
                                 resolution = set_res(cap, 1920, 1080)
+                                print(resolution)
 
-                                frameRate = caluclate_framerate(cap)
+                                # frameRate = caluclate_framerate(cap)
+                                frameRate = 16
                                 secondsPerFrame = 1 / frameRate
 
                                 noVid = False
@@ -184,9 +186,15 @@ with socket(AF_INET, SOCK_DGRAM) as conn:
                             else:
                                 dat = data[_ * bytesAPacket:_ * bytesAPacket + bytesAPacket]
                                 # Format is type width height bytesSent, runningtotalbytessent, totalpackets, packet
-                            d = pack('BHHHHBB', 11, width, height, len(dat), bytesSent, num, _ + 1) + dat
-                            conn.sendto(d, connAddr)
-                            bytesSent += len(dat)
+                            d = pack('BHHHIBB', 11, width, height, len(dat), bytesSent, num, _ + 1) + dat
+                            sent = False
+                            while not sent:
+                                try:
+                                    conn.sendto(d, connAddr)
+                                    bytesSent += len(dat)
+                                    sent = True
+                                except BlockingIOError:
+                                    pass
                     else:
                         if not ret:
                             video = False
