@@ -68,7 +68,7 @@ with socket(AF_INET, SOCK_STREAM) as conn:
     conn.bind(('', connPort))
     conn.setblocking(0)
     conn.listen(2)
-    conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    conn.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     while not done:
         with socket(AF_INET, SOCK_DGRAM) as cs:
             cs.setblocking(0)
