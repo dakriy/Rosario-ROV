@@ -47,15 +47,13 @@ namespace Core
 		// Sockets and buffers
 		sf::UdpSocket broadcast;
 
-		sf::UdpSocket connection;
+		sf::TcpSocket connection;
 
 		sf::IpAddress ROV;
 
 		std::vector<std::pair<sf::IpAddress, std::string>> found_devices;
 
 		std::array<char, broadcastBufferLen> broadcastBuffer;
-
-		std::array<char, sf::UdpSocket::MaxDatagramSize> recvBuffer;
 
 
 		// Ping information
@@ -93,7 +91,7 @@ namespace Core
 
 		float get_ping_time();
 
-		sf::Socket::Status connect_to_host(sf::IpAddress);
+		void connect_to_host(sf::IpAddress);
 
 		~Network();
 	};

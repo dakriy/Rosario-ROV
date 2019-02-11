@@ -7,10 +7,7 @@ Core::Network::Network()
 {
 	broadcast.setBlocking(false);
 	connection.setBlocking(false);
-	if (connection.bind(42069) == sf::Socket::Status::Error)
-	{
-		QuitWithError("Could not bind to port, check that all instances of the application are closed.", 1);
-	}
+
 	for (auto & p : pingvals)
 	{
 		p = sf::Time::Zero;
@@ -102,37 +99,31 @@ void Core::Network::process_packets()
 
 	if (connecting)
 	{
-		size_t rcvd;
-		sf::IpAddress rip;
-		unsigned short rport;
-		if (connection.receive(static_cast<void*>(recvBuffer.data()), sf::UdpSocket::MaxDatagramSize, rcvd, rip, rport) == sf::Socket::Done)
+		auto status = connection.connect(ROV, connectionPort);
+		if (status == sf::TcpSocket::Status::Error)
 		{
-			if (strcmp(recvBuffer.data(), "connect") == 0)
-			{
-				connected = true;
-				connecting = false;
-				connection.send("connected", 9, ROV, connectionPort);
-				pingRecvClock.restart();
-			}
-			else
-			{
-				connecting = false;
-				connected = false;
-			}
+			connecting = false;
+			connected = false;
+			// error
+		} else
+		{
+			connecting = false;
+			connected = true;
 		}
+
 	}
 
 
 	if (connected)
 	{
 		// Receiving
-		sf::IpAddress rip;
-		unsigned short rport;
 		sf::Packet p;
-		if (connection.receive(p, rip, rport) == sf::Socket::Done)
+		auto status = connection.receive(p);
+		if (status == sf::Socket::Done)
 		{
-			if (rip == ROV)
-				process_packet(p);
+			process_packet(p);
+		} else if (status == sf::Socket::Disconnected) {
+			connected = false;
 		}
 
 		// Sending
@@ -171,7 +162,7 @@ void Core::Network::send_packet(PacketTypes t)
 		case PacketTypes::StartMoveDown:
 		case PacketTypes::StopMoveDown:
 		default:
-			connection.send(p, ROV, connectionPort);
+			connection.send(p);
 			break;
 		}
 	}
@@ -182,6 +173,9 @@ void Core::Network::process_packet(sf::Packet& p)
 	sf::Int8 t;
 	p >> t;
 	auto type = static_cast<PacketTypes>(t);
+
+	// We got a packet so reset the watchdog
+	pingRecvClock.restart();
 	switch (type)
 	{
 	case PacketTypes::Ping:
@@ -190,46 +184,32 @@ void Core::Network::process_packet(sf::Packet& p)
 			pingCounter = 0;
 		pingvals[pingCounter++] = pingClock.getElapsedTime();
 
-		// We got a ping so reset the watchdog
-		pingRecvClock.restart();
 		Core::Event e(Core::Event::EventType::PingReceived);
 		GlobalContext::get_engine()->add_event(e);
 		break;
 	}
 	case PacketTypes::Video:
 	{
-		sf::Uint16 w, h, size, sent;
-		sf::Uint8 total, current;
+		sf::Uint16 w, h;
 
-		p >> w >> h >> size >> sent >> total >> current;
+		p >> w >> h;
 
-		if (current == 1)
-		{
-			if (!incomingFrame)
-			{
-				delete[] incomingFrame;
-			}
-			incomingFrame = new sf::Uint8[h*w * 4];
-		}
+		sf::Uint8 * frameData = new sf::Uint8[w * h * 4];
 		
 		sf::Uint8 pixel_color;
-		for (unsigned i = sent; i < sent + size; ++i)
+		for (unsigned i = 0; i < w*h*4; ++i)
 		{
 			p >> pixel_color;
-			incomingFrame[i] = pixel_color;
+				frameData[i] = pixel_color;
 		}
 
-		if (current == total)
-		{
-			Core::Event e(Core::Event::EventType::VideoFrameReceived);
+		Core::Event e(Core::Event::EventType::VideoFrameReceived);
 
-			e.f.h = h;
-			e.f.w = w;
+		e.f.h = h;
+		e.f.w = w;
 
-			e.f.data = incomingFrame;
-			incomingFrame = nullptr;
-			GlobalContext::get_engine()->add_event(e);
-		}
+		e.f.data = frameData;
+		GlobalContext::get_engine()->add_event(e);
 
 		break;
 	}	
@@ -260,6 +240,7 @@ void Core::Network::process_packet(sf::Packet& p)
 
 void Core::Network::disconnect()
 {
+	connection.disconnect();
 	connected = false;
 	connecting = false;
 }
@@ -283,16 +264,15 @@ float Core::Network::get_ping_time()
 	return static_cast<float>(total.asMilliseconds()) / static_cast<float>(n);
 }
 
-sf::Socket::Status Core::Network::connect_to_host(sf::IpAddress addr)
+void Core::Network::connect_to_host(sf::IpAddress addr)
 {
 	connected = false;
 	connecting = true;
 	ROV = addr;
-	return connection.send("connectRequest", 14, addr, connectionPort);
 }
 
 Core::Network::~Network()
 {
 	broadcast.unbind();
-	connection.unbind();
+	connection.disconnect();
 }
