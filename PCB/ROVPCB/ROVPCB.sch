@@ -510,4 +510,17 @@ Wire Wire Line
 Connection ~ 1800 5650
 Wire Wire Line
 	1800 5650 1700 5650
+$Comp
+L Amplifier_Audio:IRS2092 U?
+U 1 1 5C621E96
+P 7800 4350
+F 0 "U?" H 7800 5417 50  0000 C CNN
+F 1 "IRS2092" H 7800 5326 50  0000 C CNN
+F 2 "" H 7800 3800 50  0001 C CIN
+F 3 "http://www.infineon.com/dgdl/irs2092.pdf?fileId=5546d462533600a401535675f1be2790" H 7600 3800 50  0001 C CNN
+	1    7800 4350
+	1    0    0    -1  
+$EndComp
+Text Notes 6800 3150 0    157  ~ 31
+This is for the test
 $EndSCHEMATC
