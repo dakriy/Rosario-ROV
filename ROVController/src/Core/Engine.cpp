@@ -25,6 +25,21 @@ void Core::Engine::Update()
 	
 	// Update ImGUI
 	ImGui::SFML::Update(*window_, dt += rate_clock_.restart());
+
+
+	auto network = GlobalContext::get_network();
+	if (network->isConnected())
+	{
+		std::string title = "Connected to ";
+		title += network->connectedHost().toString();
+		ImGui::Begin(title.c_str());
+		ImGui::Text("Round Trip Ping: = %f ms", network->get_ping_time());
+		if (ImGui::Button("Disconnect"))
+		{
+			network->disconnect();
+		}
+		ImGui::End();
+	}
 	
 	// Update all frames except paused ones.
 	for (auto f : frame_stack_)

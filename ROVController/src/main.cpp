@@ -24,7 +24,7 @@ bool LoadResources()
 int main(int argc, char* argv[])
 {
 	// SEED
-	srand(GetSeed("A seed, I don't really care what goes here atm..."));
+	srand(GetSeed("A seed, I don't really care what goes here atm... it gets hashed anyway"));
 
 	sf::Clock elapsedTime;
 	GlobalContext::set_clock(&elapsedTime);

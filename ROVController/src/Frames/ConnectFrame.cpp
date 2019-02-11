@@ -32,9 +32,9 @@ void Frames::ConnectFrame::update(const sf::Time& dt)
 
 	for (auto& p : t)
 	{
-		options_.add_option(new Controls::Button(p.second, [&]()
+		options_.add_option(new Controls::Button(p.second, [p]()
 		{
-			
+			GlobalContext::get_network()->connect_to_host(p.first);
 		}));
 	}
 	create_options();
