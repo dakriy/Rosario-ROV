@@ -39,6 +39,7 @@ namespace Core
 
 		enum EventType
 		{
+			PingReceived,
 			VideoFrameReceived,
 			TemperatureReceived,
 			PressureReceived,

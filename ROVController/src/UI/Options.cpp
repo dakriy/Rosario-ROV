@@ -1,5 +1,4 @@
 #include "Options.h"
-#include <functional>
 #include <cmath>
 #include "../Core/GlobalContext.h"
 

@@ -34,6 +34,11 @@ Core::EventHandler<sf::Event, sf::Event::EventType::Count> * GlobalContext::get_
 	return event_handler_;
 }
 
+Core::EventHandler<Core::Event, Core::Event::EventType::Count>* GlobalContext::get_core_event_handler()
+{
+	return internal_event_handler_;
+}
+
 Core::Network* GlobalContext::get_network()
 {
 	return network_;

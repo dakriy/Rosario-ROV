@@ -75,6 +75,8 @@ namespace Core
 
 		void process_packets();
 
+		void process_packet(sf::Packet&);
+
 		void disconnect();
 
 		float get_ping_time();

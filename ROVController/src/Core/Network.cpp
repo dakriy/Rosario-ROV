@@ -131,45 +131,8 @@ void Core::Network::process_packets()
 		sf::Packet p;
 		if (connection.receive(p, rip, rport) == sf::Socket::Done)
 		{
-			sf::Int8 type;
-			p >> type;
-			auto atype = static_cast<PacketTypes>(type);
-			if (atype == PacketTypes::Ping)
-			{
-				if (pingCounter == pingWindow)
-					pingCounter = 0;
-				pingvals[pingCounter++] = pingClock.getElapsedTime();
-
-				// We got a ping so reset the watchdog
-				pingRecvClock.restart();
-			}
-			else if (atype == PacketTypes::Video)
-			{
-				Core::Event e(Core::Event::EventType::VideoFrameReceived);
-
-				e.f.data = nullptr;
-				e.f.length = 0;
-
-				GlobalContext::get_engine()->add_event(e);
-			}
-			else if (atype == PacketTypes::Temperature)
-			{
-				float temp;
-				p >> temp;
-				Core::Event e(Core::Event::EventType::TemperatureReceived);
-				e.t.temp = temp;
-
-				GlobalContext::get_engine()->add_event(e);
-			}
-			else if (atype == PacketTypes::Pressure)
-			{
-				float pressure;
-				p >> pressure;
-				Core::Event e(Core::Event::EventType::PressureReceived);
-				e.p.pressure = pressure;
-
-				GlobalContext::get_engine()->add_event(e);
-			}
+			if (rip == ROV)
+				process_packet(p);
 		}
 
 		// Sending
@@ -187,6 +150,60 @@ void Core::Network::process_packets()
 		{
 			connected = false;
 		}
+	}
+}
+
+void Core::Network::process_packet(sf::Packet& p)
+{
+	sf::Int8 t;
+	p >> t;
+	auto type = static_cast<PacketTypes>(t);
+	switch (type)
+	{
+	case PacketTypes::Ping:
+	{
+		if (pingCounter == pingWindow)
+			pingCounter = 0;
+		pingvals[pingCounter++] = pingClock.getElapsedTime();
+
+		// We got a ping so reset the watchdog
+		pingRecvClock.restart();
+		Core::Event e(Core::Event::EventType::PingReceived);
+		GlobalContext::get_engine()->add_event(e);
+		break;
+	}
+	case PacketTypes::Video:
+	{
+		Core::Event e(Core::Event::EventType::VideoFrameReceived);
+
+		e.f.data = nullptr;
+		e.f.length = 0;
+
+		GlobalContext::get_engine()->add_event(e);
+		break;
+	}	
+	case PacketTypes::Temperature:
+	{
+		float temp;
+		p >> temp;
+		Core::Event e(Core::Event::EventType::TemperatureReceived);
+		e.t.temp = temp;
+
+		GlobalContext::get_engine()->add_event(e);
+		break;
+	}
+	case PacketTypes::Pressure:
+	{
+		float pressure;
+		p >> pressure;
+		Core::Event e(Core::Event::EventType::PressureReceived);
+		e.p.pressure = pressure;
+
+		GlobalContext::get_engine()->add_event(e);
+		break;
+	}
+	default:
+		break;
 	}
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 #include "IFrame.h"
+#include "../Globals.h"
+#include "../Core/Engine.h"
 
 /**
  * @file ViewFrame.h
@@ -12,12 +14,14 @@ namespace Frames
 {
 	class ViewFrame : public IFrame
 	{
+	protected:
+		EVENT_FUNC_INDEX(Core::Event, Core::Event::EventType::Count) frameHook = nullptr;
 	public:
 		/**
 		 * View Frame Constructor
 		 * Currently defaulted
 		 */
-		ViewFrame() = default;
+		ViewFrame();
 
 		/**
 		 * Draws the main menu frame
@@ -44,6 +48,6 @@ namespace Frames
 		/**
 		 * Default constructor because we don't need to do anything special
 		 */
-		~ViewFrame() = default;
+		~ViewFrame();
 	};
 }
