@@ -87,9 +87,6 @@ int main(int argc, char* argv[])
 
 	eventHandler.unhook_event_callback(ev1handle, sf::Event::Closed);
 
-	GlobalContext::clear_network();
-	GlobalContext::clear_window();
-
 	ImGui::SFML::Shutdown();
 	return 0;
 }

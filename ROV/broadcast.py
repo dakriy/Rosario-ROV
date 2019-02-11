@@ -116,7 +116,7 @@ with socket(AF_INET, SOCK_DGRAM) as conn:
                                 resolution = set_res(cap, 1920, 1080)
 
                                 frameRate = caluclate_framerate(cap)
-                                secondsPerFrame = 1 / frametime
+                                secondsPerFrame = 1 / frameRate
 
                                 noVid = False
                                 if not cap.isOpened():
@@ -164,11 +164,12 @@ with socket(AF_INET, SOCK_DGRAM) as conn:
                         frametime = time.time()
                         img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
                         print(img)
-                        #d = pack('BP', 11, np.size(img, 0), np.size(img, 1), img)
-                        #conn.sendto(d, connAddr)
+                        d = pack('BHH', 11, np.size(img, 0), np.size(img, 1)) + img.tobytes()
+                        conn.sendto(d, connAddr)
                     else:
-                        video = False
-                        break
+                        if not ret:
+                            video = False
+                            break
                 else:
                     video = False
                 pass

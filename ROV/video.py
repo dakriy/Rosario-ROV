@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import cv2
+import numpy as np
+from struct import *
 import time
 
 def caluclate_framerate(device):
@@ -28,26 +30,30 @@ def set_res(dev, x, y):
     return str(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), str(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 
+frametime = 0
 cap = cv2.VideoCapture(0)
 resolution = set_res(cap, 1920, 1080)
 
-framerate = caluclate_framerate(cap)
-fourcc = "MJPG"
+#frameRate = caluclate_framerate(cap)
+frameRate = 16
+secondsPerFrame = 1 / frameRate
+
 
 if not cap.isOpened():
     print("Unable to access camera")
-    exit(1)
+    exit()
 
-write = cv2.VideoWriter_fourcc(*fourcc)
-out = cv2.VideoWriter(file, write, framerate, (1920, 1080))
 
 while cap.isOpened():
     ret, frame = cap.read()
-    if ret:
-        out.write(frame)
+    if ret and time.time() - frametime >= secondsPerFrame:
+        frametime = time.time()
+        img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
+        d = pack('BHH', 11, np.size(img, 0), np.size(img, 1)) + img.tobytes()
+        print(d)
+        # conn.sendto(d, connAddr)
     else:
-        break
+        if not ret:
+            break
 
 cap.release()
-out.release()
-cv2.destroyAllWindows()

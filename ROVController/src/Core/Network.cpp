@@ -198,11 +198,22 @@ void Core::Network::process_packet(sf::Packet& p)
 	}
 	case PacketTypes::Video:
 	{
-		Core::Event e(Core::Event::EventType::VideoFrameReceived);
+		sf::Uint16 w, h;
 
-		e.f.data = nullptr;
-		e.f.h = 0;
-		e.f.w = 0;
+		p >> w >> h;
+		Core::Event e(Core::Event::EventType::VideoFrameReceived);
+		
+		e.f.h = h;
+		e.f.w = w;
+
+		e.f.data = new sf::Uint8[h*w*4];
+
+		sf::Uint8 pixel_color;
+		for (unsigned i = 0; i < w*h*4; ++i)
+		{
+			p >> pixel_color;
+			e.f.data[i] = pixel_color;
+		}
 
 		GlobalContext::get_engine()->add_event(e);
 		break;

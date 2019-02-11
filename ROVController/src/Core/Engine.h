@@ -57,8 +57,15 @@ namespace Core
 			Pressure p;
 		};
 
-		Event(EventType t) : type(t){}
+		explicit Event(EventType t) : type(t){}
 		Event() = default;
+		~Event()
+		{
+			if (type == VideoFrameReceived)
+			{
+				delete[] f.data;
+			}
+		}
 	};
 
 	/**
