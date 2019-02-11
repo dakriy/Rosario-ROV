@@ -198,24 +198,39 @@ void Core::Network::process_packet(sf::Packet& p)
 	}
 	case PacketTypes::Video:
 	{
-		sf::Uint16 w, h;
+		sf::Uint16 w, h, size, sent;
+		sf::Uint8 total, current;
 
-		p >> w >> h;
-		Core::Event e(Core::Event::EventType::VideoFrameReceived);
+		p >> w >> h >> size >> sent >> total >> current;
+
+		if (current == 1)
+		{
+			if (!incomingFrame)
+			{
+				delete[] incomingFrame;
+			}
+			incomingFrame = new sf::Uint8[h*w * 4];
+		}
 		
-		e.f.h = h;
-		e.f.w = w;
-
-		e.f.data = new sf::Uint8[h*w*4];
-
 		sf::Uint8 pixel_color;
-		for (unsigned i = 0; i < w*h*4; ++i)
+		for (unsigned i = sent; i < sent + size; ++i)
 		{
 			p >> pixel_color;
-			e.f.data[i] = pixel_color;
+			incomingFrame[i] = pixel_color;
 		}
 
-		GlobalContext::get_engine()->add_event(e);
+		if (current == total)
+		{
+			Core::Event e(Core::Event::EventType::VideoFrameReceived);
+
+			e.f.h = h;
+			e.f.w = w;
+
+			e.f.data = incomingFrame;
+			incomingFrame = nullptr;
+			GlobalContext::get_engine()->add_event(e);
+		}
+
 		break;
 	}	
 	case PacketTypes::Temperature:

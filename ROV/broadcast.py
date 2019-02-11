@@ -6,6 +6,7 @@ import select
 import subprocess
 import cv2
 import time
+import math
 
 
 def caluclate_framerate(device):
@@ -163,9 +164,29 @@ with socket(AF_INET, SOCK_DGRAM) as conn:
                     if ret and time.time() - frametime >= secondsPerFrame:
                         frametime = time.time()
                         img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
-                        print(img)
-                        d = pack('BHH', 11, np.size(img, 0), np.size(img, 1)) + img.tobytes()
-                        conn.sendto(d, connAddr)
+
+                        width = np.size(img, 0)
+                        height = np.size(img, 1)
+                        totalSize = 4 * width * height
+
+                        num = int(math.ceil(totalSize / 65400))
+
+                        bytesAPacket = 65400
+
+                        data = img.tobytes()
+
+                        bytesSent = 0
+
+                        for _ in range(num):
+                            if num - 1 == _:
+                                # send the rest of the data on the last one
+                                dat = data[_ * bytesAPacket:]
+                            else:
+                                dat = data[_ * bytesAPacket:_ * bytesAPacket + bytesAPacket]
+                                # Format is type width height bytesSent, runningtotalbytessent, totalpackets, packet
+                            d = pack('BHHHHBB', 11, width, height, len(dat), bytesSent, num, _ + 1) + dat
+                            conn.sendto(d, connAddr)
+                            bytesSent += len(dat)
                     else:
                         if not ret:
                             video = False
