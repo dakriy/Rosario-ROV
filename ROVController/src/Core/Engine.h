@@ -11,11 +11,54 @@
 #include "../Frames/IFrame.h"
 #include "Event.h"
 #include <vector>
+#include <list>
 
 class DebugTerminal;
 
 namespace Core
 {
+
+	class Event
+	{
+	public:
+		struct VideoFrame
+		{
+			char * data;
+			size_t length;
+		};
+
+		struct Temperature
+		{
+			float temp;
+		};
+
+		struct Pressure
+		{
+			float pressure;
+		};
+
+		enum EventType
+		{
+			VideoFrameReceived,
+			TemperatureReceived,
+			PressureReceived,
+
+			Count
+		};
+
+		EventType type = Count;
+
+		union
+		{
+			VideoFrame f;
+			Temperature t;
+			Pressure p;
+		};
+
+		Event(EventType t) : type(t){}
+		Event() = default;
+	};
+
 	/**
 	 * List of actions we can do to a frame
 	 * Must end with FrameActionCount
@@ -46,8 +89,10 @@ namespace Core
 		// Frames currently on the stack
 		std::vector<Frames::IFrame *> frame_stack_;
 
+		std::list<Core::Event> core_events_;
+
 		// Event processor
-		void Events() const;
+		void Events();
 
 		// Frame updater
 		void Update();
@@ -65,9 +110,6 @@ namespace Core
 		// The global render window
 		sf::RenderWindow * window_;
 
-		// The global event handler
-		EventHandler * ev_;
-
 		// Rate clock to get the current dt from last frame render off of
 		sf::Clock rate_clock_;
 
@@ -80,15 +122,24 @@ namespace Core
 		// Frame action queue
 		std::vector<FAction> frame_action_list_;
 
+		EventHandler<sf::Event, sf::Event::EventType::Count>* ev_;
+		EventHandler<Core::Event, Core::Event::EventType::Count>* cev_;
+
 	public:
 		/**
 		 * Engine Constructor
 		 * 
 		 * @param w window to render onto
 		 * @param ev event hander to process events off of
+		 * @param cev core event handler to process core events off of
 		 * @param glbClk global clock to keep time off of
 		 */
-		Engine(sf::RenderWindow * w, EventHandler * ev, sf::Clock * glbClk);
+		Engine(sf::RenderWindow * w, EventHandler<sf::Event, sf::Event::EventType::Count> * ev, EventHandler<Core::Event, Core::Event::EventType::Count> * cev, sf::Clock * glbClk);
+
+		/**
+		 *
+		 */
+		void add_event(Core::Event e);
 
 		/**
 		 * Main loop. Order is:

@@ -25,7 +25,6 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
-    <ClCompile Include="src\Core\Event.cpp" />
     <ClCompile Include="src\Core\GlobalContext.cpp" />
     <ClCompile Include="src\Core\Network.cpp" />
     <ClCompile Include="src\Factories\TextFactory.cpp" />

@@ -7,8 +7,8 @@
 #include <windows.h>
 #endif//_WIN32
 
-#define EVENT_FUNC_TYPE std::function<bool(const sf::Event*)>
-#define EVENT_FUNC_INDEX const Core::EventHook*
+#define EVENT_FUNC_TYPE(T) std::function<bool(const T*)>
+#define EVENT_FUNC_INDEX(T, S) const Core::EventHook<T, S>*
 #define let const auto
 #define var auto
 

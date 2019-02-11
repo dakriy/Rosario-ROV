@@ -11,7 +11,6 @@
  */
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include "Event.h"
 #include "Engine.h"
 #include "Network.h"
 
@@ -28,7 +27,9 @@ private:
 	static sf::RenderWindow * window_;
 
 	// Global event handler instance
-	static Core::EventHandler * event_handler_;
+	static Core::EventHandler<sf::Event, sf::Event::EventType::Count> * event_handler_;
+
+	static Core::EventHandler<Core::Event, Core::Event::EventType::Count> * internal_event_handler_;
 
 	// Networkmodule
 	static Core::Network * network_;
@@ -52,7 +53,9 @@ public:
 	/**
 	 * Returns the global event handler
 	 */
-	static Core::EventHandler * get_event_handler();
+	static Core::EventHandler<sf::Event, sf::Event::EventType::Count> * get_event_handler();
+
+	static Core::EventHandler<Core::Event, Core::Event::EventType::Count> * get_core_event_handler();
 
 	/**
 	 * Returns the network module
@@ -86,7 +89,10 @@ public:
 	 * 
 	 * @param ptr Event hander pointer
 	 */
-	static void set_event_handler(Core::EventHandler * ptr);
+	static void set_event_handler(Core::EventHandler<sf::Event, sf::Event::EventType::Count> * ptr);
+
+
+	static void set_core_event_handler(Core::EventHandler<Core::Event, Core::Event::EventType::Count> * ptr);
 
 	/**
 	 * Sets the global network module
@@ -115,6 +121,9 @@ public:
 	 * Clears the global event handler
 	 */
 	static void clear_event_handler();
+
+
+	static void clear_core_event_handler();
 
 	/**
 	 * Clears the global network object

@@ -39,10 +39,10 @@ namespace Controls
 		void position_options();
 
 		// mouse hook pointer so it can be unhooked when the object is destroyed
-		EVENT_FUNC_INDEX mouse_hook_ = nullptr;
+		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) mouse_hook_ = nullptr;
 
 		// scroll hook pointer so it can be unhooked when the object is destroyed
-		EVENT_FUNC_INDEX scroll_hook_ = nullptr;
+		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) scroll_hook_ = nullptr;
 
 		// Parent frame that we are being displayed on
 		Frames::IFrame * parent_;

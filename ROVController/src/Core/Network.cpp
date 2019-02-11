@@ -1,5 +1,7 @@
 #include "Network.h"
 #include "../Utilities.h"
+#include "GlobalContext.h"
+#include "Event.h"
 
 Core::Network::Network()
 {
@@ -140,6 +142,33 @@ void Core::Network::process_packets()
 
 				// We got a ping so reset the watchdog
 				pingRecvClock.restart();
+			}
+			else if (atype == PacketTypes::Video)
+			{
+				Core::Event e(Core::Event::EventType::VideoFrameReceived);
+
+				e.f.data = nullptr;
+				e.f.length = 0;
+
+				GlobalContext::get_engine()->add_event(e);
+			}
+			else if (atype == PacketTypes::Temperature)
+			{
+				float temp;
+				p >> temp;
+				Core::Event e(Core::Event::EventType::TemperatureReceived);
+				e.t.temp = temp;
+
+				GlobalContext::get_engine()->add_event(e);
+			}
+			else if (atype == PacketTypes::Pressure)
+			{
+				float pressure;
+				p >> pressure;
+				Core::Event e(Core::Event::EventType::PressureReceived);
+				e.p.pressure = pressure;
+
+				GlobalContext::get_engine()->add_event(e);
 			}
 		}
 

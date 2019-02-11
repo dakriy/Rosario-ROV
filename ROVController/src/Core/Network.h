@@ -9,7 +9,11 @@ namespace Core
 {
 	enum class PacketTypes
 	{
-		Ping,
+		Ping = 0,
+		Video = 11,
+		Temperature = 12,
+		Pressure = 13,
+
 		Count
 	};
 	class Network

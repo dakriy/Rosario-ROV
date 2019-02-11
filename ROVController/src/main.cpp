@@ -56,7 +56,10 @@ int main(int argc, char* argv[])
 
 	// Must be kept alive in the root scope for everything else to be able to access it.
 	// It adds itself to the global context.
-	Core::EventHandler eventHandler;
+	Core::EventHandler<sf::Event, sf::Event::EventType::Count> eventHandler;
+	Core::EventHandler<Core::Event, Core::Event::EventType::Count> coreEventHandler;
+	GlobalContext::set_event_handler(&eventHandler);
+	GlobalContext::set_core_event_handler(&coreEventHandler);
 
 	// Start up main rendering window
 
@@ -66,7 +69,7 @@ int main(int argc, char* argv[])
 
 	GlobalContext::set_window(&Window);
 
-	Core::Engine engine(&Window, &eventHandler, &elapsedTime);
+	Core::Engine engine(&Window, &eventHandler, &coreEventHandler, &elapsedTime);
 
 	const auto ev1handle = eventHandler.add_event_callback([&](const sf::Event* e) -> bool {
 		Window.close();

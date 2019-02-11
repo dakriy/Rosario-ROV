@@ -8,7 +8,7 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
-void Core::Engine::Events() const
+void Core::Engine::Events()
 {
 	sf::Event event;
 	while (window_->pollEvent(event)) {
@@ -17,6 +17,13 @@ void Core::Engine::Events() const
 
 		ev_->handle_event(&event);
 	}
+
+	for (auto & e : core_events_)
+	{
+		cev_->handle_event(&e);
+	}
+	core_events_.clear();
+
 }
 
 void Core::Engine::Update()
@@ -26,7 +33,7 @@ void Core::Engine::Update()
 	// Update ImGUI
 	ImGui::SFML::Update(*window_, dt += rate_clock_.restart());
 
-
+	// Connected window
 	auto network = GlobalContext::get_network();
 	if (network->isConnected())
 	{
@@ -91,13 +98,15 @@ void Core::Engine::ProcessFrameAction(FAction& f_action)
 	}
 }
 
-Core::Engine::Engine(sf::RenderWindow* w, EventHandler* ev, sf::Clock* glbClk)
+Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::EventType::Count>* ev, EventHandler<Core::Event, Core::Event::EventType::Count>* cev, sf::Clock* glbClk)
 {
 	assert(w);
 	assert(ev);
+	assert(cev);
 	assert(glbClk);
 	window_ = w;
 	ev_ = ev;
+	cev_ = cev;
 	global_clock_ = glbClk;
 
 	// Set default framerate to 60.
@@ -110,6 +119,12 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler* ev, sf::Clock* glbClk)
 	frame_stack_.emplace_back(firstFrame);
 
 	GlobalContext::set_engine(this);
+}
+
+void Core::Engine::add_event(Core::Event e)
+{
+	if (e.type != Core::Event::EventType::Count)
+		core_events_.emplace_back(e);
 }
 
 void Core::Engine::Loop()

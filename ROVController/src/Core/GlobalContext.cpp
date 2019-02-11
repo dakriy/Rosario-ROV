@@ -3,7 +3,8 @@
 Core::Engine * GlobalContext::engine_ = nullptr;
 sf::Clock * GlobalContext::global_clock_ = nullptr;
 sf::RenderWindow * GlobalContext::window_ = nullptr;
-Core::EventHandler * GlobalContext::event_handler_ = nullptr;
+Core::EventHandler<sf::Event, sf::Event::EventType::Count> * GlobalContext::event_handler_ = nullptr;
+Core::EventHandler<Core::Event, Core::Event::EventType::Count> * GlobalContext::internal_event_handler_ = nullptr;
 Core::Network * GlobalContext::network_ = nullptr;
 
 sf::Clock * GlobalContext::get_clock()
@@ -28,7 +29,7 @@ void GlobalContext::set_window(sf::RenderWindow * w)
 		window_ = w;
 }
 
-Core::EventHandler * GlobalContext::get_event_handler()
+Core::EventHandler<sf::Event, sf::Event::EventType::Count> * GlobalContext::get_event_handler()
 {
 	return event_handler_;
 }
@@ -49,10 +50,16 @@ void GlobalContext::clear_network()
 	network_ = nullptr;
 }
 
-void GlobalContext::set_event_handler(Core::EventHandler * e)
+void GlobalContext::set_event_handler(Core::EventHandler<sf::Event, sf::Event::EventType::Count> * e)
 {
 	if (event_handler_ == nullptr && e != nullptr)
 		event_handler_ = e;
+}
+
+void GlobalContext::set_core_event_handler(Core::EventHandler<Core::Event, Core::Event::EventType::Count>* ptr)
+{
+	if (internal_event_handler_ == nullptr && ptr != nullptr)
+		internal_event_handler_ = ptr;
 }
 
 Core::Engine* GlobalContext::get_engine()
@@ -79,6 +86,11 @@ void GlobalContext::clear_clock()
 void GlobalContext::clear_event_handler()
 {
 	event_handler_ = nullptr;
+}
+
+void GlobalContext::clear_core_event_handler()
+{
+	internal_event_handler_ = nullptr;
 }
 
 void GlobalContext::clear_engine()

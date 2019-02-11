@@ -66,9 +66,6 @@
     <ClCompile Include="src\Core\Engine.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Event.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\GlobalContext.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>

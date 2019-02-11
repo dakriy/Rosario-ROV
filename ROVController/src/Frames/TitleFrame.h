@@ -22,7 +22,7 @@ namespace Frames
 			"Exit"
         };
 		// Event hook for pressing escape to exit
-		EVENT_FUNC_INDEX escape_to_exit_hook_ = nullptr;
+		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) escape_to_exit_hook_ = nullptr;
 
 		// Creates the options
 		void create_options();

@@ -21,7 +21,7 @@ namespace Controls
 		std::array<size_t, 2> display_string_bounds_;
 		bool display_cursor_ = false;
 		size_t cursor_pos_ = 0;
-		EVENT_FUNC_INDEX keyboard_hook_;
+		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) keyboard_hook_;
 
 	public:
 		explicit TextBox(std::function<void(std::string)> onTextChange = nullptr, std::function<void(std::string)> onEnter = nullptr, const std::string& startText = "");
