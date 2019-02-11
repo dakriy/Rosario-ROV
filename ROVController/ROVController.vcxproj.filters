@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{888ac38a-34e9-41d0-9632-559dd4b56afc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{e90a4e6b-6bcb-4d0f-a316-cca91a34d312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{5127baf9-7bc3-4236-aaff-45bfcd38eb4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Frames">
+      <UniqueIdentifier>{32eacf69-12d7-4b73-a198-ff70b6e4fb11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Frames">
+      <UniqueIdentifier>{2d0b50cf-f38d-42f3-9398-84d7f755a077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Interfaces">
+      <UniqueIdentifier>{99b2b22a-98c6-421f-804e-66bf92b7126c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{489c49bd-45c6-451a-b10c-4bfa9bffa096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{dec2be24-722d-4328-b83a-993e96ee8c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Factories">
+      <UniqueIdentifier>{64968998-9274-4f18-b5dd-bc72af8b6e31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Factories">
+      <UniqueIdentifier>{cac0b987-94e2-4342-81ef-dbd1b7f8c978}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui-SFML.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Engine.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Event.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\GlobalContext.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frames\IFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frames\MainMenuFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frames\TitleFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Button.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\Options.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\TextBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI\UIElement.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Factories\TextFactory.cpp">
+      <Filter>Source Files\Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frames\ConnectFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frames\ViewFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Network.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Core\Engine.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Event.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\GlobalContext.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\IFrame.h">
+      <Filter>Header Files\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\MainMenuFrame.h">
+      <Filter>Header Files\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\TitleFrame.h">
+      <Filter>Header Files\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Interfaces\IUpdateable.h">
+      <Filter>Header Files\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Button.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\Options.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\TextBox.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI\UIElement.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Factories\TextFactory.h">
+      <Filter>Header Files\Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\ConnectFrame.h">
+      <Filter>Header Files\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\ViewFrame.h">
+      <Filter>Header Files\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Network.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Resources\ProggyClean.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\background.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\lester.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

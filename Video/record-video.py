@@ -15,7 +15,7 @@ class GracefulKiller:
         self.kill_now = True
 
 start = time.time()
-framerate = 25
+framerate = 10
 fourcc = "DIVX"
 cap = cv2.VideoCapture(0)
 file = "/home/pi/Measurements/Video/zucc " + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start)) + ".avi"
