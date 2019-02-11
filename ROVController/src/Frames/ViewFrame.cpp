@@ -5,9 +5,10 @@
 Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		std::cout << "IT WORKS YO" << std::endl;
+		std::cout << "Vid Frame Received" << std::endl;
 		return true;
-	}, Core::Event::EventType::PingReceived);
+	}, Core::Event::EventType::VideoFrameReceived);
+	GlobalContext::get_network()->send_packet(Core::PacketTypes::StartVideo);
 }
 
 void Frames::ViewFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -25,5 +26,6 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
+	GlobalContext::get_network()->send_packet(Core::PacketTypes::StopVideo);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 }

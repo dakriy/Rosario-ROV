@@ -23,8 +23,9 @@ namespace Core
 	public:
 		struct VideoFrame
 		{
-			char * data;
-			size_t length;
+			int w;
+			int h;
+			sf::Uint8 * data;
 		};
 
 		struct Temperature

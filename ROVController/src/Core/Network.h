@@ -9,10 +9,20 @@ namespace Core
 {
 	enum class PacketTypes
 	{
-		Ping = 0,
-		Video = 11,
-		Temperature = 12,
-		Pressure = 13,
+		Ping,
+		StartVideo,
+		StopVideo,
+		StartTemp,
+		StopTemp,
+		StartPressure,
+		StopPressure,
+		StartMoveUp,
+		StopMoveUp,
+		StartMoveDown,
+		StopMoveDown,
+		Video,
+		Temperature,
+		Pressure,
 
 		Count
 	};
@@ -74,6 +84,8 @@ namespace Core
 		void stop_search_for_devices();
 
 		void process_packets();
+
+		void send_packet(PacketTypes t);
 
 		void process_packet(sf::Packet&);
 

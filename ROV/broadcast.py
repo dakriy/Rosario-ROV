@@ -1,11 +1,12 @@
 from socket import *
-import time
+import numpy as np
 import netifaces as ni
 from struct import *
 import select
 import subprocess
 import cv2
 import time
+
 
 def caluclate_framerate(device):
     num_frames = 60
@@ -161,8 +162,10 @@ with socket(AF_INET, SOCK_DGRAM) as conn:
                     ret, frame = cap.read()
                     if ret and time.time() - frametime >= secondsPerFrame:
                         frametime = time.time()
-                        d = pack('BP', 11, frame)
-                        conn.sendto(d, connAddr)
+                        img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
+                        print(img)
+                        #d = pack('BP', 11, np.size(img, 0), np.size(img, 1), img)
+                        #conn.sendto(d, connAddr)
                     else:
                         video = False
                         break
@@ -173,7 +176,7 @@ with socket(AF_INET, SOCK_DGRAM) as conn:
                 pass
             if pressure:
                 pass
-            if moveUp
+            if moveUp:
                 pass
             if moveDown:
                 pass

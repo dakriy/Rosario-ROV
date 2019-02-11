@@ -140,15 +140,39 @@ void Core::Network::process_packets()
 		// Send ping every 5 seconds
 		if (pingClock.getElapsedTime().asSeconds() > 5)
 		{
-			sf::Packet t;
-			t << static_cast<sf::Int8>(PacketTypes::Ping);
-			pingClock.restart();
-			connection.send(t, ROV, connectionPort);
+			send_packet(PacketTypes::Ping);
 		}
 
 		if (pingRecvClock.getElapsedTime().asSeconds() > 15)
 		{
 			connected = false;
+		}
+	}
+}
+
+void Core::Network::send_packet(PacketTypes t)
+{
+	sf::Packet p;
+	p << static_cast<sf::Int8>(t);
+	if (connected)
+	{
+		switch(t)
+		{
+		case PacketTypes::Ping:
+			pingClock.restart();
+		case PacketTypes::StartVideo:
+		case PacketTypes::StopVideo:
+		case PacketTypes::StartTemp:
+		case PacketTypes::StopTemp:
+		case PacketTypes::StartPressure:
+		case PacketTypes::StopPressure:
+		case PacketTypes::StartMoveUp:
+		case PacketTypes::StopMoveUp:
+		case PacketTypes::StartMoveDown:
+		case PacketTypes::StopMoveDown:
+		default:
+			connection.send(p, ROV, connectionPort);
+			break;
 		}
 	}
 }
@@ -177,7 +201,8 @@ void Core::Network::process_packet(sf::Packet& p)
 		Core::Event e(Core::Event::EventType::VideoFrameReceived);
 
 		e.f.data = nullptr;
-		e.f.length = 0;
+		e.f.h = 0;
+		e.f.w = 0;
 
 		GlobalContext::get_engine()->add_event(e);
 		break;

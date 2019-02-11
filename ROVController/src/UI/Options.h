@@ -9,7 +9,6 @@
  */
 
 #include "../Interfaces/IUpdateable.h"
-#include <functional>
 #include <SFML/Graphics.hpp>
 #include "UIElement.h"
 #include "../Core/Event.h"
