@@ -118,7 +118,7 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                             d = pack('B', type)
                             client.send(d)
                             pingTime = time.time()
-                        elif type == 255:
+                        elif type == 254:
                             connected = False
                             print('255')
                             client.close()
@@ -156,17 +156,7 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                             print('Stopping pressure stream')
                             pressure = False
                         elif type == 7:
-                            print('start move up')
-                            moveUp = True
-                        elif type == 8:
-                            print('stop move up')
-                            moveUp = False
-                        elif type == 9:
-                            print('start move down')
-                            moveDown = True
-                        elif type == 10:
-                            print('stop move down')
-                            moveDown = False
+                            pass
                         else:
                             print('unknown packet type')
                     else:
@@ -206,7 +196,3 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                     val = sensor.pressure(ms5837.UNITS_mbar)
                     d = pack('<Bd', 13, val)
                     client.send(d)
-            if moveUp:
-                pass
-            if moveDown:
-                pass
