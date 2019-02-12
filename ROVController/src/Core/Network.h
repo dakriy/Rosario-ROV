@@ -10,21 +10,18 @@ namespace Core
 {
 	enum class PacketTypes
 	{
-		Ping,
-		StartVideo,
-		StopVideo,
-		StartTemp,
-		StopTemp,
-		StartPressure,
-		StopPressure,
-		StartMoveUp,
-		StopMoveUp,
-		StartMoveDown,
-		StopMoveDown,
-		Video,
-		Temperature,
-		Pressure,
-		Shutdown = 255,
+		Ping = 0,
+		StartVideo = 1,
+		StopVideo = 2,
+		StartTemp = 3,
+		StopTemp = 4,
+		StartPressure = 5,
+		StopPressure = 6,
+		Move = 7,
+		Video = 11,
+		Temperature = 12,
+		Pressure = 13,
+		Shutdown = 254,
 		Count
 	};
 
@@ -104,7 +101,7 @@ namespace Core
 
 		void process_packets();
 
-		void send_packet(PacketTypes t);
+		void send_packet(PacketTypes t, void * data = nullptr, size_t size = 0);
 
 		void process_packet(PacketTypes t);
 

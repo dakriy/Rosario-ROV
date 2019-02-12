@@ -75,6 +75,20 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 	{
 		frame = false;
 	}
+
+	if (sf::Joystick::isConnected(0) && sf::Joystick::hasAxis(0, sf::Joystick::Y) && updateFrequency == updateCounter)
+	{
+		auto pos = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+		let up = 10.f;
+		let down = 3.4f;
+		let range = up - down;
+		var amount = (pos + 100.f) / 200.f * range + down;
+		GlobalContext::get_network()->send_packet(Core::PacketTypes::Move, reinterpret_cast<void*>(&amount), sizeof amount);
+		updateCounter = 0;
+	} else
+	{
+		++updateCounter;
+	}
 }
 
 Frames::FrameType Frames::ViewFrame::get_type() const

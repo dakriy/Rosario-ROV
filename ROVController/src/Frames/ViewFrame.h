@@ -27,6 +27,12 @@ namespace Frames
 		double pressure = 0;
 		double temp = 0;
 
+		bool movingUp = false;
+		bool movingDown = false;
+
+		const unsigned updateFrequency = 10;
+		unsigned updateCounter = 0;
+
 	public:
 		/**
 		 * View Frame Constructor

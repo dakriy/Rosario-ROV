@@ -243,15 +243,29 @@ void Core::Network::process_packets()
 	}
 }
 
-void Core::Network::send_packet(PacketTypes t)
+void Core::Network::send_packet(PacketTypes t, void * data = nullptr, size_t size = 0)
 {
 	if (connected)
 	{
 		switch(t)
 		{
+		case PacketTypes::Move:
+		{
+			sf::Socket::Status status;
+			connection.send(&t, 1);
+			do
+			{
+				status = connection.send(data, size);
+			} while (status == sf::Socket::Status::Partial);
+			if (status == sf::Socket::Disconnected)
+			{
+				connected = false;
+			}
+			break;
+		}
 		case PacketTypes::Ping:
 			pingClock.restart();
-			// Nothing special needed for nay of these packets currently except ping packet
+			// Nothing special needed for nay of these packets currently except ping packet and move packet
 		default:
 		{
 			sf::Socket::Status status;
