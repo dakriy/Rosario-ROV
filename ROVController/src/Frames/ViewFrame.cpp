@@ -71,6 +71,9 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 		ImGui::Begin("Temperature");
 		ImGui::Text("Temperature: = %f degrees F", temp);
 		ImGui::End();
+	} else
+	{
+		frame = false;
 	}
 }
 
