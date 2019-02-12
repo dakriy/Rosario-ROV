@@ -243,7 +243,7 @@ void Core::Network::process_packets()
 	}
 }
 
-void Core::Network::send_packet(PacketTypes t, void * data = nullptr, size_t size = 0)
+void Core::Network::send_packet(PacketTypes t, void * data, size_t size)
 {
 	if (connected)
 	{
@@ -252,10 +252,12 @@ void Core::Network::send_packet(PacketTypes t, void * data = nullptr, size_t siz
 		case PacketTypes::Move:
 		{
 			sf::Socket::Status status;
-			connection.send(&t, 1);
+			unsigned char buff[100];
+			buff[0] = static_cast<unsigned char>(t);
+			std::memcpy(&buff[1], data, size);
 			do
 			{
-				status = connection.send(data, size);
+				status = connection.send(buff, size + 1);
 			} while (status == sf::Socket::Status::Partial);
 			if (status == sf::Socket::Disconnected)
 			{

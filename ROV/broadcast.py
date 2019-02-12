@@ -119,7 +119,6 @@ try:
                         data = client.recv(1)
                         if data:
                             type = unpack('B', data)[0]
-                            print(type)
                             if type == 0:
                                 print('received ping packet')
                                 d = pack('B', type)
