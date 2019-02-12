@@ -4,6 +4,7 @@
 #include <vector>
 #include <array>
 #include <chrono>
+#include "Engine.h"
 
 namespace Core
 {
@@ -23,17 +24,21 @@ namespace Core
 		Video,
 		Temperature,
 		Pressure,
-
+		Shutdown = 255,
 		Count
 	};
+
 	class Network
 	{
 	protected:
+
 		// Constants
 		static const int broadcastBufferLen = 100;
 
-		static const int pingWindow = 10;
+		// max packet size in bytes
+		static const int bufferLen = 4096;
 
+		static const int pingWindow = 10;
 		
 		// Flags
 		bool connected = false;
@@ -53,19 +58,35 @@ namespace Core
 
 		std::vector<std::pair<sf::IpAddress, std::string>> found_devices;
 
-		std::array<char, broadcastBufferLen> broadcastBuffer;
+		std::array<unsigned char, 1024> tempBuff;
 
+		std::array<char, broadcastBufferLen> broadcastBuffer;
 
 		// Ping information
 		unsigned int pingCounter = 0;
 
 		sf::Clock pingClock;
-		sf::Clock pingRecvClock;
 
 		std::array<sf::Time, pingWindow> pingvals;
 
+
+		size_t recvall(size_t len);
+
+		bool continueRecv();
+
+		void startPacket(PacketTypes);
+
+		std::vector<sf::Uint8> buffer;
+		
+		size_t frameBuffSize = 1920 * 1080 * 4 + 100;
+
+		PacketTypes currentIncomingType = PacketTypes::Count;
+		Event * incoming = nullptr;
+		size_t received = 0;
+		size_t expectedSize = 1;
+
 	public:
-		static const unsigned short connectionPort = 42069;
+		static const unsigned short connectionPort = 42068;
 
 		static const unsigned short broadcastPort = 42070;
 
@@ -85,7 +106,7 @@ namespace Core
 
 		void send_packet(PacketTypes t);
 
-		void process_packet(sf::Packet&);
+		void process_packet(PacketTypes t);
 
 		void disconnect();
 

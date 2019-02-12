@@ -25,7 +25,7 @@ namespace Core
 		{
 			int w;
 			int h;
-			sf::Uint8 * data;
+			const sf::Uint8 * data;
 		};
 
 		struct Temperature
@@ -59,13 +59,6 @@ namespace Core
 
 		explicit Event(EventType t) : type(t){}
 		Event() = default;
-		~Event()
-		{
-			if (type == VideoFrameReceived)
-			{
-				delete[] f.data;
-			}
-		}
 	};
 
 	/**
@@ -98,7 +91,7 @@ namespace Core
 		// Frames currently on the stack
 		std::vector<Frames::IFrame *> frame_stack_;
 
-		std::list<Core::Event> core_events_;
+		std::list<Core::Event*> core_events_;
 
 		// Event processor
 		void Events();
@@ -108,6 +101,8 @@ namespace Core
 
 		// Frame renderer
 		void Render();
+
+		void ProcessCustomEvents();
 
 		/**
 		 * Process a frame action
@@ -148,7 +143,7 @@ namespace Core
 		/**
 		 *
 		 */
-		void add_event(Core::Event e);
+		void add_event(Core::Event *e);
 
 		/**
 		 * Main loop. Order is:

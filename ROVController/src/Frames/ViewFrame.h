@@ -15,6 +15,11 @@ namespace Frames
 	class ViewFrame : public IFrame
 	{
 	protected:
+		sf::Image image;
+		sf::Texture tex;
+		sf::Sprite sprite;
+		bool frame = false;
+
 		EVENT_FUNC_INDEX(Core::Event, Core::Event::EventType::Count) frameHook = nullptr;
 	public:
 		/**

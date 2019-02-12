@@ -3,6 +3,99 @@
 #include "GlobalContext.h"
 #include "Event.h"
 
+size_t Core::Network::recvall(size_t len)
+{
+	sf::Socket::Status status;
+	size_t received = 0, total_received = 0;
+	while (received < len)
+	{
+		status = connection.receive(static_cast<void*>(tempBuff.data() + total_received), len - total_received, received);
+		total_received += received;
+		if (status == sf::Socket::Done)
+		{
+			return received;
+		}
+		if (status == sf::Socket::Disconnected)
+		{
+			connected = false;
+			return received;
+		}
+		if (status == sf::Socket::Error || status == sf::Socket::NotReady)
+		{
+			return received;
+		}
+	}
+	return received;
+}
+
+bool Core::Network::continueRecv()
+{
+	if (expectedSize)
+	{
+		sf::Socket::Status status;
+		size_t r;
+		status = connection.receive(static_cast<void*>(&buffer[received]), expectedSize - received, r);
+		received += r;
+		if (status == sf::Socket::Disconnected)
+		{
+			connected = false;
+		}
+		if (received == expectedSize)
+		{
+			received = expectedSize = 0;
+			return true;
+		}
+		return false;
+
+	}
+	return true;
+}
+
+void Core::Network::startPacket(PacketTypes t)
+{
+	currentIncomingType = t;
+	received = 0;
+	// Default to packet being handled and done
+	expectedSize = 0;
+	switch (t)
+	{
+	case PacketTypes::Ping:
+	{
+		incoming = new Core::Event(Event::PingReceived);
+		break;
+	}
+	case PacketTypes::Video:
+	{
+		sf::Uint16 w, h;
+
+		recvall(4);
+
+		w = *reinterpret_cast<sf::Uint16*>(&tempBuff[0]);
+		h = *reinterpret_cast<sf::Uint16*>(&tempBuff[2]);
+		incoming = new Core::Event(Event::VideoFrameReceived);
+		incoming->f.w = w;
+		incoming->f.h = h;
+		expectedSize = w * h * 4;
+		break;
+	}
+
+	case PacketTypes::Temperature:
+	{
+		incoming = new Core::Event(Event::TemperatureReceived);
+		expectedSize = 4;
+		break;
+	}
+	case PacketTypes::Pressure:
+	{
+		incoming = new Core::Event(Event::PressureReceived);
+		expectedSize = 4;
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 Core::Network::Network()
 {
 	broadcast.setBlocking(false);
@@ -12,6 +105,7 @@ Core::Network::Network()
 	{
 		p = sf::Time::Zero;
 	}
+	buffer.resize(frameBuffSize);
 }
 
 bool Core::Network::isConnected() const
@@ -97,6 +191,38 @@ void Core::Network::process_packets()
 		}
 	}
 
+	if (connected)
+	{
+
+		auto done = continueRecv();
+		
+		// If recieving has finished from last packet, there is new data availble, and it is the count meaning the packet identifier
+		if (done && currentIncomingType == PacketTypes::Count)
+		{
+			// Identify the packet
+			auto t = static_cast<PacketTypes>(buffer[0]);
+			// Start the packet
+			startPacket(t);
+			done = false;
+		}
+
+		if (done)
+		{
+			// Done receiving packet, process it and setup for the next one...
+			process_packet(currentIncomingType);
+			received = 0;
+			expectedSize = 1;
+			currentIncomingType = PacketTypes::Count;
+		}
+
+		// Sending
+		// Send ping every 5 seconds
+		if (pingClock.getElapsedTime().asSeconds() > 5)
+		{
+			send_packet(PacketTypes::Ping);
+		}
+	}
+
 	if (connecting)
 	{
 		auto status = connection.connect(ROV, connectionPort);
@@ -105,77 +231,44 @@ void Core::Network::process_packets()
 			connecting = false;
 			connected = false;
 			// error
-		} else
+		}
+		else
 		{
 			connecting = false;
 			connected = true;
 		}
 
 	}
-
-
-	if (connected)
-	{
-		// Receiving
-		sf::Packet p;
-		auto status = connection.receive(p);
-		if (status == sf::Socket::Done)
-		{
-			process_packet(p);
-		} else if (status == sf::Socket::Disconnected) {
-			connected = false;
-		}
-
-		// Sending
-
-		// Send ping every 5 seconds
-		if (pingClock.getElapsedTime().asSeconds() > 5)
-		{
-			send_packet(PacketTypes::Ping);
-		}
-
-		if (pingRecvClock.getElapsedTime().asSeconds() > 15)
-		{
-			connected = false;
-		}
-	}
 }
 
 void Core::Network::send_packet(PacketTypes t)
 {
-	sf::Packet p;
-	p << static_cast<sf::Int8>(t);
 	if (connected)
 	{
 		switch(t)
 		{
 		case PacketTypes::Ping:
 			pingClock.restart();
-		case PacketTypes::StartVideo:
-		case PacketTypes::StopVideo:
-		case PacketTypes::StartTemp:
-		case PacketTypes::StopTemp:
-		case PacketTypes::StartPressure:
-		case PacketTypes::StopPressure:
-		case PacketTypes::StartMoveUp:
-		case PacketTypes::StopMoveUp:
-		case PacketTypes::StartMoveDown:
-		case PacketTypes::StopMoveDown:
+			// Nothing special needed for nay of these packets currently except ping packet
 		default:
-			connection.send(p);
+		{
+			sf::Socket::Status status;
+			do
+			{
+				status = connection.send(&t, 1);
+			} while (status == sf::Socket::Status::Partial);
+			if (status == sf::Socket::Disconnected)
+			{
+				connected = false;
+			}
 			break;
+		}
 		}
 	}
 }
 
-void Core::Network::process_packet(sf::Packet& p)
+void Core::Network::process_packet(PacketTypes type)
 {
-	sf::Int8 t;
-	p >> t;
-	auto type = static_cast<PacketTypes>(t);
-
-	// We got a packet so reset the watchdog
-	pingRecvClock.restart();
 	switch (type)
 	{
 	case PacketTypes::Ping:
@@ -183,59 +276,35 @@ void Core::Network::process_packet(sf::Packet& p)
 		if (pingCounter == pingWindow)
 			pingCounter = 0;
 		pingvals[pingCounter++] = pingClock.getElapsedTime();
-
-		Core::Event e(Core::Event::EventType::PingReceived);
-		GlobalContext::get_engine()->add_event(e);
+		GlobalContext::get_engine()->add_event(incoming);
 		break;
 	}
 	case PacketTypes::Video:
 	{
-		sf::Uint16 w, h;
-
-		p >> w >> h;
-
-		sf::Uint8 * frameData = new sf::Uint8[w * h * 4];
-		
-		sf::Uint8 pixel_color;
-		for (unsigned i = 0; i < w*h*4; ++i)
-		{
-			p >> pixel_color;
-				frameData[i] = pixel_color;
-		}
-
-		Core::Event e(Core::Event::EventType::VideoFrameReceived);
-
-		e.f.h = h;
-		e.f.w = w;
-
-		e.f.data = frameData;
-		GlobalContext::get_engine()->add_event(e);
-
+		incoming->f.data = buffer.data();
+		GlobalContext::get_engine()->add_event(incoming);
 		break;
 	}	
 	case PacketTypes::Temperature:
 	{
 		float temp;
-		p >> temp;
-		Core::Event e(Core::Event::EventType::TemperatureReceived);
-		e.t.temp = temp;
-
-		GlobalContext::get_engine()->add_event(e);
+		temp = (buffer[3] << 0) | (buffer[2] << 8) | (buffer[1] << 16) | (buffer[0] << 24);
+		incoming->t.temp = temp;
+		GlobalContext::get_engine()->add_event(incoming);
 		break;
 	}
 	case PacketTypes::Pressure:
 	{
 		float pressure;
-		p >> pressure;
-		Core::Event e(Core::Event::EventType::PressureReceived);
-		e.p.pressure = pressure;
-
-		GlobalContext::get_engine()->add_event(e);
+		pressure = (buffer[3] << 0) | (buffer[2] << 8) | (buffer[1] << 16) | (buffer[0] << 24);
+		incoming->p.pressure = pressure;
+		GlobalContext::get_engine()->add_event(incoming);
 		break;
 	}
 	default:
 		break;
 	}
+	incoming = nullptr;
 }
 
 void Core::Network::disconnect()
@@ -266,7 +335,7 @@ float Core::Network::get_ping_time()
 
 void Core::Network::connect_to_host(sf::IpAddress addr)
 {
-	connected = false;
+	disconnect();
 	connecting = true;
 	ROV = addr;
 }

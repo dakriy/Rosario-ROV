@@ -17,13 +17,8 @@ void Core::Engine::Events()
 
 		ev_->handle_event(&event);
 	}
-
-	for (auto & e : core_events_)
-	{
-		cev_->handle_event(&e);
-	}
-	core_events_.clear();
-
+	
+	ProcessCustomEvents();
 }
 
 void Core::Engine::Update()
@@ -44,6 +39,10 @@ void Core::Engine::Update()
 		if (ImGui::Button("Disconnect"))
 		{
 			network->disconnect();
+		}
+		if (ImGui::Button("Shutdown ROV"))
+		{
+			network->send_packet(PacketTypes::Shutdown);
 		}
 		ImGui::End();
 	}
@@ -73,6 +72,16 @@ void Core::Engine::Render()
 	ImGui::SFML::Render(*window_);
 
 	window_->display();
+}
+
+void Core::Engine::ProcessCustomEvents()
+{
+	for (auto e : core_events_)
+	{
+		cev_->handle_event(e);
+		delete e;
+	}
+	core_events_.clear();
 }
 
 void Core::Engine::ProcessFrameAction(FAction& f_action)
@@ -121,18 +130,17 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::Eve
 	GlobalContext::set_engine(this);
 }
 
-void Core::Engine::add_event(Core::Event e)
+void Core::Engine::add_event(Core::Event *e)
 {
-	if (e.type != Core::Event::EventType::Count)
+	if (e->type != Core::Event::EventType::Count)
 		core_events_.emplace_back(e);
 }
 
 void Core::Engine::Loop()
 {
 	GlobalContext::get_network()->process_packets();
-
 	Events();
-	
+
 	Update();
 
 	// Process frame swapping
@@ -149,6 +157,10 @@ void Core::Engine::Loop()
 	}
 
 	frame_action_list_.clear();
+
+	// Process events again cause why not
+	GlobalContext::get_network()->process_packets();
+	ProcessCustomEvents();
 
 	Render();
 }
