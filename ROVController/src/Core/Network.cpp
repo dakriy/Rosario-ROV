@@ -66,16 +66,18 @@ void Core::Network::startPacket(PacketTypes t)
 	}
 	case PacketTypes::Video:
 	{
-		sf::Uint16 w, h;
+		//sf::Uint16 w, h;
+		sf::Uint32 len;
 
 		recvall(4);
 
-		w = *reinterpret_cast<sf::Uint16*>(&tempBuff[0]);
-		h = *reinterpret_cast<sf::Uint16*>(&tempBuff[2]);
+		//w = *reinterpret_cast<sf::Uint16*>(&tempBuff[0]);
+		//h = *reinterpret_cast<sf::Uint16*>(&tempBuff[2]);
+		len = *reinterpret_cast<sf::Uint32*>(&tempBuff[0]);
+
 		incoming = new Core::Event(Event::VideoFrameReceived);
-		incoming->f.w = w;
-		incoming->f.h = h;
-		expectedSize = w * h * 4;
+		incoming->f.len = len;
+		expectedSize = len;
 		break;
 	}
 

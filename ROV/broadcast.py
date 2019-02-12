@@ -181,13 +181,14 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                         ret, frame = cap.read()
                         if ret:
                             frametime = time.time()
-                            img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
-                            #result, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
-
-                            width = np.size(img, 0)
-                            height = np.size(img, 1)
-
-                            d = pack('<BHH', 11, width, height) + img.tobytes('C')
+                            #img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
+                            result, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
+                            #width = np.size(img, 0)
+                            #height = np.size(img, 1)
+                            #d = pack('<BHH', 11, width, height) + img.tobytes('C')
+                            print(len(data))
+                            data = frame.tobytes('C')
+                            d = pack('<BI', 11, len(data)) + data
                             client.send(d)
                         else:
                             print('vid stopping')
@@ -200,12 +201,12 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                 if sensor.read():
                     val = sensor.temperature(ms5837.UNITS_Farenheit)
                     d = pack('<Bd', 12, val)
-                    client.sned(d)
+                    client.send(d)
             if pressure:
                 if sensor.read():
                     val = sensor.pressure(ms5837.UNITS_mbar)
                     d = pack('<Bd', 13, val)
-                    client.sned(d)
+                    client.send(d)
             if moveUp:
                 pass
             if moveDown:

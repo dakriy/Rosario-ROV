@@ -6,7 +6,13 @@
 Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		image.create(e->f.w, e->f.h, e->f.data);
+		//image.create(e->f.w, e->f.h, e->f.data);
+		if(!image.loadFromMemory(e->f.data, e->f.len))
+		{
+			std::cout << "NOOO but here" << std::endl;
+			return false;
+		}
+
 		if (!tex.loadFromImage(image))
 		{
 			std::cout << "NOOOOO" << std::endl;
@@ -25,10 +31,12 @@ Frames::ViewFrame::ViewFrame()
 
 	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		pressure = e->p.pressure;
+		return true;
 	}, Core::Event::EventType::PressureReceived);
 
 	temperatureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		temp = e->t.temp;
+		return true;
 	}, Core::Event::EventType::TemperatureReceived);
 
 

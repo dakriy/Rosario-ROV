@@ -23,8 +23,7 @@ namespace Core
 	public:
 		struct VideoFrame
 		{
-			int w;
-			int h;
+			unsigned len;
 			const sf::Uint8 * data;
 		};
 
