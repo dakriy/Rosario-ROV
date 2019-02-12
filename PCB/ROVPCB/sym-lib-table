@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name ROVPCB-rescue)(type Legacy)(uri ${KIPRJMOD}/ROVPCB-rescue.lib)(options "")(descr ""))
+)
