@@ -6,6 +6,7 @@ import select
 import subprocess
 import cv2
 import time
+import ms5837py3 as ms5837
 import math
 
 
@@ -73,6 +74,12 @@ pressure = False
 temperature = False
 
 frametime = 0
+
+
+sensor = ms5837.MS5837_30BA()
+
+if not sensor.init():
+    print("could not initialize sensor")
 
 with socket(AF_INET, SOCK_STREAM) as conn:
     conn.bind(('', connPort))
@@ -189,11 +196,16 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                 else:
                     print('vid stopped because cap isnt open')
                     video = False
-                pass
             if temperature:
-                pass
+                if sensor.read():
+                    val = sensor.temperature(ms5837.UNITS_Farenheit)
+                    d = pack('<Bd', 12, val)
+                    client.sned(d)
             if pressure:
-                pass
+                if sensor.read():
+                    val = sensor.pressure(ms5837.UNITS_mbar)
+                    d = pack('<Bd', 13, val)
+                    client.sned(d)
             if moveUp:
                 pass
             if moveDown:

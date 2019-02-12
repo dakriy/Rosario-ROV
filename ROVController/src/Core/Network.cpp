@@ -82,13 +82,13 @@ void Core::Network::startPacket(PacketTypes t)
 	case PacketTypes::Temperature:
 	{
 		incoming = new Core::Event(Event::TemperatureReceived);
-		expectedSize = 4;
+		expectedSize = 8;
 		break;
 	}
 	case PacketTypes::Pressure:
 	{
 		incoming = new Core::Event(Event::PressureReceived);
-		expectedSize = 4;
+		expectedSize = 8;
 		break;
 	}
 	default:
@@ -287,16 +287,16 @@ void Core::Network::process_packet(PacketTypes type)
 	}	
 	case PacketTypes::Temperature:
 	{
-		float temp;
-		temp = (buffer[3] << 0) | (buffer[2] << 8) | (buffer[1] << 16) | (buffer[0] << 24);
+		double temp;
+		temp = *reinterpret_cast<double *>(&buffer[0]);
 		incoming->t.temp = temp;
 		GlobalContext::get_engine()->add_event(incoming);
 		break;
 	}
 	case PacketTypes::Pressure:
 	{
-		float pressure;
-		pressure = (buffer[3] << 0) | (buffer[2] << 8) | (buffer[1] << 16) | (buffer[0] << 24);
+		double pressure;
+		pressure = *reinterpret_cast<double *>(&buffer[0]);
 		incoming->p.pressure = pressure;
 		GlobalContext::get_engine()->add_event(incoming);
 		break;

@@ -30,12 +30,12 @@ namespace Core
 
 		struct Temperature
 		{
-			float temp;
+			double temp;
 		};
 
 		struct Pressure
 		{
-			float pressure;
+			double pressure;
 		};
 
 		enum EventType
