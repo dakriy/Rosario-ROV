@@ -34,11 +34,21 @@ def set_res(dev, x, y):
     return str(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), str(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 
+def recvall(sock, n):
+    data = b''
+    while len(data) < n:
+        packet = sock.recv(n - len(data))
+        if not packet:
+            return None
+        data += packet
+    return data
+
+
 ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['broadcast']
 me = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
 
 broadcastPort = 42070
-connPort = 42069
+connPort = 42068
 
 done = False
 
@@ -82,6 +92,7 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                 inputready,outputready,other = select.select([conn], [], [], 0)
                 for s in inputready:
                     if s == conn:
+                        print('connected to client')
                         client_socket, address = conn.accept()
                         connAddr = address
                         client = client_socket
@@ -91,9 +102,10 @@ with socket(AF_INET, SOCK_STREAM) as conn:
             inputready, outputready, other = select.select([client], [], [], 0)
             for s in inputready:
                 if s == client:
-                    data = client.recv(1024)
+                    data = client.recv(1)
                     if data:
                         type = unpack('B', data)[0]
+                        print(type)
                         if type == 0:
                             print('received ping packet')
                             d = pack('B', type)
@@ -101,6 +113,7 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                             pingTime = time.time()
                         elif type == 255:
                             connected = False
+                            print('255')
                             client.close()
                             print('shutting down')
                             subprocess.call(['shutdown', '-h', 'now'], shell=False)
@@ -150,26 +163,31 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                         else:
                             print('unknown packet type')
                     else:
+                        print('here')
                         client.close()
+                        print('client disconnected')
                         connected = False
 
             if video and not noVid:
                 if cap.isOpened():
-                    ret, frame = cap.read()
-                    if ret and time.time() - frametime >= secondsPerFrame:
-                        frametime = time.time()
-                        img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
+                    if time.time() - frametime >= secondsPerFrame:
+                        ret, frame = cap.read()
+                        if ret:
+                            frametime = time.time()
+                            img = cv2.cvtColor(frame, cv2.COLOR_RGB2RGBA)
+                            #result, frame = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 90])
 
-                        width = np.size(img, 0)
-                        height = np.size(img, 1)
+                            width = np.size(img, 0)
+                            height = np.size(img, 1)
 
-                        d = pack('BHH', 11, width, height) + img.tobytes()
-                        client.send(d)
-                    else:
-                        if not ret:
+                            d = pack('<BHH', 11, width, height) + img.tobytes('C')
+                            client.send(d)
+                        else:
+                            print('vid stopping')
                             video = False
                             break
                 else:
+                    print('vid stopped because cap isnt open')
                     video = False
                 pass
             if temperature:
