@@ -86,7 +86,7 @@ namespace Core
 		size_t expectedSize = 1;
 
 	public:
-		static const unsigned short connectionPort = 42068;
+		static const unsigned short connectionPort = 42069;
 
 		static const unsigned short broadcastPort = 42070;
 
