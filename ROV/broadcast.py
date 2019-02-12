@@ -49,7 +49,7 @@ ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['broadcast']
 me = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
 
 broadcastPort = 42070
-connPort = 42068
+connPort = 42069
 
 done = False
 
@@ -186,7 +186,6 @@ with socket(AF_INET, SOCK_STREAM) as conn:
                             #width = np.size(img, 0)
                             #height = np.size(img, 1)
                             #d = pack('<BHH', 11, width, height) + img.tobytes('C')
-                            print(len(data))
                             data = frame.tobytes('C')
                             d = pack('<BI', 11, len(data)) + data
                             client.send(d)
