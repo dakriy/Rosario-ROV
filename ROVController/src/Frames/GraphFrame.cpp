@@ -45,7 +45,7 @@ void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states)
 		if (error(fac, scaleX) < error(scaleXreal, scaleX))
 		{
 			scaleXreal = fac;
-		}		
+		}
 	}
 
 	if (inv)
@@ -57,8 +57,9 @@ void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states)
 	sf::Vertex line[2];
 	for (auto x = RoundToNearest(graphBounds.left, scaleXreal); x < graphBounds.left + graphBounds.width; x += scaleXreal)
 	{
-		line[0] = sf::Vertex(sf::Vector2f(x / getScaleX(), windowSize.y));
-		line[1] = sf::Vertex(sf::Vector2f(x / getScaleX(), 0));
+		auto screen = convertToScreenCoords(sf::Vector2<double>(x, 0.));
+		line[0] = sf::Vertex(sf::Vector2f(screen.x, windowSize.y));
+		line[1] = sf::Vertex(sf::Vector2f(screen.x, 0));
 		line[0].color = line[1].color = sf::Color(128, 128, 128);
 		target.draw(line, 2, sf::Lines);
 	}
@@ -105,6 +106,16 @@ double Frames::GraphFrame::getScaleX() const
 double Frames::GraphFrame::getScaleY() const
 {
 	return graphBounds.height / windowSize.y;
+}
+
+sf::Vector2u Frames::GraphFrame::convertToScreenCoords(sf::Vector2<double> coords) const
+{
+	sf::Vector2u output;
+	auto scaleX = windowSize.x / graphBounds.width;
+	auto scaleY = windowSize.y / graphBounds.height;
+	output.x = (coords.x - graphBounds.left) * scaleX;
+	output.y = (graphBounds.top - coords.y) * scaleY;
+	return output;
 }
 
 bool Frames::GraphFrame::xAxisVisible() const

@@ -61,6 +61,8 @@ namespace Frames
 		
 		double getScaleY() const;
 
+		sf::Vector2u convertToScreenCoords(sf::Vector2<double> coords) const;
+
 		bool xAxisVisible() const;
 
 		bool yAxisVisible() const;

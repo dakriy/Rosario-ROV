@@ -21,14 +21,22 @@ constexpr int ProperModulus(int x, int y)
 	return ((x % y) + y) % y;
 }
 
-inline int RoundToNearest(int x, int multiple)
+// Use with integer types
+template<typename T>
+T RountToNearestWhole(T x)
 {
-	return ((x + multiple / 2) / multiple) * multiple;
+	return static_cast<T>(x + 0.5);
 }
 
-inline double RoundToNearest(double x, double multiple)
+/*inline int RoundToNearest(int x, int multiple)
 {
-	return floor(x / multiple + 0.5) * multiple;
+	return ((x + multiple / 2) / multiple) * multiple;
+}*/
+
+template<typename T>
+inline T RoundToNearest(T x, T multiple)
+{
+	return static_cast<T>(floor(static_cast<double>(x / multiple + 0.5)) * multiple);
 }
 
 inline double error(double x1, double x2)
