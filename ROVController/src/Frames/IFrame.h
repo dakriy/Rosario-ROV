@@ -24,6 +24,7 @@ namespace Frames
 		Connect,
 		View,
 		Credits,
+		Graph,
 
 		// FrameType Count, Leave last
 		Count

@@ -11,6 +11,7 @@ namespace Frames
 		// Title frame options enum
         enum OptionsEnum {
 			Connect,
+			Graph,
 			View,
 			Exit
         };
@@ -18,6 +19,7 @@ namespace Frames
 		// Title frame options text
         const std::vector<const char*> option_text_ = {
 			"Connect to a Device",
+			"Graph",
 			"Access Connected Device",
 			"Exit"
         };

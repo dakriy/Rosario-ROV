@@ -21,6 +21,36 @@ constexpr int ProperModulus(int x, int y)
 	return ((x % y) + y) % y;
 }
 
+inline int RoundToNearest(int x, int multiple)
+{
+	return ((x + multiple / 2) / multiple) * multiple;
+}
+
+inline double RoundToNearest(double x, double multiple)
+{
+	return floor(x / multiple + 0.5) * multiple;
+}
+
+inline double error(double x1, double x2)
+{
+	return abs(x2 - x1) / x2;
+}
+
+constexpr unsigned GetNumberOfDigits(unsigned i)
+{
+	if (i > 300)
+		return 300;
+	// Multiply going up rather than divide going down
+	// because multiplies are faster than divides.
+	auto digits = 1, pten = 10;
+	while (pten < i)
+	{
+		digits++;
+		pten *= 10;
+	}
+	return digits;
+}
+
 /**
  * @brief
  * Vector lerping between two vectors
@@ -135,5 +165,3 @@ template <typename T,
 	};
 	return iterable_wrapper{ std::forward<T>(iterable) };
 }
-
-

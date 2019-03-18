@@ -3,6 +3,7 @@
 #include "../Core/GlobalContext.h"
 #include "ConnectFrame.h"
 #include "ViewFrame.h"
+#include "GraphFrame.h"
 
 Frames::TitleFrame::TitleFrame() : 
     options_(this, content_bounds_)
@@ -25,6 +26,12 @@ void Frames::TitleFrame::create_options()
 		hide();
 		pause();
 		GlobalContext::get_engine()->frame_action(Core::PushFrame, new ConnectFrame);
+	}));
+	options_.add_option(new Controls::Button(option_text_[Graph], [&]()
+	{
+		hide();
+		pause();
+		GlobalContext::get_engine()->frame_action(Core::PushFrame, new GraphFrame);
 	}));
 	options_.add_option(new Controls::Button(option_text_[View], [&]()
 	{

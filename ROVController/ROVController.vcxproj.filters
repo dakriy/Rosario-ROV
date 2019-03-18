@@ -105,6 +105,9 @@
     <ClCompile Include="src\Core\Network.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Frames\GraphFrame.cpp">
+      <Filter>Source Files\Frames</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Engine.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="src\Core\Network.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frames\GraphFrame.h">
+      <Filter>Header Files\Frames</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -29,6 +29,7 @@
     <ClCompile Include="src\Core\Network.cpp" />
     <ClCompile Include="src\Factories\TextFactory.cpp" />
     <ClCompile Include="src\Frames\ConnectFrame.cpp" />
+    <ClCompile Include="src\Frames\GraphFrame.cpp" />
     <ClCompile Include="src\Frames\IFrame.cpp" />
     <ClCompile Include="src\Frames\MainMenuFrame.cpp" />
     <ClCompile Include="src\Frames\TitleFrame.cpp" />
@@ -47,6 +48,7 @@
     <ClInclude Include="src\Core\Network.h" />
     <ClInclude Include="src\Factories\TextFactory.h" />
     <ClInclude Include="src\Frames\ConnectFrame.h" />
+    <ClInclude Include="src\Frames\GraphFrame.h" />
     <ClInclude Include="src\Frames\IFrame.h" />
     <ClInclude Include="src\Frames\MainMenuFrame.h" />
     <ClInclude Include="src\Frames\TitleFrame.h" />
