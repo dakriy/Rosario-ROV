@@ -20,42 +20,17 @@ Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 7)
 
 void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	// Got to be multiple of 1,2, or 5
-	// Zoom in scale down
-	// Zoom out scale up
+	drawGrid(target, states);
+}
 
-	// Draw vertical lines
-	// Calculate scale factor for each tick on the graph
-	auto scaleX = graphBounds.width / linesPerScreenTarget.x;
-	auto inv = false;
-	if (scaleX < 1.)
-	{
-		scaleX = 1. / scaleX;
-		inv = true;
-	}
-
-	auto exponent = GetNumberOfDigits(scaleX) - 1;
-
-	// Initially set to some large number so it will get overwritten
-	auto scaleXreal = std::numeric_limits<double>::max();
-
-	for (auto factor : graphIntervals)
-	{
-		auto fac = pow(10, exponent) * factor;
-		if (error(fac, scaleX) < error(scaleXreal, scaleX))
-		{
-			scaleXreal = fac;
-		}
-	}
-
-	if (inv)
-	{
-		// Invert it back again if we need to.
-		scaleXreal = 1. / scaleXreal;
-	}
-
+void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates states) const
+{
 	sf::Vertex line[2];
-	for (auto x = RoundToNearest(graphBounds.left, scaleXreal); x < graphBounds.left + graphBounds.width; x += scaleXreal)
+
+	auto scaleX = calculateGridScale(graphBounds.width / linesPerScreenTarget.x);
+	auto scaleY = calculateGridScale(graphBounds.height / linesPerScreenTarget.y);
+
+	for (auto x = RoundToNearest(graphBounds.left, scaleX); x < graphBounds.left + graphBounds.width; x += scaleX)
 	{
 		auto screen = convertToScreenCoords(sf::Vector2<double>(x, 0.));
 		line[0] = sf::Vertex(sf::Vector2f(screen.x, windowSize.y));
@@ -63,6 +38,53 @@ void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states)
 		line[0].color = line[1].color = sf::Color(128, 128, 128);
 		target.draw(line, 2, sf::Lines);
 	}
+
+	for (auto y = RoundToNearest(graphBounds.top, scaleY); y > graphBounds.top - graphBounds.height; y -= scaleY)
+	{
+		auto screen = convertToScreenCoords(sf::Vector2<double>(0., y));
+		line[0] = sf::Vertex(sf::Vector2f(windowSize.x, screen.y));
+		line[1] = sf::Vertex(sf::Vector2f(0, screen.y));
+		line[0].color = line[1].color = sf::Color(128, 128, 128);
+		target.draw(line, 2, sf::Lines);
+	}
+}
+
+double Frames::GraphFrame::calculateGridScale(double targetScale) const
+{
+	// Got to be multiple of 1,2, or 5
+	// Zoom in scale down
+	// Zoom out scale up
+
+	// Draw vertical lines
+	// Calculate scale factor for each tick on the graph
+	auto inv = false;
+	if (targetScale < 1.)
+	{
+		targetScale = 1. / targetScale;
+		inv = true;
+	}
+
+	auto exponent = GetNumberOfDigits(targetScale) - 1;
+
+	// Initially set to some large number so it will get overwritten
+	auto scaleReal = std::numeric_limits<double>::max();
+
+	for (auto factor : graphIntervals)
+	{
+		auto fac = pow(10, exponent) * factor;
+		if (error(fac, targetScale) < error(scaleReal, targetScale))
+		{
+			scaleReal = fac;
+		}
+	}
+
+	if (inv)
+	{
+		// Invert it back again if we need to.
+		scaleReal = 1. / scaleReal;
+	}
+
+	return scaleReal;
 }
 
 void Frames::GraphFrame::update(const sf::Time& dt)

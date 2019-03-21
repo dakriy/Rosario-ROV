@@ -44,6 +44,10 @@ namespace Frames
 		 */
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+		void drawGrid(sf::RenderTarget& target, sf::RenderStates states) const;
+
+		double calculateGridScale(double targetScale) const;
+
 		/**
 		 * Updates the frame
 		 *
