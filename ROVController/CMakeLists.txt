@@ -47,6 +47,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_DEBUG}")
   set(SFML_LIBS "sfml-graphics-d.lib sfml-window-d.lib sfml-audio-d.lib sfml-network-d.lib sfml-system-d.lib")
 else()
+  set(CMAKE_BUILDTYPE "Release")
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
   set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
@@ -55,6 +56,8 @@ else()
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
   endif()
 endif()
+
+message(STATUS "Building ${CMAKE_BUILD_TYPE} ")
 
 ################# Flags ################
 # Defines Flags for Windows and Linux. #
