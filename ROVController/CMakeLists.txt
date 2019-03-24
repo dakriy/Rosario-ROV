@@ -84,7 +84,7 @@ include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH})
 
 
 if(MSVC)
-   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3 /MD /Od /EHsc /std:c++latest")
+   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3 /MDd /Od /EHsc /std:c++latest")
    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /W3 /GL /Od /Oi /Gy /EHsc /std:c++latest /MD")
 endif(MSVC)
 if(NOT MSVC)
