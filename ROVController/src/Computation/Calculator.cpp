@@ -108,7 +108,7 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
     // Must be a function
     // TODO: Get next function token
     // TODO: Put scoping checks here
-    int it;
+    int it = 0;
     while (isalnum(*(iterator + it))) it++;
 
     if (it > 9)
@@ -119,7 +119,7 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
 
     // Copy out a substring
     char subbuff[10];
-    memcpy( subbuff, iterator, static_cast<size_t>(it));
+    memcpy(subbuff, iterator, static_cast<size_t>(it));
     subbuff[it] = '\0';
 
     // Check all the functions
