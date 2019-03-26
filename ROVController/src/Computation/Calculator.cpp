@@ -51,6 +51,7 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
     {
         ParseToken token;
         token.t = ParseToken::lp;
+        ++iterator;
         return token;
     }
 
@@ -70,6 +71,7 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
             token.t = ParseToken::op;
             OpInfo o(i);
             token.token.op = o;
+            ++iterator;
             return token;
         }
     }
@@ -79,6 +81,7 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
     {
         ParseToken token;
         token.t = ParseToken::x;
+        ++iterator;
         return token;
     }
 
@@ -86,6 +89,7 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
     {
         ParseToken token;
         token.t = ParseToken::y;
+        ++iterator;
         return token;
     }
 
@@ -97,16 +101,42 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
         // TODO: use strod() here
         token.token.n = atof(iterator);
         token.t = ParseToken::n;
+        ++iterator;
         return token;
     }
 
     // Must be a function
     // TODO: Get next function token
+    // TODO: Put scoping checks here
+    int it;
+    while (isalnum(*(iterator + it))) it++;
 
+    if (it > 9)
+    {
+        // Problem here, no functions larger than 9
+        // TODO: Throw parse error
+    }
 
-    Computation::ParseToken token;
+    // Copy out a substring
+    char subbuff[10];
+    memcpy( subbuff, iterator, static_cast<size_t>(it));
+    subbuff[it] = '\0';
 
-    return token;
+    // Check all the functions
+    for (const auto& [i, thing] : FunctionMap)
+    {
+        if (strcmp(subbuff, thing) == 0)
+        {
+            ParseToken token;
+            token.t = ParseToken::fn;
+            token.token.f = i;
+            iterator += it;
+            return token;
+        }
+    }
+
+    // Ok, it's not a known function or operator or anything HALP
+    // TODO: Handle errors here
 }
 
 Computation::OpInfo::OpInfo(Computation::Operator op) {
