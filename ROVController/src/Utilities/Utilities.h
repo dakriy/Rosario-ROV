@@ -1,9 +1,10 @@
 #pragma once
 #include <random>
 #include <iostream>
-#include "Globals.h"
+#include "../Globals.h"
 #include <SFML/System/Vector2.hpp>
 #include <tuple>
+#include <SFML/Graphics/Image.hpp>
 
 static std::mt19937 rnd = std::mt19937();
 
@@ -50,7 +51,7 @@ constexpr unsigned GetNumberOfDigits(unsigned i)
 		return 300;
 	// Multiply going up rather than divide going down
 	// because multiplies are faster than divides.
-	auto digits = 1, pten = 10;
+	unsigned digits = 1, pten = 10;
 	while (pten < i)
 	{
 		digits++;
@@ -58,6 +59,24 @@ constexpr unsigned GetNumberOfDigits(unsigned i)
 	}
 	return digits;
 }
+
+constexpr unsigned GetNumberOfDigits(unsigned long long int i)
+{
+	if (i > 300)
+		return 300;
+	// Multiply going up rather than divide going down
+	// because multiplies are faster than divides.
+	unsigned digits = 1, pten = 10;
+	while (pten < i)
+	{
+		digits++;
+		pten *= 10;
+	}
+	return digits;
+}
+
+
+void copyScreenshotToClipboard(const sf::Image & image);
 
 /**
  * @brief
@@ -172,4 +191,26 @@ template <typename T,
 		auto end() { return iterator{ 0, std::end(iterable) }; }
 	};
 	return iterable_wrapper{ std::forward<T>(iterable) };
+}
+
+
+// https://stackoverflow.com/questions/207976/how-to-easily-map-c-enums-to-strings
+template<typename T> struct map_init_helper
+{
+	T& data;
+	map_init_helper(T& d) : data(d) {}
+	map_init_helper& operator() (typename T::key_type const& key, typename T::mapped_type const& value)
+	{
+		data[key] = value;
+		return *this;
+	}
+};
+
+template<typename T> map_init_helper<T> map_init(T& item)
+{
+	return map_init_helper<T>(item);
+}
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
 }

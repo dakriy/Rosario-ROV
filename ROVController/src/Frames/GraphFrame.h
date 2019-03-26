@@ -30,6 +30,8 @@ namespace Frames
 		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) resizeHook;
 		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) scrollHook;
 
+		sf::View g;
+
 		// Position of top left
 		sf::Rect<double> graphBounds;
 	public:
@@ -73,6 +75,6 @@ namespace Frames
 
 		FrameType get_type() const override;
 
-		~GraphFrame();
+		~GraphFrame() override;
 	};
 }

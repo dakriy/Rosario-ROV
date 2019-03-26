@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 # Change if you want modify path or other values. #
 ###################################################
 
+set(CMAKE_CXX_STANDARD 17)
+
 set(PROJECT_NAME ROVController)
 # Output Variables
 set(OUTPUT_DEBUG Debug/bin)
@@ -15,6 +17,8 @@ set(CPP_DIR_4 src/Frames)
 set(CPP_DIR_5 src)
 set(CPP_DIR_6 src/UI)
 set(CPP_DIR_7 imgui-sfml)
+set(CPP_DIR_8 src/Computation)
+set(CPP_DIR_9 src/Utilities)
 set(HEADER_DIR_1 src/Core)
 set(HEADER_DIR_2 src/Factories)
 set(HEADER_DIR_3 src/Frames)
@@ -22,6 +26,8 @@ set(HEADER_DIR_4 src)
 set(HEADER_DIR_5 src/Interfaces)
 set(HEADER_DIR_6 src/UI)
 set(HEADER_DIR_7 imgui-sfml)
+set(HEADER_DIR_8 src/Computation)
+set(HEADER_DIR_9 src/Utilities)
 set(IMGUI_PATH imgui)
 set(IMGUI_SFML_PATH imgui-sfml)
 
@@ -106,6 +112,8 @@ file(GLOB SRC_FILES
     ${CPP_DIR_5}/*.cpp
     ${CPP_DIR_6}/*.cpp
     ${CPP_DIR_7}/*.cpp
+    $(CPP_DIR_8)/*.cpp
+    $(CPP_DIR_9)/*.cpp
     ${HEADER_DIR_1}/*.h
     ${HEADER_DIR_2}/*.h
     ${HEADER_DIR_3}/*.h
@@ -113,14 +121,17 @@ file(GLOB SRC_FILES
     ${HEADER_DIR_5}/*.h
     ${HEADER_DIR_6}/*.h
     ${HEADER_DIR_7}/*.h
+    ${HEADER_DIR_8}/*.h
+    ${HEADER_DIR_9}/*.h
 )
 
 # Add executable to build.
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME}
    ${SRC_FILES}
 )
 
 
+# COPY RESOURCES
 # we don't want to copy if we're building in the source dir
 if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
     message(STATUS "Copying resources to output directory ${CMAKE_CURRENT_BINARY_DIR}/Resources")

@@ -4,7 +4,7 @@
 #include <cassert>
 #include "../Frames/TitleFrame.h"
 #include "../Globals.h"
-#include "../Utilities.h"
+#include "../Utilities/Utilities.h"
 #include <imgui-SFML.h>
 #include <imgui.h>
 

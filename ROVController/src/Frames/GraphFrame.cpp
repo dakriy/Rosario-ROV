@@ -1,9 +1,13 @@
 #include "GraphFrame.h"
 #include "../Core/GlobalContext.h"
-#include "../Utilities.h"
+#include "../Utilities/Utilities.h"
+#include "../Factories/TextFactory.h"
 #include <limits>
+#include <string>
+#include <iomanip>
+#include <sstream>
 
-Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 7)
+Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8)
 {
 	windowSize = GlobalContext::get_window()->getSize();
 
@@ -25,6 +29,7 @@ void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states)
 
 void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    // Draw lines
 	sf::Vertex line[2];
 
 	auto scaleX = calculateGridScale(graphBounds.width / linesPerScreenTarget.x);
@@ -37,6 +42,16 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
 		line[1] = sf::Vertex(sf::Vector2f(screen.x, 0));
 		line[0].color = line[1].color = sf::Color(128, 128, 128);
 		target.draw(line, 2, sf::Lines);
+
+		// Draw line number
+        std::ostringstream num;
+        num << std::scientific << std::setprecision(1) << x;
+        std::string strNum = num.str();
+        auto text = Factory::TextFactory::create_displayable_string(strNum);
+        // For now just place it on the bottom
+        text.setPosition(screen.x, windowSize.y - text.getCharacterSize());
+        text.setFillColor(sf::Color::White);
+        target.draw(text);
 	}
 
 	for (auto y = RoundToNearest(graphBounds.top, scaleY); y > graphBounds.top - graphBounds.height; y -= scaleY)
@@ -46,6 +61,16 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
 		line[1] = sf::Vertex(sf::Vector2f(0, screen.y));
 		line[0].color = line[1].color = sf::Color(128, 128, 128);
 		target.draw(line, 2, sf::Lines);
+
+        // Draw line number
+        std::ostringstream num;
+        num << std::scientific << std::setprecision(1) << y;
+        std::string strNum = num.str();
+        auto text = Factory::TextFactory::create_displayable_string(strNum);
+        // For now just place it on the bottom
+        text.setPosition(0, screen.y);
+        text.setFillColor(sf::Color::White);
+        target.draw(text);
 	}
 }
 
@@ -64,7 +89,7 @@ double Frames::GraphFrame::calculateGridScale(double targetScale) const
 		inv = true;
 	}
 
-	auto exponent = GetNumberOfDigits(targetScale) - 1;
+	auto exponent = GetNumberOfDigits(static_cast<unsigned long long>(targetScale)) - 1;
 
 	// Initially set to some large number so it will get overwritten
 	auto scaleReal = std::numeric_limits<double>::max();
@@ -95,8 +120,8 @@ void Frames::GraphFrame::zoomRelative(int x, int y, float amount)
 {
 	assert(x >= 0 && x <= windowSize.x && "X is out of window range");
 	assert(y >= 0 && y <= windowSize.y && "Y is out of window range");
-	double percentLeftZoom = x / windowSize.x;
-	double percentTopZoom = y / windowSize.y;
+	double percentLeftZoom = static_cast<double>(x) / static_cast<double>(windowSize.x);
+	double percentTopZoom = static_cast<double>(y) / static_cast<double>(windowSize.y);
 
 	auto totalX = amount * graphBounds.width * zoomTickAmount;
 	auto totalY = amount * graphBounds.height * zoomTickAmount;
@@ -135,8 +160,8 @@ sf::Vector2u Frames::GraphFrame::convertToScreenCoords(sf::Vector2<double> coord
 	sf::Vector2u output;
 	auto scaleX = windowSize.x / graphBounds.width;
 	auto scaleY = windowSize.y / graphBounds.height;
-	output.x = (coords.x - graphBounds.left) * scaleX;
-	output.y = (graphBounds.top - coords.y) * scaleY;
+	output.x = static_cast<unsigned>((coords.x - graphBounds.left) * scaleX);
+	output.y = static_cast<unsigned>((graphBounds.top - coords.y) * scaleY);
 	return output;
 }
 

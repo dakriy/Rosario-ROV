@@ -6,7 +6,7 @@
 #include <SFML/Window/Event.hpp>
 #include "Frames/MainMenuFrame.h"
 #include "Factories/TextFactory.h"
-#include "Utilities.h"
+#include "Utilities/Utilities.h"
 #include "Core/GlobalContext.h"
 
 bool LoadResources()
@@ -55,7 +55,6 @@ int main(int argc, char* argv[])
 	
 
 	// Must be kept alive in the root scope for everything else to be able to access it.
-	// It adds itself to the global context.
 	Core::EventHandler<sf::Event, sf::Event::EventType::Count> eventHandler;
 	Core::EventHandler<Core::Event, Core::Event::EventType::Count> coreEventHandler;
 	GlobalContext::set_event_handler(&eventHandler);
