@@ -90,8 +90,8 @@ include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH})
 
 
 if(MSVC)
-   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3 /MDd /Od /EHsc /std:c++latest")
-   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /W3 /GL /Od /Oi /Gy /EHsc /std:c++latest /MD")
+   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3 /MDd /Od /EHsc")
+   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /W3 /GL /Od /Oi /Gy /EHsc /MD")
 endif(MSVC)
 if(NOT MSVC)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
@@ -112,8 +112,8 @@ file(GLOB SRC_FILES
     ${CPP_DIR_5}/*.cpp
     ${CPP_DIR_6}/*.cpp
     ${CPP_DIR_7}/*.cpp
-    $(CPP_DIR_8)/*.cpp
-    $(CPP_DIR_9)/*.cpp
+    ${CPP_DIR_8}/*.cpp
+    ${CPP_DIR_9}/*.cpp
     ${HEADER_DIR_1}/*.h
     ${HEADER_DIR_2}/*.h
     ${HEADER_DIR_3}/*.h

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <stack>
 #include <vector>
+#include <queue>
 
 // TODO: https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 
@@ -25,15 +26,18 @@ namespace Computation {
 
     struct ParseToken {
         enum type {
+            // Operator
             op,
+            // Function
             fn,
-            // left parantheses
+            // left parentheses
             lp,
-            // right parantheses
+            // right parentheses
             rp,
             x,
             y,
-            n
+            n,
+            comma
         };
 
         union tok {
@@ -51,14 +55,19 @@ namespace Computation {
         std::unordered_map<Operator, char> OperatorMap;
         std::unordered_map<Function, const char *> FunctionMap;
         std::stack<ParseToken> operatorStack;
-        const char * expression;
-        int bufferLen;
+        std::stack<ParseToken> outputQueue;
+
+        const char * expression = nullptr;
         // Iterator is left at the start of what we want to parse next
-        const char * iterator;
+        const char * iterator = nullptr;
         bool noMoreTokens = false;
         ParseToken getNextToken();
+        void advanceIterator();
+
+        // initally to something we don't care about
+        ParseToken::type lastTokenType = ParseToken::comma;
     public:
-        Calculator(const char * expr, unsigned len);
-        Expression parse();
+        Calculator();
+        Expression* parse(const char * expr);
     };
 }

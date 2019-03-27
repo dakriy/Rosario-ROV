@@ -6,6 +6,8 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <imgui-SFML.h>
+#include <imgui.h>
 
 Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8)
 {
@@ -114,6 +116,30 @@ double Frames::GraphFrame::calculateGridScale(double targetScale) const
 
 void Frames::GraphFrame::update(const sf::Time& dt)
 {
+    ImGui::Begin("Math Module");
+    ImGui::InputTextWithHint("Input Expression", "Enter math relation here", expression, IM_ARRAYSIZE(expression));
+    if (ImGui::Button("Calculate")) {
+        delete expr;
+        try {
+			exception = nullptr;
+            expr = calc.parse(expression);
+        } catch(const char * ex)
+        {
+            exception = ex;
+			expr = nullptr;
+        }
+    }
+    if (exception) {
+        ImGui::Text("%s", exception);
+    }
+
+    if (expr) {
+
+        ImGui::Text("Result = %f", expr->compute(0, 0));
+    }
+
+    ImGui::End();
+    ImGui::ShowDemoWindow();
 }
 
 void Frames::GraphFrame::zoomRelative(int x, int y, float amount)

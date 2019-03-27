@@ -15,7 +15,7 @@ unsigned GetSeed(const std::string& seed);
 void QuitWithError(const char * error, int exit_code);
 
 /**
- * Performs x % y but works proerply with negative numbers
+ * Performs x % y but works properly with negative numbers
  */
 constexpr int ProperModulus(int x, int y)
 {

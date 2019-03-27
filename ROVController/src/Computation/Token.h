@@ -14,7 +14,9 @@ namespace Computation {
         Divide,
         Multiply,
         Power,
-        Modulus
+        Modulus,
+        Equals,
+        Negate
     };
 
     enum class Function {
@@ -37,6 +39,8 @@ namespace Computation {
 
     class Token {
     protected:
+        static constexpr auto zero = 0.0000001;
+
         union value {
             Operator o;
             Function f;
@@ -50,13 +54,13 @@ namespace Computation {
 
         TokenType t;
 
-        Token * left;
-        Token * right;
+        Token * left = nullptr;
+        Token * right = nullptr;
     public:
-        explicit Token(Token *l = nullptr, Token *r = nullptr);
+        Token();
         explicit Token(double n, Token *l = nullptr, Token *r = nullptr);
-        explicit Token(TokenType type, Token *l = nullptr, Token *r = nullptr);
         explicit Token(Operator o, Token *l = nullptr, Token *r = nullptr);
+        explicit Token(Function f, Token *l = nullptr, Token *r = nullptr);
         double compute(double x, double y);
         TokenType getType();
         void setOperator(Operator o);
@@ -66,6 +70,8 @@ namespace Computation {
         void setY();
         void setLeft(Token * l);
         void setRight(Token * r);
+        bool isZero();
+        bool addToken(Token * t);
         Token * getLeft();
         Token * getRight();
         ~Token();

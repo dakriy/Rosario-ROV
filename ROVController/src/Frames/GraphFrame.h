@@ -8,6 +8,7 @@
  */
 
 #include "../UI/Options.h"
+#include "../Computation/Calculator.h"
 
 namespace Frames
 {
@@ -30,7 +31,13 @@ namespace Frames
 		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) resizeHook;
 		EVENT_FUNC_INDEX(sf::Event, sf::Event::EventType::Count) scrollHook;
 
-		sf::View g;
+		char expression[128] = "";
+
+		const char * exception = nullptr;
+
+		Computation::Calculator calc;
+
+		Computation::Expression *expr = nullptr;
 
 		// Position of top left
 		sf::Rect<double> graphBounds;
