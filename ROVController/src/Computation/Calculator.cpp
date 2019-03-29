@@ -149,7 +149,9 @@ Computation::Expression * Computation::Calculator::parse(const char * expr) {
                 throw "Something went wrong when parsing your expression. Not sure what. There is a leftover parenthesis or comma though.";
         }
 
-        ex->getHead()->addToken(token);
+        if (!ex->getHead()->addToken(token)) {
+            throw "Syntax error!";
+        }
 
         outputQueue.pop();
     }
@@ -227,8 +229,8 @@ Computation::ParseToken Computation::Calculator::getNextToken() {
             ParseToken token;
             token.t = ParseToken::op;
 
-            // A negation shows up after an operator or a left parenthesis
-            if (*iterator == OperatorMap[Operator::Subtract] && (lastTokenType == ParseToken::op || lastTokenType == ParseToken::lp))
+            // A negation shows up after an operator or a left parenthesis, or a comma
+            if (*iterator == OperatorMap[Operator::Subtract] && (lastTokenType == ParseToken::op || lastTokenType == ParseToken::lp || lastTokenType == ParseToken::comma))
             {
                 token.token.op = OpInfo(Operator::Negate);
             } else {
@@ -354,7 +356,7 @@ Computation::OpInfo::OpInfo(Computation::Operator op) : op(op) {
             break;
         case Operator::Negate:
             ass = Right;
-            precedence = 10;
+            precedence = 9;
             break;
     }
 }
