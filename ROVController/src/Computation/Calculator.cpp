@@ -113,6 +113,9 @@ Computation::Expression * Computation::Calculator::parse(const char * expr) {
             // Set right hand value in the expression to be 0 so nothing is subtracted when it is evaluated
             // Tokens default to be 0
             right = new Token;
+        } else {
+            // Is an equality pop off the equals sign and leave left and right null pointers to be filled out later
+            outputQueue.pop();
         }
     }
 
