@@ -162,7 +162,7 @@ T lerp_n(const T v0, const T v1, const T t)
 
 /**
  * @brief
- * C++ Implmentation of Python's enumerate, can be used like this:
+ * C++ Implementation of Python's enumerate, can be used like this:
  * 
  * for (auto [i, thing] : enumerate(things))
  * {
@@ -198,7 +198,7 @@ template <typename T,
 template<typename T> struct map_init_helper
 {
 	T& data;
-	map_init_helper(T& d) : data(d) {}
+	explicit map_init_helper(T& d) : data(d) {}
 	map_init_helper& operator() (typename T::key_type const& key, typename T::mapped_type const& value)
 	{
 		data[key] = value;

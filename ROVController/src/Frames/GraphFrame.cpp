@@ -9,7 +9,7 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
-Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8)
+Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8), points(sf::LineStrip, array_count)
 {
 	windowSize = GlobalContext::get_window()->getSize();
 
@@ -27,25 +27,71 @@ Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8)
 void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	drawGrid(target, states);
+	if (expr && expr->graphingSuggestion() == Computation::GraphingHint::Horizontal)
+    {
+	    target.draw(points);
+    }
+}
+
+void Frames::GraphFrame::update(const sf::Time& dt)
+{
+    ImGui::Begin("Math Module");
+    ImGui::InputTextWithHint("Input Expression", "Enter math relation here", expression, IM_ARRAYSIZE(expression));
+    if (ImGui::Button("Calculate")) {
+        delete expr;
+        expr = nullptr;
+        try {
+			exception = nullptr;
+            expr = calc.parse(expression);
+        } catch(const char * ex)
+        {
+            exception = ex;
+			expr = nullptr;
+        }
+    }
+
+    if (ImGui::Button("Reset Zoom")) {
+        setZoom(sf::Vector2<double>(-10, 10), sf::Vector2<double>(-10, 10));
+    }
+
+    if (exception) {
+        ImGui::Text("%s", exception);
+    }
+    ImGui::End();
+
+    if (expr && expr->graphingSuggestion() == Computation::GraphingHint::Horizontal)
+    {
+        for (auto i = 0; i < array_count; ++i)
+        {
+            // For now assume y = something
+            // So have to flip sign if y is negative
+            // Because in the tree 0 - right side = -right
+            auto x = graphBounds.left + graphBounds.width / array_count * i;
+            auto y = - expr->compute(x, 0);
+            points[i] = sf::Vertex(convertToScreenCoords(sf::Vector2<double>(x, y)), sf::Color::Red);
+        }
+    }
+
+    //ImGui::ShowDemoWindow();
 }
 
 void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates states) const
 {
     // Draw lines
-	sf::Vertex line[2];
+    sf::Vertex line[2];
 
-	auto scaleX = calculateGridScale(graphBounds.width / linesPerScreenTarget.x);
-	auto scaleY = calculateGridScale(graphBounds.height / linesPerScreenTarget.y);
+    auto scaleX = calculateGridScale(graphBounds.width / linesPerScreenTarget.x);
+    auto scaleY = calculateGridScale(graphBounds.height / linesPerScreenTarget.y);
 
-	for (auto x = RoundToNearest(graphBounds.left, scaleX); x < graphBounds.left + graphBounds.width; x += scaleX)
-	{
-		auto screen = convertToScreenCoords(sf::Vector2<double>(x, 0.));
-		line[0] = sf::Vertex(sf::Vector2f(screen.x, windowSize.y));
-		line[1] = sf::Vertex(sf::Vector2f(screen.x, 0));
-		line[0].color = line[1].color = sf::Color(128, 128, 128);
-		target.draw(line, 2, sf::Lines);
+    for (auto x = RoundToNearest(graphBounds.left, scaleX); x < graphBounds.left + graphBounds.width; x += scaleX)
+    {
+        auto screen = convertToScreenCoords(sf::Vector2<double>(x, 0.));
+        line[0] = sf::Vertex(sf::Vector2f(screen.x, windowSize.y));
+        line[1] = sf::Vertex(sf::Vector2f(screen.x, 0));
+        line[0].color = line[1].color = sf::Color(128, 128, 128);
+        target.draw(line, 2, sf::Lines);
 
-		// Draw line number
+        // Draw line number
         std::ostringstream num;
         num << std::scientific << std::setprecision(1) << x;
         std::string strNum = num.str();
@@ -54,15 +100,15 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
         text.setPosition(screen.x, windowSize.y - text.getCharacterSize());
         text.setFillColor(sf::Color::White);
         target.draw(text);
-	}
+    }
 
-	for (auto y = RoundToNearest(graphBounds.top, scaleY); y > graphBounds.top - graphBounds.height; y -= scaleY)
-	{
-		auto screen = convertToScreenCoords(sf::Vector2<double>(0., y));
-		line[0] = sf::Vertex(sf::Vector2f(windowSize.x, screen.y));
-		line[1] = sf::Vertex(sf::Vector2f(0, screen.y));
-		line[0].color = line[1].color = sf::Color(128, 128, 128);
-		target.draw(line, 2, sf::Lines);
+    for (auto y = RoundToNearest(graphBounds.top, scaleY); y > graphBounds.top - graphBounds.height; y -= scaleY)
+    {
+        auto screen = convertToScreenCoords(sf::Vector2<double>(0., y));
+        line[0] = sf::Vertex(sf::Vector2f(windowSize.x, screen.y));
+        line[1] = sf::Vertex(sf::Vector2f(0, screen.y));
+        line[0].color = line[1].color = sf::Color(128, 128, 128);
+        target.draw(line, 2, sf::Lines);
 
         // Draw line number
         std::ostringstream num;
@@ -73,74 +119,47 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
         text.setPosition(0, screen.y);
         text.setFillColor(sf::Color::White);
         target.draw(text);
-	}
+    }
 }
 
 double Frames::GraphFrame::calculateGridScale(double targetScale) const
 {
-	// Got to be multiple of 1,2, or 5
-	// Zoom in scale down
-	// Zoom out scale up
+    // Got to be multiple of 1,2, or 5
+    // Zoom in scale down
+    // Zoom out scale up
 
-	// Draw vertical lines
-	// Calculate scale factor for each tick on the graph
-	auto inv = false;
-	if (targetScale < 1.)
-	{
-		targetScale = 1. / targetScale;
-		inv = true;
-	}
+    // Draw vertical lines
+    // Calculate scale factor for each tick on the graph
+    auto inv = false;
+    if (targetScale < 1.)
+    {
+        targetScale = 1. / targetScale;
+        inv = true;
+    }
 
-	auto exponent = GetNumberOfDigits(static_cast<unsigned long long>(targetScale)) - 1;
+    auto exponent = GetNumberOfDigits(static_cast<unsigned long long>(targetScale)) - 1;
 
-	// Initially set to some large number so it will get overwritten
-	auto scaleReal = std::numeric_limits<double>::max();
+    // Initially set to some large number so it will get overwritten
+    auto scaleReal = std::numeric_limits<double>::max();
 
-	for (auto factor : graphIntervals)
-	{
-		auto fac = pow(10, exponent) * factor;
-		if (error(fac, targetScale) < error(scaleReal, targetScale))
-		{
-			scaleReal = fac;
-		}
-	}
-
-	if (inv)
-	{
-		// Invert it back again if we need to.
-		scaleReal = 1. / scaleReal;
-	}
-
-	return scaleReal;
-}
-
-void Frames::GraphFrame::update(const sf::Time& dt)
-{
-    ImGui::Begin("Math Module");
-    ImGui::InputTextWithHint("Input Expression", "Enter math relation here", expression, IM_ARRAYSIZE(expression));
-    if (ImGui::Button("Calculate")) {
-        delete expr;
-        try {
-			exception = nullptr;
-            expr = calc.parse(expression);
-        } catch(const char * ex)
+    for (auto factor : graphIntervals)
+    {
+        auto fac = pow(10, exponent) * factor;
+        if (error(fac, targetScale) < error(scaleReal, targetScale))
         {
-            exception = ex;
-			expr = nullptr;
+            scaleReal = fac;
         }
     }
-    if (exception) {
-        ImGui::Text("%s", exception);
+
+    if (inv)
+    {
+        // Invert it back again if we need to.
+        scaleReal = 1. / scaleReal;
     }
 
-    if (expr) {
-
-        ImGui::Text("Result = %f", expr->compute(0, 0));
-    }
-
-    ImGui::End();
-    ImGui::ShowDemoWindow();
+    return scaleReal;
 }
+
 
 void Frames::GraphFrame::zoomRelative(int x, int y, float amount)
 {
@@ -181,14 +200,11 @@ double Frames::GraphFrame::getScaleY() const
 	return graphBounds.height / windowSize.y;
 }
 
-sf::Vector2u Frames::GraphFrame::convertToScreenCoords(sf::Vector2<double> coords) const
+sf::Vector2f Frames::GraphFrame::convertToScreenCoords(sf::Vector2<double> coords) const
 {
-	sf::Vector2u output;
 	auto scaleX = windowSize.x / graphBounds.width;
 	auto scaleY = windowSize.y / graphBounds.height;
-	output.x = static_cast<unsigned>((coords.x - graphBounds.left) * scaleX);
-	output.y = static_cast<unsigned>((graphBounds.top - coords.y) * scaleY);
-	return output;
+    return sf::Vector2f(static_cast<float>((coords.x - graphBounds.left) * scaleX), static_cast<float>((graphBounds.top - coords.y) * scaleY));
 }
 
 bool Frames::GraphFrame::xAxisVisible() const

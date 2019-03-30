@@ -9,9 +9,11 @@
 
 #include "../UI/Options.h"
 #include "../Computation/Calculator.h"
+#include <array>
 
 namespace Frames
 {
+    const unsigned array_count = 1000;
 	class GraphFrame : public IFrame
 	{
 	protected:
@@ -41,6 +43,9 @@ namespace Frames
 
 		// Position of top left
 		sf::Rect<double> graphBounds;
+
+		// std::array<sf::Vertex, array_count> points;
+		sf::VertexArray points;
 	public:
 
 		GraphFrame();
@@ -74,7 +79,7 @@ namespace Frames
 		
 		double getScaleY() const;
 
-		sf::Vector2u convertToScreenCoords(sf::Vector2<double> coords) const;
+		sf::Vector2f convertToScreenCoords(sf::Vector2<double> coords) const;
 
 		bool xAxisVisible() const;
 
