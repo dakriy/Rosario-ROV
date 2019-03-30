@@ -114,9 +114,9 @@ double Computation::Token::exec(double x, double y) {
         case Function::Step:
             return (lval >= 0) ? 1. : 0.;
         case Function::Max:
-            return max(lval, rval);
+            return fmax(lval, rval);
         case Function::Min:
-            return min(lval, rval);
+            return fmin(lval, rval);
         case Function::Sign:
             return sgn(lval);
         case Function::Floor:
