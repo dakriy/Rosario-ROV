@@ -34,7 +34,15 @@ namespace Computation {
         Step,
         Max,
         Min,
-        Sign
+        Sign,
+        Floor,
+        Ceil,
+        Atan,
+        Acos,
+        Asin,
+        Cosh,
+        Tanh,
+        Sinh
     };
 
     class Token {

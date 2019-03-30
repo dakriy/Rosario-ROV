@@ -44,7 +44,7 @@ Computation::GraphingHint Computation::Expression::graphingSuggestion() {
     // y = any expression without a y
     // any expression without a y = y
     if ((head->getRight()->getType() == TokenType::Y && countType(head->getLeft(), TokenType::Y) == 0) ||
-        (head->getLeft()->getType() == TokenType::Y && countType(head->getRight(), TokenType::Y) == 0)
+        (head->getLeft()->getType() == TokenType::Y && countType(head->getRight(), TokenType::Y) == 0))
     {
         return GraphingHint::Horizontal;
     }
@@ -53,7 +53,7 @@ Computation::GraphingHint Computation::Expression::graphingSuggestion() {
     // x = any expression without a x
     // any expression without a x = x
     if ((head->getRight()->getType() == TokenType::X && countType(head->getLeft(), TokenType::X) == 0) ||
-        (head->getLeft()->getType() == TokenType::X && countType(head->getRight(), TokenType::X) == 0)
+        (head->getLeft()->getType() == TokenType::X && countType(head->getRight(), TokenType::X) == 0))
     {
         return GraphingHint::Vertical;
     }
@@ -63,6 +63,8 @@ Computation::GraphingHint Computation::Expression::graphingSuggestion() {
 }
 
 unsigned Computation::Expression::countType(Computation::Token *h, TokenType type) {
+    // Traversal order is not a big deal, so we'll just do pre order.
+
     if (h == nullptr)
         return 0;
 

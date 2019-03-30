@@ -189,7 +189,15 @@ Computation::Calculator::Calculator() {
             (Computation::Function::Step, "u")
             (Computation::Function::Max, "max")
             (Computation::Function::Min, "min")
-            (Computation::Function::Sign, "sgn");
+            (Computation::Function::Sign, "sgn")
+            (Computation::Function::Floor, "floor")
+            (Computation::Function::Ceil, "ceil")
+            (Computation::Function::Atan, "atan")
+            (Computation::Function::Acos, "acos")
+            (Computation::Function::Asin, "asin")
+            (Computation::Function::Cosh, "cosh")
+            (Computation::Function::Tanh, "tanh")
+            (Computation::Function::Sinh, "sinh");
 
 }
 

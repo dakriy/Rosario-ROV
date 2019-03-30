@@ -119,6 +119,22 @@ double Computation::Token::exec(double x, double y) {
             return min(lval, rval);
         case Function::Sign:
             return sgn(lval);
+        case Function::Floor:
+            return floor(lval);
+        case Function::Ceil:
+            return ceil(lval);
+        case Function::Atan:
+            return atan(lval);
+        case Function::Acos:
+            return acos(lval);
+        case Function::Asin:
+            return asin(lval);
+        case Function::Cosh:
+            return cosh(lval);
+        case Function::Tanh:
+            return tanh(lval);
+        case Function::Sinh:
+            return sinh(lval);
     }
 }
 
