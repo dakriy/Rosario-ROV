@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 		{
 			vidmode = sf::VideoMode(100, 100);
 			if (!vidmode.isValid())
-				QuitWithError("Could not find a compatable Video Mode", EXIT_FAILURE);
+				QuitWithError("Could not find a compatible Video Mode", EXIT_FAILURE);
 		}
 	}
 
