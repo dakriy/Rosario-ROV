@@ -5,46 +5,72 @@ Computation::Expression::~Expression() {
 }
 
 double Computation::Expression::compute(double x, double y) {
-    if (type == GraphingHint::Constant)
-    {
-        return head->getLeft()->compute(x, y);
-    }
     return head->compute(x, y);
 }
 
 void Computation::Expression::setRhs(Computation::Token *r) {
     head->setRight(r);
-    resolveGraphingType();
 }
 
 void Computation::Expression::setLhs(Computation::Token *l) {
     head->setLeft(l);
-    resolveGraphingType();
 }
 
 Computation::Expression::Expression(Computation::Token *lhs, Computation::Token *rhs) {
     head = new Token(Operator::Subtract, lhs, rhs);
-    resolveGraphingType();
 }
 
 Computation::Token *Computation::Expression::getHead() {
     return head;
 }
 
-Computation::GraphingHint Computation::Expression::grpahingSuggestion() {
-    return type;
-}
+Computation::GraphingHint Computation::Expression::graphingSuggestion() {
 
-void Computation::Expression::resolveGraphingType() {
-    // constant if rhs is 0 or null and left is not
-
-    if (head->getRight() && head->getRight()->isZero())
+    if (!head || !head->getRight() || !head->getLeft())
     {
-        type = GraphingHint::Constant;
-        return;
+        // No equals sign because stuff is null meaning we were not fully initialized.
+        return GraphingHint::Constant;
     }
 
-    // TODO: Traverse tree and count x's and y's
-    type = GraphingHint::Squares;
+    // constant if rhs is 0 or null and left is not
+    // Don't want to get in here for something like x+y = 0
+    if (countType(head, TokenType::Y) == 0 && countType(head, TokenType::X) == 0)
+    {
+        // Constant means no equals sign, so not an equality
+        return GraphingHint::Constant;
+    }
+
+    // Can do horizontal scan graphing if in either of these configurations:
+    // y = any expression without a y
+    // any expression without a y = y
+    if ((head->getRight()->getType() == TokenType::Y && countType(head->getLeft(), TokenType::Y) == 0) ||
+        (head->getLeft()->getType() == TokenType::Y && countType(head->getRight(), TokenType::Y) == 0)
+    {
+        return GraphingHint::Horizontal;
+    }
+
+    // Can do vertical scan graphing if in either of these configurations:
+    // x = any expression without a x
+    // any expression without a x = x
+    if ((head->getRight()->getType() == TokenType::X && countType(head->getLeft(), TokenType::X) == 0) ||
+        (head->getLeft()->getType() == TokenType::X && countType(head->getRight(), TokenType::X) == 0)
+    {
+        return GraphingHint::Vertical;
+    }
+
+    // Otherwise we need to do marching squares
+    return GraphingHint::Squares;
 }
 
+unsigned Computation::Expression::countType(Computation::Token *h, TokenType type) {
+    if (h == nullptr)
+        return 0;
+
+    unsigned count = 0;
+    if (h->getType() == type)
+        ++count;
+
+    count += countType(h->getLeft(), type);
+    count += countType(h->getRight(), type);
+    return count;
+}
