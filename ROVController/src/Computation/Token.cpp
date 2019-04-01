@@ -246,6 +246,23 @@ bool Computation::Token::addToken(Computation::Token *nt) {
 	throw "Points that don't exist do now...";
 }
 
-bool Computation::Token::isZero() {
+bool Computation::Token::isZero() const {
     return t == TokenType::Number && abs(v.n) < zero;
+}
+
+Computation::Token::Token(Computation::Token &token) : t(token.t), v(token.v) {
+    deepCopyNode(token.right, right);
+    deepCopyNode(token.left, left);
+}
+
+void Computation::Token::deepCopyNode(Computation::Token *original, Computation::Token *&copyTo) {
+    if (original == nullptr) {
+        copyTo = nullptr;
+    } else {
+        copyTo = new Token();
+        copyTo->t = original->t;
+        copyTo->v = original->v;
+        deepCopyNode(original->right, copyTo->right);
+        deepCopyNode(original->left, copyTo->left);
+    }
 }

@@ -76,3 +76,8 @@ unsigned Computation::Expression::countType(Computation::Token *h, TokenType typ
     count += countType(h->getRight(), type);
     return count;
 }
+
+Computation::Expression::Expression(Computation::Expression & expression) {
+    if (expression.head)
+        head = new Token(*expression.getHead());
+}

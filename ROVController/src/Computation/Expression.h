@@ -15,6 +15,7 @@ namespace Computation {
     protected:
         Token *head = nullptr;
     public:
+        Expression(Expression & expression);
         explicit Expression(Token * lhs = nullptr, Token * rhs = nullptr);
         double compute(double x, double y);
         void setLhs(Token * l);

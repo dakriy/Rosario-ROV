@@ -57,15 +57,17 @@ namespace Computation {
 
         value v;
 
-        double operate(double x, double y);
-        double exec(double x, double y);
-
         TokenType t;
 
         Token * left = nullptr;
         Token * right = nullptr;
+
+        double operate(double x, double y);
+        double exec(double x, double y);
     public:
         Token();
+        // Performs deep copy
+        Token(Token &token);
         explicit Token(double n, Token *l = nullptr, Token *r = nullptr);
         explicit Token(Operator o, Token *l = nullptr, Token *r = nullptr);
         explicit Token(Function f, Token *l = nullptr, Token *r = nullptr);
@@ -78,8 +80,9 @@ namespace Computation {
         void setY();
         void setLeft(Token * l);
         void setRight(Token * r);
-        bool isZero();
+        bool isZero() const;
         bool addToken(Token * t);
+        static void deepCopyNode(Token * original, Token * &copyTo);
         Token * getLeft();
         Token * getRight();
         ~Token();
