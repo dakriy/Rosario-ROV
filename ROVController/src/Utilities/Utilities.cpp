@@ -1,4 +1,5 @@
 #include "Utilities.h"
+#include "../Core/GlobalContext.h"
 
 unsigned GetSeed(const std::string& seed) {
     return static_cast<unsigned>(std::hash<std::string>{}(seed));
@@ -77,4 +78,11 @@ void copyScreenshotToClipboard(const sf::Image & image)
 
 	CloseClipboard();
 	GlobalFree(hResult);
+}
+
+sf::Vector2f convertToScreenCoords(sf::Rect<double> bounds, sf::Vector2<double> coords) {
+    auto windowSize = GlobalContext::get_window()->getSize();
+    auto scaleX = windowSize.x / bounds.width;
+    auto scaleY = windowSize.y / bounds.height;
+    return sf::Vector2f(static_cast<float>((coords.x - bounds.left) * scaleX), static_cast<float>((bounds.top - coords.y) * scaleY));
 }

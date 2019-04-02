@@ -9,7 +9,7 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
-Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8), points(sf::LineStrip, array_count)
+Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8)
 {
 	windowSize = GlobalContext::get_window()->getSize();
 
@@ -27,10 +27,6 @@ Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8), points(sf::LineS
 void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	drawGrid(target, states);
-	if (expr && expr->graphingSuggestion() == Computation::GraphingHint::Horizontal)
-    {
-	    target.draw(points);
-    }
 }
 
 void Frames::GraphFrame::update(const sf::Time& dt)
@@ -58,19 +54,6 @@ void Frames::GraphFrame::update(const sf::Time& dt)
         ImGui::Text("%s", exception);
     }
     ImGui::End();
-
-    if (expr && expr->graphingSuggestion() == Computation::GraphingHint::Horizontal)
-    {
-        for (auto i = 0; i < array_count; ++i)
-        {
-            // For now assume y = something
-            // So have to flip sign if y is negative
-            // Because in the tree 0 - right side = -right
-            auto x = graphBounds.left + graphBounds.width / array_count * i;
-            auto y = - expr->compute(x, 0);
-            points[i] = sf::Vertex(convertToScreenCoords(sf::Vector2<double>(x, y)), sf::Color::Red);
-        }
-    }
 
     //ImGui::ShowDemoWindow();
 }
@@ -198,13 +181,6 @@ double Frames::GraphFrame::getScaleX() const
 double Frames::GraphFrame::getScaleY() const
 {
 	return graphBounds.height / windowSize.y;
-}
-
-sf::Vector2f Frames::GraphFrame::convertToScreenCoords(sf::Vector2<double> coords) const
-{
-	auto scaleX = windowSize.x / graphBounds.width;
-	auto scaleY = windowSize.y / graphBounds.height;
-    return sf::Vector2f(static_cast<float>((coords.x - graphBounds.left) * scaleX), static_cast<float>((graphBounds.top - coords.y) * scaleY));
 }
 
 bool Frames::GraphFrame::xAxisVisible() const

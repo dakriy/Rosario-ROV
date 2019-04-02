@@ -13,7 +13,6 @@
 
 namespace Frames
 {
-    const unsigned array_count = 1000;
 	class GraphFrame : public IFrame
 	{
 	protected:
@@ -43,9 +42,6 @@ namespace Frames
 
 		// Position of top left
 		sf::Rect<double> graphBounds;
-
-		// std::array<sf::Vertex, array_count> points;
-		sf::VertexArray points;
 	public:
 
 		GraphFrame();

@@ -14,6 +14,8 @@ unsigned GetSeed(const std::string& seed);
 
 void QuitWithError(const char * error, int exit_code);
 
+sf::Vector2f convertToScreenCoords(sf::Rect<double> bounds, sf::Vector2<double> coords);
+
 /**
  * Performs x % y but works properly with negative numbers
  */
