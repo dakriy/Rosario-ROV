@@ -118,13 +118,10 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::Eve
 	cev_ = cev;
 	global_clock_ = glbClk;
 
-	// Set default framerate to 60.
-	window_->setFramerateLimit(60);
+	// Enable vertical sync enabled. Don't do framerate
+	window_->setVerticalSyncEnabled(true);
 	// Initialize it to the first main menu frame.
 	let firstFrame = new Frames::TitleFrame;
-	assert(firstFrame);
-	if (!firstFrame)
-		QuitWithError("Could not initialze the application", EXIT_FAILURE);
 	frame_stack_.emplace_back(firstFrame);
 
 	GlobalContext::set_engine(this);

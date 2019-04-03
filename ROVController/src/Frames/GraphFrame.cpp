@@ -54,8 +54,6 @@ void Frames::GraphFrame::update(const sf::Time& dt)
         ImGui::Text("%s", exception);
     }
     ImGui::End();
-
-    //ImGui::ShowDemoWindow();
 }
 
 void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates states) const
@@ -68,7 +66,7 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
 
     for (auto x = RoundToNearest(graphBounds.left, scaleX); x < graphBounds.left + graphBounds.width; x += scaleX)
     {
-        auto screen = convertToScreenCoords(sf::Vector2<double>(x, 0.));
+        auto screen = convertToScreenCoords(graphBounds, sf::Vector2<double>(x, 0.));
         line[0] = sf::Vertex(sf::Vector2f(screen.x, windowSize.y));
         line[1] = sf::Vertex(sf::Vector2f(screen.x, 0));
         line[0].color = line[1].color = sf::Color(128, 128, 128);
@@ -87,7 +85,7 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
 
     for (auto y = RoundToNearest(graphBounds.top, scaleY); y > graphBounds.top - graphBounds.height; y -= scaleY)
     {
-        auto screen = convertToScreenCoords(sf::Vector2<double>(0., y));
+        auto screen = convertToScreenCoords(graphBounds, sf::Vector2<double>(0., y));
         line[0] = sf::Vertex(sf::Vector2f(windowSize.x, screen.y));
         line[1] = sf::Vertex(sf::Vector2f(0, screen.y));
         line[0].color = line[1].color = sf::Color(128, 128, 128);

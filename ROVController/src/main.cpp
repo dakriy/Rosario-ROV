@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 	// Start up main rendering window
 
 	sf::RenderWindow Window(vidmode, APP_NAME, vidstyle, settings);
-	Window.setVerticalSyncEnabled(true);
+
 	ImGui::SFML::Init(Window);
 
 	GlobalContext::set_window(&Window);

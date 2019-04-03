@@ -28,7 +28,7 @@ class Grapher : public sf::Drawable, Interfaces::IUpdateable{
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-        void update(sf::Time & dt) override;
+        void update(const sf::Time & dt) override;
 
         ~Grapher() override;
     };
