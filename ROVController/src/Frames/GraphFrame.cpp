@@ -33,6 +33,16 @@ void Frames::GraphFrame::update(const sf::Time& dt)
 {
     ImGui::Begin("Math Module");
     ImGui::InputTextWithHint("Input Expression", "Enter math relation here", expression, IM_ARRAYSIZE(expression));
+
+    if (expr && !expr->isEquation())
+    {
+        ImGui::Text("= %f", expr->compute(0,0));
+    }
+    
+    if (exception) {
+        ImGui::Text("%s", exception);
+    }
+
     if (ImGui::Button("Calculate")) {
         delete expr;
         expr = nullptr;
@@ -50,9 +60,6 @@ void Frames::GraphFrame::update(const sf::Time& dt)
         setZoom(sf::Vector2<double>(-10, 10), sf::Vector2<double>(-10, 10));
     }
 
-    if (exception) {
-        ImGui::Text("%s", exception);
-    }
     ImGui::End();
 }
 

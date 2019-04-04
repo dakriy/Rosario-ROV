@@ -16,7 +16,7 @@ void Computation::Expression::setLhs(Computation::Token *l) {
     head->setLeft(l);
 }
 
-Computation::Expression::Expression(Computation::Token *lhs, Computation::Token *rhs) {
+Computation::Expression::Expression(bool equality, Computation::Token *lhs, Computation::Token *rhs) : equation(equality) {
     head = new Token(Operator::Subtract, lhs, rhs);
 }
 
@@ -77,7 +77,15 @@ unsigned Computation::Expression::countType(Computation::Token *h, TokenType typ
     return count;
 }
 
-Computation::Expression::Expression(Computation::Expression & expression) {
+Computation::Expression::Expression(Computation::Expression & expression) : equation(expression.equation) {
     if (expression.head)
         head = new Token(*expression.getHead());
+}
+
+bool Computation::Expression::isEquation() {
+    return equation;
+}
+
+void Computation::Expression::setEquation(bool eq) {
+    equation = eq;
 }

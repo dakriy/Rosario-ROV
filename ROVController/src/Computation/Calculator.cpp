@@ -103,6 +103,8 @@ Computation::Expression * Computation::Calculator::parse(const char * expr) {
 
     Token *left = nullptr, *right = nullptr;
 
+	bool equality = false;
+
     if (!outputQueue.empty())
     {
         auto top = outputQueue.top();
@@ -114,13 +116,13 @@ Computation::Expression * Computation::Calculator::parse(const char * expr) {
             // Tokens default to be 0
             right = new Token;
         } else {
-            // Is an equality pop off the equals sign and leave left and right null pointers to be filled out later
+            // Is an equality pop off the equals sign and leave left and right null pointers to be filled out late
+            equality = true;
             outputQueue.pop();
         }
     }
 
-    auto ex = new Expression(left, right);
-
+    auto ex = new Expression(equality, left, right);
 
     while(!outputQueue.empty())
     {
