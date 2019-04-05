@@ -1,3 +1,4 @@
+#include <imgui.h>
 #include "Grapher.h"
 #include "../Utilities/Utilities.h"
 
@@ -56,6 +57,19 @@ void Computation::Grapher::update() {
                 points[i] = sf::Vertex(convertToScreenCoords(bounds, sf::Vector2<double>(x, y)), sf::Color::Red);
             }
         }
+
+        static int squaresX = 1;
+
+        ImGui::Begin("Marching Squares");
+        ImGui::SliderInt("Squares along the x axis", &squaresX, 1, 500);
+        ImGui::End();
+
+
+        if (type == Computation::GraphingHint::Squares)
+        {
+
+        }
+
     }
 }
 
