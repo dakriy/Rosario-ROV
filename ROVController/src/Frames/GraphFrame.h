@@ -9,6 +9,7 @@
 
 #include "../UI/Options.h"
 #include "../Computation/Calculator.h"
+#include "../Computation/Grapher.h"
 #include <array>
 
 namespace Frames
@@ -39,6 +40,8 @@ namespace Frames
 		Computation::Calculator calc;
 
 		Computation::Expression *expr = nullptr;
+
+		Computation::Grapher grapher;
 
 		// Position of top left
 		sf::Rect<double> graphBounds;

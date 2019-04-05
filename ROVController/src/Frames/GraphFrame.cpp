@@ -21,12 +21,15 @@ Frames::GraphFrame::GraphFrame() : linesPerScreenTarget(13, 8)
 	graphBounds.height = windowSize.y * getScaleX();
 	graphBounds.top = graphBounds.height / 2.;
 
+	grapher.updateBounds(graphBounds);
+
 	setHooks();
 }
 
 void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	drawGrid(target, states);
+	grapher.draw(target, states);
 }
 
 void Frames::GraphFrame::update(const sf::Time& dt)
@@ -38,7 +41,7 @@ void Frames::GraphFrame::update(const sf::Time& dt)
     {
         ImGui::Text("= %f", expr->compute(0,0));
     }
-    
+
     if (exception) {
         ImGui::Text("%s", exception);
     }
@@ -49,6 +52,7 @@ void Frames::GraphFrame::update(const sf::Time& dt)
         try {
 			exception = nullptr;
             expr = calc.parse(expression);
+            grapher.setExpression(expr);
         } catch(const char * ex)
         {
             exception = ex;
@@ -61,6 +65,7 @@ void Frames::GraphFrame::update(const sf::Time& dt)
     }
 
     ImGui::End();
+    grapher.update();
 }
 
 void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates states) const
@@ -164,6 +169,7 @@ void Frames::GraphFrame::zoomRelative(int x, int y, float amount)
 	graphBounds.height -= totalY;
 	graphBounds.left -= percentLeftZoom * totalX;
 	graphBounds.top -= percentTopZoom * totalY;
+    grapher.updateBounds(graphBounds);
 }
 
 
@@ -176,6 +182,7 @@ void Frames::GraphFrame::setZoom(sf::Vector2<double> xRange, sf::Vector2<double>
 	graphBounds.left = xRange.x;
 	graphBounds.height = yRange.y - yRange.x;
 	graphBounds.width = xRange.y - xRange.x;
+    grapher.updateBounds(graphBounds);
 }
 
 double Frames::GraphFrame::getScaleX() const
