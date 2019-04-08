@@ -47,7 +47,7 @@ namespace Computation {
 
     class Token {
     protected:
-        static constexpr auto zero = 0.0000001;
+        static constexpr auto zero = 0.000000001;
 
         union value {
             Operator o;

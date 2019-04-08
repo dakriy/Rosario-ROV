@@ -91,7 +91,7 @@ void copyScreenshotToClipboard(const sf::Image & image);
  * @param t value to extrapolate at
  */
 template<typename T>
-sf::Vector2<T> lerp_v(const sf::Vector2<T> a, const sf::Vector2<T> b, T t)
+sf::Vector2<T> lerp_v(const sf::Vector2<T> a, const sf::Vector2<T> b, const float t)
 {
 	return (1 - t) * a + t * b;
 }
@@ -106,7 +106,7 @@ sf::Vector2<T> lerp_v(const sf::Vector2<T> a, const sf::Vector2<T> b, T t)
  * @param t value to extrapolate at
  */
 template<typename T>
-sf::Vector2<T> lerp_v_f(const sf::Vector2<T> a, const sf::Vector2<T> b, T t)
+sf::Vector2<T> lerp_v_f(const sf::Vector2<T> a, const sf::Vector2<T> b, const float t)
 {
 	return a + (b - a) * t;
 }
@@ -140,7 +140,7 @@ T lerp(const T y0, const T y1, const T x0, const T x1, const T x)
 * @param v1 is the ending value
 */
 template<typename T>
-T lerp_n_f(const T v0, const T v1, const T t)
+T lerp_n_f(const T v0, const T v1, const float t)
 {
 	return v0 + (v1 - v0) * t;
 }
@@ -157,7 +157,7 @@ T lerp_n_f(const T v0, const T v1, const T t)
  * @param v1 is the ending value
  */
 template<typename T>
-T lerp_n(const T v0, const T v1, const T t)
+T lerp_n(const T v0, const T v1, const float t)
 {
 	return (1 - t) * v0 + t * v1;
 }
