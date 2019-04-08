@@ -103,7 +103,7 @@ namespace Core
 	}
 
 	template <typename T, int EventSize>
-	const EVENT_FUNC_INDEX(T, EventSize) EventHandler<T, EventSize>::add_event_callback_for_all_events(const EVENT_FUNC_TYPE(T)& callback)
+	EVENT_FUNC_INDEX(T, EventSize) EventHandler<T, EventSize>::add_event_callback_for_all_events(const EVENT_FUNC_TYPE(T)& callback)
 	{
 		// We take care of deletion and control everything about the pointer
 		// So not going to worry about memory leaks.

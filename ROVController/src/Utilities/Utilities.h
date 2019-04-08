@@ -1,9 +1,10 @@
 #pragma once
 #include <random>
 #include <iostream>
-#include "Globals.h"
+#include "../Globals.h"
 #include <SFML/System/Vector2.hpp>
 #include <tuple>
+#include <SFML/Graphics/Image.hpp>
 
 static std::mt19937 rnd = std::mt19937();
 
@@ -13,13 +14,71 @@ unsigned GetSeed(const std::string& seed);
 
 void QuitWithError(const char * error, int exit_code);
 
+sf::Vector2f convertToScreenCoords(sf::Rect<double> bounds, sf::Vector2<double> coords);
+
 /**
- * Performs x % y but works proerply with negative numbers
+ * Performs x % y but works properly with negative numbers
  */
 constexpr int ProperModulus(int x, int y)
 {
 	return ((x % y) + y) % y;
 }
+
+// Use with integer types
+template<typename T>
+T RountToNearestWhole(T x)
+{
+	return static_cast<T>(x + 0.5);
+}
+
+/*inline int RoundToNearest(int x, int multiple)
+{
+	return ((x + multiple / 2) / multiple) * multiple;
+}*/
+
+template<typename T>
+inline T RoundToNearest(T x, T multiple)
+{
+	return static_cast<T>(floor(static_cast<double>(x / multiple + 0.5)) * multiple);
+}
+
+inline double error(double x1, double x2)
+{
+	return abs(x2 - x1) / x2;
+}
+
+constexpr unsigned GetNumberOfDigits(unsigned i)
+{
+	if (i > 300)
+		return 300;
+	// Multiply going up rather than divide going down
+	// because multiplies are faster than divides.
+	unsigned digits = 1, pten = 10;
+	while (pten < i)
+	{
+		digits++;
+		pten *= 10;
+	}
+	return digits;
+}
+
+constexpr unsigned GetNumberOfDigits(unsigned long long int i)
+{
+	if (i > 300)
+		return 300;
+	// Multiply going up rather than divide going down
+	// because multiplies are faster than divides.
+	unsigned digits = 1, pten = 10;
+	while (pten < i)
+	{
+		digits++;
+		pten *= 10;
+	}
+	return digits;
+}
+
+
+void copyScreenshotToClipboard(const sf::Image & image);
 
 /**
  * @brief
@@ -32,7 +91,7 @@ constexpr int ProperModulus(int x, int y)
  * @param t value to extrapolate at
  */
 template<typename T>
-sf::Vector2<T> lerp_v(const sf::Vector2<T> a, const sf::Vector2<T> b, T t)
+sf::Vector2<T> lerp_v(const sf::Vector2<T> a, const sf::Vector2<T> b, const float t)
 {
 	return (1 - t) * a + t * b;
 }
@@ -47,7 +106,7 @@ sf::Vector2<T> lerp_v(const sf::Vector2<T> a, const sf::Vector2<T> b, T t)
  * @param t value to extrapolate at
  */
 template<typename T>
-sf::Vector2<T> lerp_v_f(const sf::Vector2<T> a, const sf::Vector2<T> b, T t)
+sf::Vector2<T> lerp_v_f(const sf::Vector2<T> a, const sf::Vector2<T> b, const float t)
 {
 	return a + (b - a) * t;
 }
@@ -81,7 +140,7 @@ T lerp(const T y0, const T y1, const T x0, const T x1, const T x)
 * @param v1 is the ending value
 */
 template<typename T>
-T lerp_n_f(const T v0, const T v1, const T t)
+T lerp_n_f(const T v0, const T v1, const float t)
 {
 	return v0 + (v1 - v0) * t;
 }
@@ -98,14 +157,14 @@ T lerp_n_f(const T v0, const T v1, const T t)
  * @param v1 is the ending value
  */
 template<typename T>
-T lerp_n(const T v0, const T v1, const T t)
+T lerp_n(const T v0, const T v1, const float t)
 {
 	return (1 - t) * v0 + t * v1;
 }
 
 /**
  * @brief
- * C++ Implmentation of Python's enumerate, can be used like this:
+ * C++ Implementation of Python's enumerate, can be used like this:
  * 
  * for (auto [i, thing] : enumerate(things))
  * {
@@ -137,3 +196,23 @@ template <typename T,
 }
 
 
+// https://stackoverflow.com/questions/207976/how-to-easily-map-c-enums-to-strings
+template<typename T> struct map_init_helper
+{
+	T& data;
+	explicit map_init_helper(T& d) : data(d) {}
+	map_init_helper& operator() (typename T::key_type const& key, typename T::mapped_type const& value)
+	{
+		data[key] = value;
+		return *this;
+	}
+};
+
+template<typename T> map_init_helper<T> map_init(T& item)
+{
+	return map_init_helper<T>(item);
+}
+
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}

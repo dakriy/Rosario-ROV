@@ -6,7 +6,7 @@
 #include <SFML/Window/Event.hpp>
 #include "Frames/MainMenuFrame.h"
 #include "Factories/TextFactory.h"
-#include "Utilities.h"
+#include "Utilities/Utilities.h"
 #include "Core/GlobalContext.h"
 
 bool LoadResources()
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 		{
 			vidmode = sf::VideoMode(100, 100);
 			if (!vidmode.isValid())
-				QuitWithError("Could not find a compatable Video Mode", EXIT_FAILURE);
+				QuitWithError("Could not find a compatible Video Mode", EXIT_FAILURE);
 		}
 	}
 
@@ -55,7 +55,6 @@ int main(int argc, char* argv[])
 	
 
 	// Must be kept alive in the root scope for everything else to be able to access it.
-	// It adds itself to the global context.
 	Core::EventHandler<sf::Event, sf::Event::EventType::Count> eventHandler;
 	Core::EventHandler<Core::Event, Core::Event::EventType::Count> coreEventHandler;
 	GlobalContext::set_event_handler(&eventHandler);
@@ -64,7 +63,7 @@ int main(int argc, char* argv[])
 	// Start up main rendering window
 
 	sf::RenderWindow Window(vidmode, APP_NAME, vidstyle, settings);
-	Window.setVerticalSyncEnabled(true);
+
 	ImGui::SFML::Init(Window);
 
 	GlobalContext::set_window(&Window);

@@ -1,0 +1,6 @@
+[submodule "ROVController/imgui"]
+	path = ROVController/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "ROVController/imgui-sfml"]
+	path = ROVController/imgui-sfml
+	url = https://github.com/eliasdaler/imgui-sfml

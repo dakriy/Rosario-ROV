@@ -12,4 +12,9 @@
 #define let const auto
 #define var auto
 
+constexpr double E = 2.7182818284590452353602874713527;
+
+// Interestingly enough, NASA only uses about 15 digits of PI for spaceflight.
+constexpr double PI = 3.1415926535897932384626433832;
+
 constexpr auto APP_NAME = "ROV Controller";

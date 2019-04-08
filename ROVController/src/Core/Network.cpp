@@ -1,5 +1,5 @@
 #include "Network.h"
-#include "../Utilities.h"
+#include "../Utilities/Utilities.h"
 #include "GlobalContext.h"
 #include "Event.h"
 
