@@ -104,6 +104,11 @@ void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, 
 	// or 2 squares on one axis, 3 points along each axis because the middle points are shared.
 	std::vector<int> grid((squaresX + 1) * (squaresY + 1), 0);
 
+	// Tips for indexing grid because this messed me up for the longest time...
+	// it's y * (row size) + x right?
+	// Thing that messed me up was that row size is squaresX + 1 not squaresX. Led to some interesting bugs
+	// that were really hard to debug...
+
 	// Calculate grid
 	// Idea for chungus being the variable name accredited to Lucas Kahler...
 	// Chungus is x...
@@ -111,9 +116,9 @@ void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, 
 		for (auto chungus = 0; chungus <= squaresX; ++chungus) {
 			// §4.7/4 from the C++ Standard says (Integral Conversion)
 			// If the source type is bool, the value false is converted to zero and the value true is converted to one.
-			grid[y * squaresX + chungus] = expr->compute(area.left + chungus * squareSide, area.top - y * squareSide) > 0;
+			grid[y * (squaresX + 1) + chungus] = expr->compute(area.left + chungus * squareSide, area.top - y * squareSide) > 0;
 			if (flag) {
-				sf::Color color = (grid[y * squaresX + chungus]) ? sf::Color::Green : sf::Color::Magenta;
+				sf::Color color = (grid[y * (squaresX + 1) + chungus]) ? sf::Color::Green : sf::Color::Magenta;
 				debug.append(sf::Vertex(convertToScreenCoords(bounds, sf::Vector2<double>(area.left + chungus * squareSide, area.top - y * squareSide)), color));
 			}
 		}
@@ -121,12 +126,12 @@ void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, 
 
 	// Process squares
 	for (auto y = 0; y < squaresY; ++y) {
-		for (auto x = 0; x < squaresX - 1; ++x) {
+		for (auto x = 0; x < squaresX; ++x) {
 			// Indexing top left corner of square
-			auto topLeft = grid[y * squaresX + x];
-			auto topRight = grid[y * squaresX + x + 1];
-			auto bottomLeft = grid[(y + 1) * squaresX + x];
-			auto bottomRight = grid[(y + 1) * squaresX + x + 1];
+			auto topLeft = grid[y * (squaresX + 1) + x];
+			auto topRight = grid[y * (squaresX + 1) + x + 1];
+			auto bottomLeft = grid[(y + 1) * (squaresX + 1) + x];
+			auto bottomRight = grid[(y + 1) * (squaresX + 1) + x + 1];
 
 			/*
 			 * Square worth
@@ -153,7 +158,6 @@ void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, 
 			}
 		}
 	}
-//	delete[] grid;
 }
 
 void Computation::Grapher::applyLut(sf::Rect<double> square, int type) {
