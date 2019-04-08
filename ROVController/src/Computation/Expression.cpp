@@ -26,7 +26,7 @@ Computation::Token *Computation::Expression::getHead() {
 
 Computation::GraphingHint Computation::Expression::graphingSuggestion() {
 
-    if (!head || !head->getRight() || !head->getLeft())
+    if (!head || !head->getRight() || !head->getLeft() || !equation)
     {
         // No equals sign because stuff is null meaning we were not fully initialized.
         return GraphingHint::Constant;

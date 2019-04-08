@@ -76,13 +76,14 @@ void Computation::Grapher::update() {
 			// clear doesn't deallocate the corresponding memory, so that adding new vertices after clearing doesn't involve reallocating all the memory.
 			points.clear();
 
-			static int squaresX = 1;
-			static int iterations = 1;
+			static int squaresX = 100;
+			static int iterations = 3;
 
 			ImGui::Begin("Marching Squares");
 			ImGui::SliderInt("Squares along the x axis", &squaresX, 1, 200);
-			ImGui::SliderInt("Iterations", &iterations, 1, 5);
-			ImGui::Checkbox("Debug", &flag);
+			ImGui::SliderInt("Iterations", &iterations, 1, 10);
+			ImGui::SliderInt("Iteration Squares", &iterationSquares, 2, 10);
+			ImGui::Checkbox("Debug Dots", &flag);
 			ImGui::End();
 
 			marchingSquares(bounds, squaresX, iterations);
@@ -153,7 +154,7 @@ void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, 
 				if (current == max) {
 					applyLut(square, type);
 				} else {
-					marchingSquares(square, squaresX / (current * 2), max, current + 1);
+					marchingSquares(square, iterationSquares, max, current + 1);
 				}
 			}
 		}

@@ -14,6 +14,7 @@ namespace Computation{
             sf::VertexArray points;
             sf::VertexArray debug;
             bool flag = false;
+            int iterationSquares = 3;
 
             sf::Rect<double> bounds;
 
