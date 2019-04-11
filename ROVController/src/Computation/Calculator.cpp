@@ -1,6 +1,7 @@
 #include "Calculator.h"
 #include "../Utilities/Utilities.h"
 #include <cstdlib>
+#include <cstring>
 
 Computation::Expression * Computation::Calculator::parse(const char * expr) {
     expression = iterator = expr;

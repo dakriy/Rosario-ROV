@@ -28,6 +28,7 @@ int GetRandomNumberInRange(int min, int max)
 	return dist(rnd);
 }
 
+/*
 void copyScreenshotToClipboard(const sf::Image & image)
 {
 	BITMAPINFOHEADER bmpInfoHeader = {0};
@@ -78,7 +79,7 @@ void copyScreenshotToClipboard(const sf::Image & image)
 
 	CloseClipboard();
 	GlobalFree(hResult);
-}
+}*/
 
 sf::Vector2f convertToScreenCoords(sf::Rect<double> bounds, sf::Vector2<double> coords) {
     auto windowSize = GlobalContext::get_window()->getSize();
