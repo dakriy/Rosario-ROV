@@ -12,6 +12,9 @@ set(OUTPUT_RELEASE Release/bin)
 
 # Folders files
 set(CPP_DIR_1 src)
+set(CPP_DIR_2 src/Network)
+set(HEADER_DIR_1 src)
+set(HEADER_DIR_2 src/Network)
 
 ############## CMake Project ################
 #        The main options of project        #
@@ -89,6 +92,9 @@ endif(NOT MSVC)
 
 file(GLOB SRC_FILES
     ${CPP_DIR_1}/*.cpp
+    ${CPP_DIR_2}/*.cpp
+    ${HEADER_DIR_1}/*.h
+    ${HEADER_DIR_2}/*.h
 )
 
 # Add executable to build.
