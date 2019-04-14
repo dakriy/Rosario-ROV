@@ -101,7 +101,7 @@ namespace Core
 
 		void process_packets();
 
-		void send_packet(PacketTypes t, void * data = nullptr, size_t size = 0);
+		void send_packet(sf::Packet &p, PacketTypes t);
 
 		void process_packet(PacketTypes t);
 

@@ -40,9 +40,15 @@ Frames::ViewFrame::ViewFrame()
 	}, Core::Event::EventType::TemperatureReceived);
 
 
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StartVideo);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StartPressure);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StartTemp);
+	sf::Packet vidP;
+	sf::Packet pressP;
+	sf::Packet tempP;
+	vidP << static_cast<unsigned char>(Core::PacketTypes::StartVideo);
+	pressP << static_cast<unsigned char>(Core::PacketTypes::StartPressure);
+	tempP << static_cast<unsigned char>(Core::PacketTypes::StartTemp);
+	GlobalContext::get_network()->send_packet(vidP, Core::PacketTypes::StartVideo);
+	GlobalContext::get_network()->send_packet(pressP, Core::PacketTypes::StartPressure);
+	GlobalContext::get_network()->send_packet(tempP, Core::PacketTypes::StartTemp);
 }
 
 void Frames::ViewFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -83,7 +89,10 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 		let down = 3.4f;
 		let range = up - down;
 		var amount = (pos + 100.f) / 200.f * range + down;
-		GlobalContext::get_network()->send_packet(Core::PacketTypes::Move, reinterpret_cast<void*>(&amount), sizeof amount);
+		sf::Packet p;
+		p << static_cast<unsigned char>(Core::PacketTypes::Move);
+		p << amount;
+		GlobalContext::get_network()->send_packet(p, Core::PacketTypes::Move);
 		updateCounter = 0;
 	} else
 	{
@@ -98,9 +107,15 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StopVideo);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StopTemp);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StopPressure);
+	sf::Packet vidP;
+	sf::Packet pressP;
+	sf::Packet tempP;
+	vidP << static_cast<unsigned char>(Core::PacketTypes::StopVideo);
+	pressP << static_cast<unsigned char>(Core::PacketTypes::StopPressure);
+	tempP << static_cast<unsigned char>(Core::PacketTypes::StopTemp);
+	GlobalContext::get_network()->send_packet(vidP, Core::PacketTypes::StopVideo);
+	GlobalContext::get_network()->send_packet(tempP, Core::PacketTypes::StopTemp);
+	GlobalContext::get_network()->send_packet(pressP, Core::PacketTypes::StopPressure);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(pressureHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(temperatureHook);

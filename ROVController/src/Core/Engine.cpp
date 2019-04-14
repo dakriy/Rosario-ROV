@@ -42,7 +42,9 @@ void Core::Engine::Update()
 		}
 		if (ImGui::Button("Shutdown ROV"))
 		{
-			network->send_packet(PacketTypes::Shutdown);
+			sf::Packet p;
+			p << static_cast<unsigned char>(PacketTypes::Shutdown);
+			network->send_packet(p, PacketTypes::Shutdown);
 		}
 		ImGui::End();
 	}

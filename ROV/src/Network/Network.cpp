@@ -36,13 +36,14 @@ void Network::Network::watch() {
 	while (!done)
 	{
 		// No connection yet, broadcast ourselves.
-		if (!connection.getRemotePort()) {
+		if (!connected) {
 			if (selector.wait(sf::milliseconds(packetWaitTimeout))) {
 				// Check if it was listener that got new data
 				if (selector.isReady(listener)) {
 					// Accept new connection
 					if (listener.accept(connection) == sf::Socket::Done) {
 						// Watch the new socket
+						connected = true;
 						selector.add(connection);
 					}
 				}
@@ -71,8 +72,12 @@ void Network::Network::watch() {
 				// New packet!
 				if (selector.isReady(connection)) {
 					sf::Packet p;
-					if (connection.receive(p) == sf::Socket::Done) {
+					auto status = connection.receive(p);
+					if (status == sf::Socket::Done) {
 						handlePacket(p);
+					} else if (status == sf::Socket::Disconnected) {
+						connected = false;
+						selector.remove(connection);
 					}
 				}
 			} else { // TODO: Handle too many timeouts
@@ -85,7 +90,7 @@ void Network::Network::watch() {
 			///////////////////////////////////////////
 
 			// Make sure we are still connected
-			if (connection.getRemotePort()) {
+			if (connected) {
 				// Send things
 				sendQueueGuard.lock();
 				while (!sendQueue.empty()) {

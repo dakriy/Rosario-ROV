@@ -26,6 +26,7 @@ namespace Network {
 		sf::TcpListener listener;
 
 		bool done = false;
+		bool connected = false;
 
 		// Running threads
 		std::thread messenger;

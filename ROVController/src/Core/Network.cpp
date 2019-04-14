@@ -222,7 +222,9 @@ void Core::Network::process_packets()
 		// Send ping every 5 seconds
 		if (pingClock.getElapsedTime().asSeconds() > 5)
 		{
-			send_packet(PacketTypes::Ping);
+			sf::Packet ping;
+			ping << static_cast<unsigned char>(PacketTypes::Ping);
+			send_packet(ping, PacketTypes::Ping);
 		}
 	}
 
@@ -244,44 +246,21 @@ void Core::Network::process_packets()
 	}
 }
 
-void Core::Network::send_packet(PacketTypes t, void * data, size_t size)
-{
-	if (connected)
-	{
-		switch(t)
-		{
-		case PacketTypes::Move:
-		{
-			sf::Socket::Status status;
-			unsigned char buff[100];
-			buff[0] = static_cast<unsigned char>(t);
-			std::memcpy(&buff[1], data, size);
-			do
+
+void Core::Network::send_packet(sf::Packet &p, PacketTypes t) {
+	if (connected) {
+		switch (t) {
+			case PacketTypes::Ping:
+				pingClock.restart();
+			default:
 			{
-				status = connection.send(buff, size + 1);
-			} while (status == sf::Socket::Status::Partial);
-			if (status == sf::Socket::Disconnected)
-			{
-				connected = false;
+				sf::Socket::Status status;
+				do {
+					status = connection.send(p);
+				} while (status == sf::Socket::Status::Partial);
+				if (status ==sf::Socket::Disconnected) connected = false;
+				break;
 			}
-			break;
-		}
-		case PacketTypes::Ping:
-			pingClock.restart();
-			// Nothing special needed for nay of these packets currently except ping packet and move packet
-		default:
-		{
-			sf::Socket::Status status;
-			do
-			{
-				status = connection.send(&t, 1);
-			} while (status == sf::Socket::Status::Partial);
-			if (status == sf::Socket::Disconnected)
-			{
-				connected = false;
-			}
-			break;
-		}
 		}
 	}
 }
