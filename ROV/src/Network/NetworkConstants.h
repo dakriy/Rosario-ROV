@@ -1,6 +1,7 @@
 #pragma once
 #ifndef ROV_NETWORKCONSTANTS_H
 #define ROV_NETWORKCONSTANTS_H
+#include <SFML/Network.hpp>
 
 namespace Network {
 
@@ -8,7 +9,7 @@ namespace Network {
 	const unsigned short connectionPort = 42069;
 	const unsigned short broadcastInterval = 3000; // In milliseconds
 	const unsigned short packetWaitTimeout = 100; // In milliseconds
-	const char * magicBroadcastString = "magic|Rosario ROV|end";
+	const char * const magicBroadcastString = "magic|Rosario ROV|end";
 
 	enum class PacketTypes
 	{

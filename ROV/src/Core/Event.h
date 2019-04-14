@@ -156,8 +156,8 @@ namespace Core
 
 		for (auto e : { types... })
 		{
-			if (e < hook->event_type_enable_flag.size())
-				hook->event_type_enable_flag[e] = true;
+			if (static_cast<int>(e) < hook->event_type_enable_flag.size())
+				hook->event_type_enable_flag[static_cast<int>(e)] = true;
 		}
 
 		// Add the hook onto the list to keep track of it for later
@@ -182,8 +182,8 @@ namespace Core
 
 		// Turn off all event flags requested.
 		for (auto e : { types... })
-			if (e < (*it)->event_type_enable_flag.size())
-				(*it)->event_type_enable_flag[e] = false;
+			if (static_cast<int>(e) < (*it)->event_type_enable_flag.size())
+				(*it)->event_type_enable_flag[static_cast<int>(e)] = false;
 
 
 		// Go through each table position to see if it's active.

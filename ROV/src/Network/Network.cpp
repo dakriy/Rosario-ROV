@@ -37,7 +37,7 @@ void Network::Network::watch() {
 	{
 		// No connection yet, broadcast ourselves.
 		if (!connection.getRemotePort()) {
-			if (selector.wait(sf::milliseconds(broadcastInterval))) {
+			if (selector.wait(sf::milliseconds(packetWaitTimeout))) {
 				// Check if it was listener that got new data
 				if (selector.isReady(listener)) {
 					// Accept new connection
@@ -48,11 +48,11 @@ void Network::Network::watch() {
 				}
 			}
 
+			// Time to rebroadcast?
 			if (lastBroadcastTime.getElapsedTime() >= sf::milliseconds(broadcastInterval)) {
-
 				// -1 as we do not want to include the trailing \n
 				// Broadcast ourselves
-				if (broadcast.send(magicBroadcastString, sizeof(magicBroadcastString) / sizeof(char) - 1, sf::IpAddress::Broadcast, broadcastPort) == sf::Socket::Status::Done) {
+				if (broadcast.send(magicBroadcastString, strlen(magicBroadcastString), sf::IpAddress::Broadcast, broadcastPort) == sf::Socket::Status::Done) {
 					// Restart broadcast clock
 					lastBroadcastTime.restart();
 				}
@@ -138,4 +138,14 @@ void Network::Network::unhookOne(PACKET_EVENT_FUNC_INDEX_NS index, PacketTypes t
 
 void Network::Network::handlePacket(sf::Packet &packet) {
 	// TODO: Handle packets lol
+	unsigned char type;
+	PacketContainer c;
+	if (packet >> type) {
+		c.type = static_cast<PacketTypes>(type);
+		c.p = &packet;
+	} else {
+		// No type was sent I guess? So throw it away
+		return;
+	}
+	packetHandler.handle_event(&c);
 }

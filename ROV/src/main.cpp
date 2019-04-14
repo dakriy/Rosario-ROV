@@ -1,4 +1,6 @@
 
+#include "Network/Network.h"
+
 int main() {
 	/*
 	 * Plan:
@@ -42,6 +44,16 @@ int main() {
 
 	// Main Thread
 
+	Network::Network network;
+	bool done = false;
+	network.hook([&](const Network::PacketContainer * p) -> bool {
+		done = true;
+		return false;
+	}, Network::PacketTypes::Shutdown);
+
+	while (!done) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 
 	return 0;
 }
