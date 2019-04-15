@@ -46,10 +46,12 @@ namespace Network {
 
 		void watch();
 		void handlePacket(sf::Packet &packet);
+
+		PACKET_EVENT_FUNC_INDEX_NS pingHook;
 	public:
 		Network();
 
-		void sendPacket(sf::Packet * packet);
+		void sendPacket(sf::Packet *packet);
 		PACKET_EVENT_FUNC_INDEX_NS hook(const PACKET_EVENT_FUNC_TYPE_NS & hook, PacketTypes type);
 		PACKET_EVENT_FUNC_INDEX_NS hookAll(const PACKET_EVENT_FUNC_TYPE_NS & hook);
 		void unhookAll(PACKET_EVENT_FUNC_INDEX_NS index);

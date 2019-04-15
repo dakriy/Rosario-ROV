@@ -46,7 +46,7 @@ int main() {
 
 	Network::Network network;
 	bool done = false;
-	network.hook([&](const Network::PacketContainer * p) -> bool {
+	auto hook = network.hook([&](const Network::PacketContainer * p) -> bool {
 		done = true;
 		return false;
 	}, Network::PacketTypes::Shutdown);

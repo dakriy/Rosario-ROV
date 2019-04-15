@@ -5,6 +5,7 @@
 #include "../Frames/TitleFrame.h"
 #include "../Globals.h"
 #include "../Utilities/Utilities.h"
+#include "../Factories/PacketFactory.h"
 #include <imgui-SFML.h>
 #include <imgui.h>
 
@@ -42,9 +43,8 @@ void Core::Engine::Update()
 		}
 		if (ImGui::Button("Shutdown ROV"))
 		{
-			sf::Packet p;
-			p << static_cast<unsigned char>(PacketTypes::Shutdown);
-			network->send_packet(p, PacketTypes::Shutdown);
+			auto p = Factory::PacketFactory::create_shutdown_packet();
+			network->send_packet(p);
 		}
 		ImGui::End();
 	}

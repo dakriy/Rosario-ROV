@@ -43,13 +43,13 @@ namespace Core
 		bool connecting = false;
 
 		bool search = false;
-
-		
 		
 		// Sockets and buffers
 		sf::UdpSocket broadcast;
 
 		sf::TcpSocket connection;
+
+		sf::SocketSelector selector;
 
 		sf::IpAddress ROV;
 
@@ -101,7 +101,9 @@ namespace Core
 
 		void process_packets();
 
-		void send_packet(sf::Packet &p, PacketTypes t);
+		void send_packet(sf::Packet &p);
+
+		void send_ping_packet();
 
 		void process_packet(PacketTypes t);
 

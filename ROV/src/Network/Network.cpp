@@ -14,6 +14,12 @@ Network::Network::Network() : messenger(&Network::watch, this) {
 	connection.setBlocking(true);
 	selector.add(broadcast);
 	selector.add(listener);
+	pingHook = packetHandler.add_event_callback([&](const PacketContainer *p) -> bool {
+		sf::Packet ping;
+		ping << static_cast<unsigned char>(PacketTypes::Ping);
+		connection.send(ping);
+		return false;
+	}, PacketTypes::Ping);
 }
 
 Network::Network::~Network() {
@@ -86,7 +92,7 @@ void Network::Network::watch() {
 
 
 			///////////////////////////////////////////
-			//////// SEND DATA          ///////////////
+			////////       SEND DATA    ///////////////
 			///////////////////////////////////////////
 
 			// Make sure we are still connected

@@ -199,7 +199,7 @@ void Core::Network::process_packets()
 
 		auto done = continueRecv();
 		
-		// If recieving has finished from last packet, there is new data availble, and it is the count meaning the packet identifier
+		// If receiving has finished from last packet, there is new data available, and it is the count meaning the packet identifier
 		if (done && currentIncomingType == PacketTypes::Count)
 		{
 			// Identify the packet
@@ -222,9 +222,7 @@ void Core::Network::process_packets()
 		// Send ping every 5 seconds
 		if (pingClock.getElapsedTime().asSeconds() > 5)
 		{
-			sf::Packet ping;
-			ping << static_cast<unsigned char>(PacketTypes::Ping);
-			send_packet(ping, PacketTypes::Ping);
+			send_ping_packet();
 		}
 	}
 
@@ -247,22 +245,21 @@ void Core::Network::process_packets()
 }
 
 
-void Core::Network::send_packet(sf::Packet &p, PacketTypes t) {
+void Core::Network::send_packet(sf::Packet &p) {
 	if (connected) {
-		switch (t) {
-			case PacketTypes::Ping:
-				pingClock.restart();
-			default:
-			{
-				sf::Socket::Status status;
-				do {
-					status = connection.send(p);
-				} while (status == sf::Socket::Status::Partial);
-				if (status ==sf::Socket::Disconnected) connected = false;
-				break;
-			}
-		}
+		sf::Socket::Status status;
+		do {
+			status = connection.send(p);
+		} while (status == sf::Socket::Status::Partial);
+		if (status == sf::Socket::Disconnected) connected = false;
 	}
+}
+
+void Core::Network::send_ping_packet() {
+	sf::Packet ping;
+	ping << static_cast<unsigned char>(PacketTypes::Ping);
+	pingClock.restart();
+	send_packet(ping);
 }
 
 void Core::Network::process_packet(PacketTypes type)

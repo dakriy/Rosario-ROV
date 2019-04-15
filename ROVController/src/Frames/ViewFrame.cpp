@@ -1,5 +1,6 @@
 #include "ViewFrame.h"
 #include "../Core/GlobalContext.h"
+#include "../Factories/PacketFactory.h"
 #include <iostream>
 #include <imgui.h>
 
@@ -40,15 +41,12 @@ Frames::ViewFrame::ViewFrame()
 	}, Core::Event::EventType::TemperatureReceived);
 
 
-	sf::Packet vidP;
-	sf::Packet pressP;
-	sf::Packet tempP;
-	vidP << static_cast<unsigned char>(Core::PacketTypes::StartVideo);
-	pressP << static_cast<unsigned char>(Core::PacketTypes::StartPressure);
-	tempP << static_cast<unsigned char>(Core::PacketTypes::StartTemp);
-	GlobalContext::get_network()->send_packet(vidP, Core::PacketTypes::StartVideo);
-	GlobalContext::get_network()->send_packet(pressP, Core::PacketTypes::StartPressure);
-	GlobalContext::get_network()->send_packet(tempP, Core::PacketTypes::StartTemp);
+	sf::Packet vidP = Factory::PacketFactory::create_video_stream_start_packet();
+	sf::Packet pressP = Factory::PacketFactory::create_pressure_data_start_packet();
+	sf::Packet tempP = Factory::PacketFactory::create_temperature_data_start_packet();
+	GlobalContext::get_network()->send_packet(vidP);
+	GlobalContext::get_network()->send_packet(pressP);
+	GlobalContext::get_network()->send_packet(tempP);
 }
 
 void Frames::ViewFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -89,10 +87,8 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 		let down = 3.4f;
 		let range = up - down;
 		var amount = (pos + 100.f) / 200.f * range + down;
-		sf::Packet p;
-		p << static_cast<unsigned char>(Core::PacketTypes::Move);
-		p << amount;
-		GlobalContext::get_network()->send_packet(p, Core::PacketTypes::Move);
+		auto p = Factory::PacketFactory::create_camera_move_packet(amount);
+		GlobalContext::get_network()->send_packet(p);
 		updateCounter = 0;
 	} else
 	{
@@ -107,15 +103,12 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
-	sf::Packet vidP;
-	sf::Packet pressP;
-	sf::Packet tempP;
-	vidP << static_cast<unsigned char>(Core::PacketTypes::StopVideo);
-	pressP << static_cast<unsigned char>(Core::PacketTypes::StopPressure);
-	tempP << static_cast<unsigned char>(Core::PacketTypes::StopTemp);
-	GlobalContext::get_network()->send_packet(vidP, Core::PacketTypes::StopVideo);
-	GlobalContext::get_network()->send_packet(tempP, Core::PacketTypes::StopTemp);
-	GlobalContext::get_network()->send_packet(pressP, Core::PacketTypes::StopPressure);
+	sf::Packet vidP = Factory::PacketFactory::create_video_stream_stop_packet();
+	sf::Packet pressP = Factory::PacketFactory::create_pressure_data_stop_packet();
+	sf::Packet tempP = Factory::PacketFactory::create_temperature_data_stop_packet();
+	GlobalContext::get_network()->send_packet(vidP);
+	GlobalContext::get_network()->send_packet(pressP);
+	GlobalContext::get_network()->send_packet(tempP);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(pressureHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(temperatureHook);
