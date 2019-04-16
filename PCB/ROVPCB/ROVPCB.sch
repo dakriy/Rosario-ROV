@@ -15,7 +15,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L ROVPCB-rescue:+5V-power #PWR01
+L ROVPCB-rescue:+5V-power-ROVPCB-rescue #PWR01
 U 1 1 580C1B61
 P 3100 950
 F 0 "#PWR01" H 3100 800 50  0001 C CNN
@@ -33,7 +33,7 @@ Wire Wire Line
 	3100 1200 2900 1200
 Connection ~ 3100 1100
 $Comp
-L ROVPCB-rescue:GND-power #PWR02
+L ROVPCB-rescue:GND-power-ROVPCB-rescue #PWR02
 U 1 1 580C1D11
 P 3000 3150
 F 0 "#PWR02" H 3000 2900 50  0001 C CNN
@@ -57,7 +57,7 @@ Wire Wire Line
 	3000 1700 2900 1700
 Connection ~ 3000 2000
 $Comp
-L ROVPCB-rescue:GND-power #PWR03
+L ROVPCB-rescue:GND-power-ROVPCB-rescue #PWR03
 U 1 1 580C1E01
 P 2300 3150
 F 0 "#PWR03" H 2300 2900 50  0001 C CNN
@@ -82,7 +82,7 @@ Wire Wire Line
 Wire Wire Line
 	2200 950  2200 1100
 $Comp
-L ROVPCB-rescue:+3.3V-power #PWR04
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue #PWR04
 U 1 1 580C1BC1
 P 2200 950
 F 0 "#PWR04" H 2200 800 50  0001 C CNN
@@ -209,7 +209,7 @@ Connection ~ 3000 1700
 Text Notes 650  7600 0    50   ~ 0
 ID_SD and ID_SC PINS:\nThese pins are reserved for HAT ID EEPROM.\n\nAt boot time this I2C interface will be\ninterrogated to look for an EEPROM\nthat identifes the attached board and\nallows automagic setup of the GPIOs\n(and optionally, Linux drivers).\n\nDO NOT USE these pins for anything other\nthan attaching an I2C ID EEPROM. Leave\nunconnected if ID EEPROM not required.
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical MK1
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue MK1
 U 1 1 5834FB2E
 P 3000 7200
 F 0 "MK1" H 3100 7246 50  0000 L CNN
@@ -220,7 +220,7 @@ F 3 "" H 3000 7200 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical MK3
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue MK3
 U 1 1 5834FBEF
 P 3450 7200
 F 0 "MK3" H 3550 7246 50  0000 L CNN
@@ -231,7 +231,7 @@ F 3 "" H 3450 7200 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical MK2
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue MK2
 U 1 1 5834FC19
 P 3000 7400
 F 0 "MK2" H 3100 7446 50  0000 L CNN
@@ -242,7 +242,7 @@ F 3 "" H 3000 7400 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical MK4
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue MK4
 U 1 1 5834FC4F
 P 3450 7400
 F 0 "MK4" H 3550 7446 50  0000 L CNN
@@ -255,7 +255,7 @@ $EndComp
 Text Notes 3000 7050 0    50   ~ 0
 Mounting Holes
 $Comp
-L ROVPCB-rescue:Conn_02x20_Odd_Even-Connector_Generic P1
+L ROVPCB-rescue:Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue P1
 U 1 1 59AD464A
 P 2600 2000
 F 0 "P1" H 2650 3117 50  0000 C CNN
@@ -314,7 +314,7 @@ GPIO2(SDA1)
 Text Label 8050 1750 2    50   ~ 0
 GPIO3(SCL1)
 $Comp
-L ROVPCB-rescue:GND-power #PWR06
+L ROVPCB-rescue:GND-power-ROVPCB-rescue #PWR06
 U 1 1 5C61D5CB
 P 8400 2350
 F 0 "#PWR06" H 8400 2100 50  0001 C CNN
@@ -325,7 +325,7 @@ F 3 "" H 8400 2350 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:+3.3V-power #PWR05
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue #PWR05
 U 1 1 5C61D5E4
 P 8150 1450
 F 0 "#PWR05" H 8150 1300 50  0001 C CNN
@@ -377,7 +377,7 @@ $EndComp
 Text Notes 1650 4050 0    157  ~ 31
 Accelerometer
 $Comp
-L ROVPCB-rescue:GND-power #PWR0101
+L ROVPCB-rescue:GND-power-ROVPCB-rescue #PWR0101
 U 1 1 5C61FCB6
 P 1700 5700
 F 0 "#PWR0101" H 1700 5450 50  0001 C CNN
@@ -421,7 +421,7 @@ $EndComp
 Wire Wire Line
 	3250 5650 3450 5650
 $Comp
-L ROVPCB-rescue:GND-power #PWR0102
+L ROVPCB-rescue:GND-power-ROVPCB-rescue #PWR0102
 U 1 1 5C62556F
 P 3450 5950
 F 0 "#PWR0102" H 3450 5700 50  0001 C CNN
@@ -432,7 +432,7 @@ F 3 "" H 3450 5950 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:GND-power #PWR0103
+L ROVPCB-rescue:GND-power-ROVPCB-rescue #PWR0103
 U 1 1 5C62558E
 P 3900 5950
 F 0 "#PWR0103" H 3900 5700 50  0001 C CNN
@@ -458,7 +458,7 @@ F 3 "~" H 2000 4450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:GND-power #PWR0104
+L ROVPCB-rescue:GND-power-ROVPCB-rescue #PWR0104
 U 1 1 5C626ED8
 P 2000 4600
 F 0 "#PWR0104" H 2000 4350 50  0001 C CNN
@@ -480,7 +480,7 @@ Wire Wire Line
 	1700 5250 1700 5550
 Connection ~ 1700 5550
 $Comp
-L ROVPCB-rescue:+3.3V-power #PWR0105
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue #PWR0105
 U 1 1 5C62A4AF
 P 2650 4400
 F 0 "#PWR0105" H 2650 4250 50  0001 C CNN
