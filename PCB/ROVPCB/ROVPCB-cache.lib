@@ -45,11 +45,11 @@ X ~ 2 0 -150 110 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_+3.3V-power
+# ROVPCB-rescue_+3.3V-power-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_+3.3V-power #PWR 0 0 Y Y 1 F P
+DEF ROVPCB-rescue_+3.3V-power-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "ROVPCB-rescue_+3.3V-power" 0 140 50 H V C CNN
+F1 "ROVPCB-rescue_+3.3V-power-ROVPCB-rescue" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -60,11 +60,11 @@ X +3V3 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_+5V-power
+# ROVPCB-rescue_+5V-power-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_+5V-power #PWR 0 0 Y Y 1 F P
+DEF ROVPCB-rescue_+5V-power-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "ROVPCB-rescue_+5V-power" 0 140 50 H V C CNN
+F1 "ROVPCB-rescue_+5V-power-ROVPCB-rescue" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -75,11 +75,11 @@ X +5V 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic
+# ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic J 0 40 Y N 1 F N
+DEF ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue J 0 40 Y N 1 F N
 F0 "J" 50 1000 50 H V C CNN
-F1 "ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic" 50 -1100 50 H V C CNN
+F1 "ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue" 50 -1100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -170,11 +170,11 @@ X Pin_9 9 -200 500 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_GND-power
+# ROVPCB-rescue_GND-power-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_GND-power #PWR 0 0 Y Y 1 F P
+DEF ROVPCB-rescue_GND-power-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -250 50 H I C CNN
-F1 "ROVPCB-rescue_GND-power" 0 -150 50 H V C CNN
+F1 "ROVPCB-rescue_GND-power-ROVPCB-rescue" 0 -150 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -183,11 +183,11 @@ X GND 1 0 0 0 D 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_Mounting_Hole-Mechanical
+# ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_Mounting_Hole-Mechanical MK 0 40 Y Y 1 F N
+DEF ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue MK 0 40 Y Y 1 F N
 F0 "MK" 0 200 50 H V C CNN
-F1 "ROVPCB-rescue_Mounting_Hole-Mechanical" 0 125 50 H V C CNN
+F1 "ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue" 0 125 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -199,31 +199,55 @@ C 0 0 50 0 1 50 N
 ENDDRAW
 ENDDEF
 #
-# Sensor_Motion_MPU-6050
+# Sensor_BME280
 #
-DEF Sensor_Motion_MPU-6050 U 0 20 Y Y 1 F N
-F0 "U" -450 550 50 H V C CNN
-F1 "Sensor_Motion_MPU-6050" 300 -550 50 H V C CNN
-F2 "Sensor_Motion:InvenSense_QFN-24_4x4mm_P0.5mm" 0 -800 50 H I C CNN
-F3 "" 0 -150 50 H I C CNN
+DEF Sensor_BME280 U 0 40 Y Y 1 F N
+F0 "U" 300 500 50 H V C CNN
+F1 "Sensor_BME280" 300 -500 50 H V C CNN
+F2 "Package_LGA:Bosch_LGA-8_2.5x2.5mm_P0.65mm_ClockwisePinNumbering" 0 -200 50 H I C CNN
+F3 "" 0 -200 50 H I C CNN
 $FPLIST
- *QFN-24*4x4mm*P0.5mm*
+ *LGA*2.5x2.5mm*P0.65mm*Clockwise*
 $ENDFPLIST
 DRAW
-S -500 500 500 -500 0 1 10 f
-X CLKIN 1 -700 -300 200 R 50 50 1 1 I C
-X REGOUT 10 700 -300 200 L 50 50 1 1 P
+S -400 400 400 -400 0 1 10 f
+X GND 1 -100 -600 200 U 50 50 1 1 W
+X CSB 2 600 -300 200 L 50 50 1 1 I
+X SDI 3 600 -100 200 L 50 50 1 1 B
+X SCK 4 600 100 200 L 50 50 1 1 I
+X SDO 5 600 300 200 L 50 50 1 1 B
+X VDDIO 6 -100 600 200 D 50 50 1 1 W
+X GND 7 100 -600 200 U 50 50 1 1 W
+X VDD 8 100 600 200 D 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# Sensor_Motion_MPU-9250
+#
+DEF Sensor_Motion_MPU-9250 U 0 20 Y Y 1 F N
+F0 "U" -450 750 50 H V C CNN
+F1 "Sensor_Motion_MPU-9250" 300 -750 50 H V C CNN
+F2 "Sensor_Motion:InvenSense_QFN-24_3x3mm_P0.4mm" 0 -1000 50 H I C CNN
+F3 "" 0 -150 50 H I C CNN
+$FPLIST
+ *QFN*3x3mm*P0.4mm*
+$ENDFPLIST
+DRAW
+S -500 700 500 -700 0 1 10 f
+X RESV_VDDIO 1 700 -300 200 L 50 50 1 1 I
+X REGOUT 10 700 -200 200 L 50 50 1 1 P
 X FSYNC 11 -700 -200 200 R 50 50 1 1 I
 X INT 12 700 300 200 L 50 50 1 1 O
-X VDD 13 100 700 200 D 50 50 1 1 W
-X GND 18 0 -700 200 U 50 50 1 1 W
-X CPOUT 20 700 -200 200 L 50 50 1 1 P
-X SCL 23 -700 200 200 R 50 50 1 1 I
-X SDA 24 -700 300 200 R 50 50 1 1 B
-X AUX_SDA 6 700 100 200 L 50 50 1 1 B
+X VDD 13 100 900 200 D 50 50 1 1 W
+X GND 18 0 -900 200 U 50 50 1 1 W
+X RESV_GND 20 700 -400 200 L 50 50 1 1 W
+X AUX_SDA 21 700 100 200 L 50 50 1 1 B
+X ~CS 22 -700 0 200 R 50 50 1 1 I
+X SCL/SCLK 23 -700 100 200 R 50 50 1 1 I
+X SDA/MOSI 24 -700 300 200 R 50 50 1 1 B
 X AUX_SCL 7 700 0 200 L 50 50 1 1 O C
-X VDDIO 8 -100 700 200 D 50 50 1 1 W
-X AD0 9 -700 100 200 R 50 50 1 1 I
+X VDDIO 8 -100 900 200 D 50 50 1 1 W
+X AD0/MISO 9 -700 200 200 R 50 50 1 1 B
 ENDDRAW
 ENDDEF
 #

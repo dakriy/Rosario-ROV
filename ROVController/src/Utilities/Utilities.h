@@ -79,8 +79,8 @@ constexpr unsigned GetNumberOfDigits(unsigned long long int i)
 	return digits;
 }
 
-
-void copyScreenshotToClipboard(const sf::Image & image);
+// Only for windows and not being used
+// void copyScreenshotToClipboard(const sf::Image & image);
 
 /**
  * @brief

@@ -2,6 +2,7 @@
 #include "../Utilities/Utilities.h"
 #include "GlobalContext.h"
 #include "Event.h"
+#include <cstring>
 
 size_t Core::Network::recvall(size_t len)
 {
