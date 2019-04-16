@@ -86,3 +86,10 @@ sf::Vector2f convertToScreenCoords(sf::Rect<double> bounds, sf::Vector2<double> 
     auto scaleY = windowSize.y / bounds.height;
     return sf::Vector2f(static_cast<float>((coords.x - bounds.left) * scaleX), static_cast<float>((bounds.top - coords.y) * scaleY));
 }
+
+sf::Vector2<double> convertToLocalCoords(sf::Rect<double> bounds, sf::Vector2<double> screenCoords) {
+    auto windowSize = GlobalContext::get_window()->getSize();
+    auto scaleX = bounds.width / windowSize.x;
+    auto scaleY = bounds.height / windowSize.y;
+    return sf::Vector2<double>(static_cast<double>(screenCoords.x * scaleX), static_cast<double>(screenCoords.y * scaleY));
+}

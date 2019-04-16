@@ -16,6 +16,8 @@ void QuitWithError(const char * error, int exit_code);
 
 sf::Vector2f convertToScreenCoords(sf::Rect<double> bounds, sf::Vector2<double> coords);
 
+sf::Vector2<double> convertToLocalCoords(sf::Rect<double> bounds, sf::Vector2<double> screenCoords);
+
 /**
  * Performs x % y but works properly with negative numbers
  */
