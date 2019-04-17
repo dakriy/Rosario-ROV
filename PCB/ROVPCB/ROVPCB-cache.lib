@@ -113,11 +113,11 @@ X SCLOUT 9 2400 -200 300 L 40 40 0 0 B
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_+3.3V-power-ROVPCB-rescue
+# ROVPCB-rescue_+3.3V-power-ROVPCB-rescue-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_+3.3V-power-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
+DEF ROVPCB-rescue_+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "ROVPCB-rescue_+3.3V-power-ROVPCB-rescue" 0 140 50 H V C CNN
+F1 "ROVPCB-rescue_+3.3V-power-ROVPCB-rescue-ROVPCB-rescue" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -128,11 +128,11 @@ X +3V3 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_+5V-power-ROVPCB-rescue
+# ROVPCB-rescue_+5V-power-ROVPCB-rescue-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_+5V-power-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
+DEF ROVPCB-rescue_+5V-power-ROVPCB-rescue-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -150 50 H I C CNN
-F1 "ROVPCB-rescue_+5V-power-ROVPCB-rescue" 0 140 50 H V C CNN
+F1 "ROVPCB-rescue_+5V-power-ROVPCB-rescue-ROVPCB-rescue" 0 140 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -143,11 +143,11 @@ X +5V 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue
+# ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue J 0 40 Y N 1 F N
+DEF ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue-ROVPCB-rescue J 0 40 Y N 1 F N
 F0 "J" 50 1000 50 H V C CNN
-F1 "ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue" 50 -1100 50 H V C CNN
+F1 "ROVPCB-rescue_Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue-ROVPCB-rescue" 50 -1100 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -238,11 +238,11 @@ X Pin_9 9 -200 500 150 R 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_GND-power-ROVPCB-rescue
+# ROVPCB-rescue_GND-power-ROVPCB-rescue-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_GND-power-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
+DEF ROVPCB-rescue_GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR 0 0 Y Y 1 F P
 F0 "#PWR" 0 -250 50 H I C CNN
-F1 "ROVPCB-rescue_GND-power-ROVPCB-rescue" 0 -150 50 H V C CNN
+F1 "ROVPCB-rescue_GND-power-ROVPCB-rescue-ROVPCB-rescue" 0 -150 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 DRAW
@@ -251,11 +251,11 @@ X GND 1 0 0 0 D 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue
+# ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue
 #
-DEF ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue MK 0 40 Y Y 1 F N
+DEF ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue MK 0 40 Y Y 1 F N
 F0 "MK" 0 200 50 H V C CNN
-F1 "ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue" 0 125 50 H V C CNN
+F1 "ROVPCB-rescue_Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue" 0 125 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
