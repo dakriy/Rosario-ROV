@@ -791,7 +791,7 @@
   )
 
   (module Package_LGA:Bosch_LGA-8_2.5x2.5mm_P0.65mm_ClockwisePinNumbering (layer F.Cu) (tedit 5A0FA816) (tstamp 5CB69D2D)
-    (at 247.825001 121.445001)
+    (at 243.415 118.275)
     (descr LGA-8)
     (tags "lga land grid array")
     (path /5CB85C79)
@@ -845,7 +845,7 @@
   )
 
   (module "Adafruit TSL2591:DFN6_TAOS" (layer F.Cu) (tedit 0) (tstamp 5CB69D3C)
-    (at 244.947601 121.212601)
+    (at 240.56 112.06)
     (path /5CB6F38A)
     (fp_text reference U3 (at 0 0) (layer F.SilkS) hide
       (effects (font (size 1.27 1.27) (thickness 0.15)) (justify right top))
@@ -873,7 +873,7 @@
   )
 
   (module LTC4316IDDPBF:DFN-10_DD (layer F.Cu) (tedit 0) (tstamp 5CB67772)
-    (at 250.34 114.47)
+    (at 253.94 117.83)
     (path /5CBEE417)
     (attr smd)
     (fp_text reference U4 (at -1.0542 -2.0524) (layer F.SilkS)
