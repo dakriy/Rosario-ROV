@@ -137,7 +137,7 @@ void Core::Engine::add_event(Core::Event *e)
 
 void Core::Engine::Loop()
 {
-	GlobalContext::get_network()->process_packets();
+    GlobalContext::get_network()->run();
 	Events();
 
 	Update();
@@ -158,7 +158,7 @@ void Core::Engine::Loop()
 	frame_action_list_.clear();
 
 	// Process events again cause why not
-	GlobalContext::get_network()->process_packets();
+    GlobalContext::get_network()->run();
 	ProcessCustomEvents();
 
 	Render();

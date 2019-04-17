@@ -11,6 +11,7 @@
 #include <mutex>
 #include <queue>
 #include "../Core/Event.h"
+#include <atomic>
 
 #define PACKET_EVENT_FUNC_TYPE EVENT_FUNC_TYPE(Network::PacketContainer)
 #define PACKET_EVENT_FUNC_INDEX EVENT_FUNC_INDEX(Network::PacketContainer, static_cast<int>(Network::PacketTypes::Count))
@@ -25,7 +26,7 @@ namespace Network {
 		sf::TcpSocket connection;
 		sf::TcpListener listener;
 
-		bool done = false;
+		std::atomic_bool done = false;
 		bool connected = false;
 
 		// Running threads
