@@ -103,29 +103,37 @@ void Core::Network::run()
 
         if (connected) {
             // Receive
-            selector.wait(sf::milliseconds(packetWaitTimeout)) {
+            if (selector.wait(sf::milliseconds(packetWaitTimeout))) {
                 if (selector.isReady(connection)) {
-
+                    sf::Packet p;
+                    if (connection.receive(p) == sf::Socket::Status::Disconnected) {
+                        connected = false;
+                    } else {
+                        auto event = decode(p);
+                        preProcess(event);
+                        // TODO: Pass off to packet handler
+                    }
                 }
             }
-        }
 
-        // Sending things
-        packetQueueLock.lock();
-        while(!packetQueue.empty()) {
-            // Get packet pointer
-            auto p = packetQueue.front();
-            // Send the packet pointer
-            auto status = connection.send(*p);
-            if (status == sf::Socket::Status::Disconnected) {
-                connected = false;
+            // Sending things
+            while(!packetQueue.empty()) {
+
+                packetQueueLock.lock();
+                // Get packet pointer
+                auto p = packetQueue.front();
+                // Pop it off the top.
+                packetQueue.pop();
+                packetQueueLock.unlock();
+                // Send the packet pointer
+                auto status = connection.send(*p);
+                if (status == sf::Socket::Status::Disconnected) {
+                    connected = false;
+                }
+                delete p;
+                // TODO: Don't drop packet if error in socket maybe? At least look into it
             }
-            // TODO: Don't drop packet if error in socket maybe? At least look into it
-            // Pop it off the top.
-            packetQueue.pop();
-            delete p;
         }
-        packetQueueLock.unlock();
 
 //        if (connected)
 //        {
@@ -168,10 +176,27 @@ Core::Event* Core::Network::decode(sf::Packet & p) {
         return nullptr;
     }
     auto type = static_cast<PacketTypes>(t);
-    switch (t) {
-        case PacketTypes::Ping:
 
+    auto packet = new Core::Event;
+
+    switch (type) {
+        case PacketTypes::Ping:break;
+        case PacketTypes::StartVideo:break;
+        case PacketTypes::StopVideo:break;
+        case PacketTypes::StartTemp:break;
+        case PacketTypes::StopTemp:break;
+        case PacketTypes::StartPressure:break;
+        case PacketTypes::StopPressure:break;
+        case PacketTypes::Move:break;
+        case PacketTypes::Video:break;
+        case PacketTypes::Temperature:break;
+        case PacketTypes::Pressure:break;
+        case PacketTypes::Shutdown:break;
+        case PacketTypes::Count:break;
+        default: //unknown packet type
+            return nullptr;
     }
+    return packet;
 }
 
 Core::Network::~Network()
