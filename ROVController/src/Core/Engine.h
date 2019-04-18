@@ -11,9 +11,8 @@
 #include "../Frames/IFrame.h"
 #include "Event.h"
 #include <vector>
-#include <list>
-
-class DebugTerminal;
+#include <queue>
+#include <mutex>
 
 namespace Core
 {
@@ -58,6 +57,7 @@ namespace Core
 
 		explicit Event(EventType t) : type(t){}
 		Event() = default;
+		~Event();
 	};
 
 	/**
@@ -90,7 +90,7 @@ namespace Core
 		// Frames currently on the stack
 		std::vector<Frames::IFrame *> frame_stack_;
 
-		std::list<Core::Event*> core_events_;
+		std::queue<Core::Event*> core_events_;
 
 		// Event processor
 		void Events();
@@ -119,14 +119,13 @@ namespace Core
 		// Global clock to keep track of time passing when updating frames
 		sf::Clock * global_clock_;
 
-		// Frame push queue
-		std::vector<Frames::IFrame *> push_frame_; 
-
 		// Frame action queue
 		std::vector<FAction> frame_action_list_;
 
 		EventHandler<sf::Event, sf::Event::EventType::Count>* ev_;
 		EventHandler<Core::Event, Core::Event::EventType::Count>* cev_;
+
+		std::mutex coreEventHandlerLock;
 
 	public:
 		/**

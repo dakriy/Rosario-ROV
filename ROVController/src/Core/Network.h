@@ -36,15 +36,17 @@ namespace Core
 		static const int broadcastBufferLen = 100;
 		static const int pingWindow = 5;
 		// In milliseconds
-        static const int packetWaitTimeout = 100;
+        static const int packetWaitTimeout = 10;
 
 		// Global Instance
         static Network * instance;
 
 		// Flags
 		bool connected = false;
-        bool search = false;
+		bool search = false;
         std::atomic_bool done = false;
+
+		std::atomic_bool stopSearch = false, startSearch = false, startConnect = false, closeConnection = false;
 		
 		// Sockets
 		sf::UdpSocket broadcast;
@@ -59,21 +61,20 @@ namespace Core
 		// Ping information
 		sf::Clock pingClock;
 		std::array<sf::Time, pingWindow> pingVals;
+		int pingCounter = 0;
 
 		// Threads and synchronization
 		std::thread runner;
 
         void run();
 
-        //void handlePacket(sf::Packet & p);
-
-        //void preProcessPacket();
-
         std::mutex packetQueueLock;
         std::queue<sf::Packet *> packetQueue;
 
         Core::Event* decode(sf::Packet &p);
         void preProcess(Core::Event *);
+
+        std::mutex devicesLock;
 
 	public:
 		static const unsigned short connectionPort = 42069;
@@ -82,7 +83,23 @@ namespace Core
 
 		Network();
 
-		// const std::vector<std::pair<sf::IpAddress, std::string>>& get_devices() const;
+		std::vector<std::pair<sf::IpAddress, std::string>> get_devices();
+
+		void search_for_devices();
+
+		void stop_search_for_devices();
+
+		float get_ping_time() const;
+
+		bool isConnected() const;
+
+		sf::IpAddress getConnectedHost() const;
+
+		void connect_to_host(sf::IpAddress addr);
+
+		void send_packet(sf::Packet *);
+
+		void disconnect();
 
 		~Network();
 	};

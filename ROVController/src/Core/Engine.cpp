@@ -34,7 +34,7 @@ void Core::Engine::Update()
 	if (network->isConnected())
 	{
 		std::string title = "Connected to ";
-		title += network->connectedHost().toString();
+		title += network->getConnectedHost().toString();
 		ImGui::Begin(title.c_str());
 		ImGui::Text("Round Trip Ping: = %f ms", network->get_ping_time());
 		if (ImGui::Button("Disconnect"))
@@ -78,12 +78,18 @@ void Core::Engine::Render()
 
 void Core::Engine::ProcessCustomEvents()
 {
-	for (auto e : core_events_)
-	{
+	// Not locking *should* be safe because we always lock before we do any actual writing
+	while (!core_events_.empty()) {
+		coreEventHandlerLock.lock();
+		// Pull off event as quick as possible while we have the lock
+		Event *e = core_events_.front();
+		core_events_.pop();
+		// Release control of the lock
+		coreEventHandlerLock.unlock();
 		cev_->handle_event(e);
+		// Delete it so we don't end up with memory leaks
 		delete e;
 	}
-	core_events_.clear();
 }
 
 void Core::Engine::ProcessFrameAction(FAction& f_action)
@@ -131,13 +137,16 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::Eve
 
 void Core::Engine::add_event(Core::Event *e)
 {
-	if (e->type != Core::Event::EventType::Count)
-		core_events_.emplace_back(e);
+	// Make sure we are not sent a nullptr or an invalid type
+	if (e && e->type != Core::Event::EventType::Count) {
+		coreEventHandlerLock.lock();
+		core_events_.push(e);
+		coreEventHandlerLock.unlock();
+	}
 }
 
 void Core::Engine::Loop()
 {
-    GlobalContext::get_network()->run();
 	Events();
 
 	Update();
@@ -156,10 +165,6 @@ void Core::Engine::Loop()
 	}
 
 	frame_action_list_.clear();
-
-	// Process events again cause why not
-    GlobalContext::get_network()->run();
-	ProcessCustomEvents();
 
 	Render();
 }
@@ -180,4 +185,14 @@ Core::Engine::~Engine()
 	}
 
 	GlobalContext::clear_engine();
+}
+
+Core::Event::~Event() {
+	switch (type) {
+		case VideoFrameReceived:
+			delete [] f.data;
+			break;
+		default:
+			break;
+	}
 }

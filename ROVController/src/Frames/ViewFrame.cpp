@@ -41,9 +41,9 @@ Frames::ViewFrame::ViewFrame()
 	}, Core::Event::EventType::TemperatureReceived);
 
 
-	sf::Packet vidP = Factory::PacketFactory::create_video_stream_start_packet();
-	sf::Packet pressP = Factory::PacketFactory::create_pressure_data_start_packet();
-	sf::Packet tempP = Factory::PacketFactory::create_temperature_data_start_packet();
+	auto vidP = Factory::PacketFactory::create_video_stream_start_packet();
+	auto pressP = Factory::PacketFactory::create_pressure_data_start_packet();
+	auto tempP = Factory::PacketFactory::create_temperature_data_start_packet();
 	GlobalContext::get_network()->send_packet(vidP);
 	GlobalContext::get_network()->send_packet(pressP);
 	GlobalContext::get_network()->send_packet(tempP);
@@ -103,9 +103,9 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
-	sf::Packet vidP = Factory::PacketFactory::create_video_stream_stop_packet();
-	sf::Packet pressP = Factory::PacketFactory::create_pressure_data_stop_packet();
-	sf::Packet tempP = Factory::PacketFactory::create_temperature_data_stop_packet();
+	auto vidP = Factory::PacketFactory::create_video_stream_stop_packet();
+	auto pressP = Factory::PacketFactory::create_pressure_data_stop_packet();
+	auto tempP = Factory::PacketFactory::create_temperature_data_stop_packet();
 	GlobalContext::get_network()->send_packet(vidP);
 	GlobalContext::get_network()->send_packet(pressP);
 	GlobalContext::get_network()->send_packet(tempP);

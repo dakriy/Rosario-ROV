@@ -4,7 +4,7 @@
 #include "Event.h"
 #include <cstring>
 
-Core::Network::Network * Core::Network::Network::instance = nullptr;
+Core::Network * Core::Network::instance = nullptr;
 
 Core::Network::Network() : runner(&Network::run, this)
 {
@@ -16,37 +16,53 @@ Core::Network::Network() : runner(&Network::run, this)
 	broadcast.setBlocking(true);
 	connection.setBlocking(true);
 
-	for (auto & p : pingvals) p = sf::Time::Zero;
+	for (auto & p : pingVals) p = sf::Time::Zero;
 
 	broadcastBuffer.fill(0);
-
-	selector.add(broadcast);
 }
 
-const std::vector<std::pair<sf::IpAddress, std::string>>& Core::Network::get_devices() const
+std::vector<std::pair<sf::IpAddress, std::string>> Core::Network::get_devices()
 {
-	return found_devices;
+	devicesLock.lock();
+	auto s = found_devices;
+	devicesLock.unlock();
+	return s;
 }
 
 void Core::Network::search_for_devices()
 {
-//	if (broadcast.bind(broadcastPort) == sf::Socket::Status::Error)
-//	{
-//		QuitWithError("Could not bind broadcast socket to port, check that all instances of the application are closed.", 1);
-//	}
-	search = true;
+	startSearch = true;
 }
 
 void Core::Network::stop_search_for_devices()
 {
-	broadcast.unbind();
-	found_devices.clear();
-	search = false;
+	stopSearch = true;
 }
 
 void Core::Network::run()
 {
     while (!done) {
+    	if (!search && !connected) {
+    		std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    	}
+
+		if (stopSearch) {
+			search = false;
+			stopSearch = false;
+			selector.remove(broadcast);
+			broadcast.unbind();
+			found_devices.clear();
+		}
+
+		if (startSearch) {
+			search = true;
+			startSearch = false;
+			if (broadcast.bind(broadcastPort) == sf::Socket::Status::Error) {
+				QuitWithError("Could not bind broadcast socket to port, check that all instances of the application are closed.", 1);
+			}
+			selector.add(broadcast);
+		}
+
         if (search) {
             size_t rcvd;
             sf::IpAddress rip;
@@ -91,7 +107,9 @@ void Core::Network::run()
                             {
                                 if (strcmp(broadcastBuffer.data(), "magic") == 0 && strcmp(broadcastBuffer.data() + pos[1], "end") == 0)
                                 {
+                                	devicesLock.lock();
                                     found_devices.emplace_back(std::make_pair(rip, broadcastBuffer.data() + pos[0]));
+                                    devicesLock.unlock();
                                 }
                             }
                         }
@@ -101,24 +119,44 @@ void Core::Network::run()
             // TODO: Remove things from the found devices if they've been there for too long
         }
 
+        if (closeConnection) {
+        	closeConnection = false;
+        	connected = false;
+        	selector.remove(connection);
+        	connection.disconnect();
+        }
+
+        if (startConnect) {
+        	startConnect = false;
+        	if (connection.connect(ROV, connectionPort) == sf::TcpSocket::Status::Error) {
+        		// Error
+				connected = false;
+        	} else {
+				connected = true;
+				selector.add(connection);
+        	}
+		}
+
         if (connected) {
             // Receive
             if (selector.wait(sf::milliseconds(packetWaitTimeout))) {
                 if (selector.isReady(connection)) {
                     sf::Packet p;
                     if (connection.receive(p) == sf::Socket::Status::Disconnected) {
-                        connected = false;
+                        closeConnection = true;
                     } else {
+                    	// Decode the packet
                         auto event = decode(p);
+                        // Do any necessary pre-processing
                         preProcess(event);
-                        // TODO: Pass off to packet handler
+                        // Pass it to the event handler
+                        GlobalContext::get_engine()->add_event(event);
                     }
                 }
             }
 
             // Sending things
             while(!packetQueue.empty()) {
-
                 packetQueueLock.lock();
                 // Get packet pointer
                 auto p = packetQueue.front();
@@ -128,44 +166,23 @@ void Core::Network::run()
                 // Send the packet pointer
                 auto status = connection.send(*p);
                 if (status == sf::Socket::Status::Disconnected) {
-                    connected = false;
+                    closeConnection = true;
                 }
+                // Prevent memory leaks
                 delete p;
                 // TODO: Don't drop packet if error in socket maybe? At least look into it
             }
-        }
 
-//        if (connected)
-//        {
-//
-//            auto done = continueRecv();
-//
-//            // If receiving has finished from last packet, there is new data available, and it is the count meaning the packet identifier
-//            if (done && currentIncomingType == PacketTypes::Count)
-//            {
-//                // Identify the packet
-//                auto t = static_cast<PacketTypes>(buffer[0]);
-//                // Start the packet
-//                startPacket(t);
-//                done = false;
-//            }
-//
-//            if (done)
-//            {
-//                // Done receiving packet, process it and setup for the next one...
-//                process_packet(currentIncomingType);
-//                received = 0;
-//                expectedSize = 1;
-//                currentIncomingType = PacketTypes::Count;
-//            }
-//
-//            // Sending
-//            // Send ping every 5 seconds
-//            if (pingClock.getElapsedTime().asSeconds() > 5)
-//            {
-//                send_ping_packet();
-//            }
-//        }
+            // Send ping packet every 5 seconds
+            if (pingClock.getElapsedTime().asSeconds() > 5) {
+            	sf::Packet p;
+				p << static_cast<unsigned char>(PacketTypes::Ping);
+				pingClock.restart();
+				if (connection.send(p) == sf::Socket::Status::Disconnected) {
+					closeConnection = true;
+				}
+            }
+        }
     }
 }
 
@@ -173,27 +190,62 @@ Core::Event* Core::Network::decode(sf::Packet & p) {
     auto t = static_cast<sf::Uint8>(PacketTypes::Count);
     if (!(p >> t)) {
         // Error?
+        // No type sent? or something weird happened
         return nullptr;
     }
     auto type = static_cast<PacketTypes>(t);
 
     auto packet = new Core::Event;
 
+    // Decode all of the packets here
     switch (type) {
-        case PacketTypes::Ping:break;
-        case PacketTypes::StartVideo:break;
-        case PacketTypes::StopVideo:break;
-        case PacketTypes::StartTemp:break;
-        case PacketTypes::StopTemp:break;
-        case PacketTypes::StartPressure:break;
-        case PacketTypes::StopPressure:break;
-        case PacketTypes::Move:break;
-        case PacketTypes::Video:break;
-        case PacketTypes::Temperature:break;
-        case PacketTypes::Pressure:break;
-        case PacketTypes::Shutdown:break;
-        case PacketTypes::Count:break;
+        case PacketTypes::Ping:
+        	packet->type = Core::Event::PingReceived;
+			break;
+		case PacketTypes::Video:
+		{
+			packet->type = Core::Event::VideoFrameReceived;
+			sf::Uint32 size;
+
+			if (!(p >> size)) {
+				delete packet;
+				return nullptr;
+			}
+
+			packet->f.len = size;
+
+			// We'll let the event handler clean up the memory for us
+			auto pixels = new sf::Uint8[size];
+
+			bool read = true;
+
+			// Fill out the pixel array assuming we just send straight pixels
+			for (unsigned i = 0; i < size && read; ++i) {
+				read = (p >> pixels[i]);
+			}
+
+			// Something went wrong during read. Abort.
+			if (!read) {
+				delete [] pixels;
+				delete packet;
+				return nullptr;
+			}
+
+			packet->f.data = pixels;
+			break;
+		}
+		case PacketTypes::StartVideo:
+		case PacketTypes::StopVideo:
+		case PacketTypes::StartTemp:
+		case PacketTypes::StopTemp:
+		case PacketTypes::StartPressure:
+		case PacketTypes::StopPressure:
+		case PacketTypes::Move:
+        case PacketTypes::Temperature:
+        case PacketTypes::Pressure:
+        case PacketTypes::Shutdown:
         default: //unknown packet type
+        	delete packet;
             return nullptr;
     }
     return packet;
@@ -207,4 +259,66 @@ Core::Network::~Network()
     broadcast.unbind();
     selector.clear();
     instance = nullptr;
+}
+
+void Core::Network::preProcess(Core::Event * ev) {
+	switch (ev->type) {
+		case Core::Event::PingReceived:
+			if (pingCounter == pingWindow) pingCounter = 0;
+			pingVals[pingCounter++] = pingClock.getElapsedTime();
+			break;
+		default:
+			break;
+	}
+}
+
+float Core::Network::get_ping_time() const
+{
+	auto total = sf::Time::Zero;
+	unsigned n = 0;
+	for (auto t : pingVals)
+	{
+		if (t != sf::Time::Zero)
+		{
+			++n;
+			total += t;
+		}
+	}
+	if (n == 0)
+	{
+		return 9999999999999.f;
+	}
+	return static_cast<float>(total.asMilliseconds()) / static_cast<float>(n);
+}
+
+bool Core::Network::isConnected() const {
+	return connected;
+}
+
+void Core::Network::connect_to_host(sf::IpAddress addr)
+{
+	closeConnection = true;
+	ROV = addr;
+	startConnect = true;
+}
+
+sf::IpAddress Core::Network::getConnectedHost() const {
+	return ROV;
+}
+
+void Core::Network::send_packet(sf::Packet *p) {
+	if (isConnected()) {
+		// Place it on the packet queue
+		packetQueueLock.lock();
+		packetQueue.push(p);
+		packetQueueLock.unlock();
+	} else {
+		// Get rid of it if we aren't connected.
+		delete p;
+	}
+
+}
+
+void Core::Network::disconnect() {
+	closeConnection = true;
 }
