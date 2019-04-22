@@ -1,6 +1,28 @@
 EESchema-LIBRARY Version 2.4
 #encoding utf-8
 #
+# Adafruit_TSL2591-eagle-import_AtlasOEM
+#
+DEF Adafruit_TSL2591-eagle-import_AtlasOEM U 0 40 Y Y 1 F N
+F0 "U" 0 0 50 H V C CNN
+F1 "Adafruit_TSL2591-eagle-import_AtlasOEM" 0 250 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+S 250 200 -250 -300 0 1 0 N
+X SDA 1 -350 150 100 R 50 50 1 1 P
+X NC 10 350 150 100 L 50 50 1 1 P
+X NC 2 -350 50 100 R 50 50 1 1 P
+X Vcc 3 -350 -50 100 R 50 50 1 1 P
+X PRB- 4 -350 -150 100 R 50 50 1 1 P
+X PRB+ 5 -350 -250 100 R 50 50 1 1 P
+X GND 6 350 -250 100 L 50 50 1 1 P
+X INT 7 350 -150 100 L 50 50 1 1 P
+X SCL 8 350 -50 100 L 50 50 1 1 P
+X NC 9 350 50 100 L 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
 # Adafruit_TSL2591-eagle-import_LIGHT_TSL2591
 #
 DEF Adafruit_TSL2591-eagle-import_LIGHT_TSL2591 U 0 40 Y Y 1 L N

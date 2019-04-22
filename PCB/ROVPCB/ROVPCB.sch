@@ -752,10 +752,10 @@ Wire Wire Line
 Wire Wire Line
 	7000 5250 7500 5250
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR?
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0111
 U 1 1 5CB8FA80
 P 7500 6000
-F 0 "#PWR?" H 7500 5750 50  0001 C CNN
+F 0 "#PWR0111" H 7500 5750 50  0001 C CNN
 F 1 "GND" H 7500 5850 50  0000 C CNN
 F 2 "" H 7500 6000 50  0000 C CNN
 F 3 "" H 7500 6000 50  0000 C CNN
@@ -777,10 +777,10 @@ Wire Wire Line
 Wire Wire Line
 	6750 5450 7500 5450
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR?
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0112
 U 1 1 5CBA3506
 P 9250 5550
-F 0 "#PWR?" H 9250 5300 50  0001 C CNN
+F 0 "#PWR0112" H 9250 5300 50  0001 C CNN
 F 1 "GND" H 9250 5400 50  0000 C CNN
 F 2 "" H 9250 5550 50  0000 C CNN
 F 3 "" H 9250 5550 50  0000 C CNN
@@ -790,10 +790,10 @@ $EndComp
 Wire Wire Line
 	9250 5550 9150 5550
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR?
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0113
 U 1 1 5CBA6BEC
 P 9350 5350
-F 0 "#PWR?" H 9350 5200 50  0001 C CNN
+F 0 "#PWR0113" H 9350 5200 50  0001 C CNN
 F 1 "+3.3V" H 9350 5490 50  0000 C CNN
 F 2 "" H 9350 5350 50  0000 C CNN
 F 3 "" H 9350 5350 50  0000 C CNN
@@ -827,18 +827,67 @@ Default I2C address: 0x68(AD0--Vdd), 0x69(AD0--GND)
 Text Notes 3750 6600 0    50   ~ 0
 Default I2C address: 0x29
 Text Notes 8050 900  0    50   ~ 0
-Default I2C address: 0x68
+Default I2C address: 0x64
 Text Notes 4550 900  0    50   ~ 0
 Default I2C address--Temp: 0x77; Pressure: 0x76
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR?
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0114
 U 1 1 5CBDF2B2
 P 6200 4900
-F 0 "#PWR?" H 6200 4650 50  0001 C CNN
+F 0 "#PWR0114" H 6200 4650 50  0001 C CNN
 F 1 "GND" H 6200 4750 50  0000 C CNN
 F 2 "" H 6200 4900 50  0000 C CNN
 F 3 "" H 6200 4900 50  0000 C CNN
 	1    6200 4900
 	1    0    0    -1  
 $EndComp
+$Comp
+L Adafruit_TSL2591-eagle-import:AtlasOEM U5
+U 1 1 5CBE687D
+P 8650 1400
+F 0 "U5" H 8650 1775 50  0000 C CNN
+F 1 "AtlasOEM" H 8650 1684 50  0000 C CNN
+F 2 "Adafruit TSL2591:OEM Board" H 8650 1400 50  0001 C CNN
+F 3 "https://www.atlas-scientific.com/_files/_datasheets/_oem/EC_oem_datasheet.pdf" H 8650 1400 50  0001 C CNN
+	1    8650 1400
+	1    0    0    -1  
+$EndComp
+NoConn ~ 9000 1250
+NoConn ~ 9000 1350
+NoConn ~ 8300 1350
+Text Label 7800 1250 0    50   ~ 0
+GPIO2(SDA1)
+Wire Wire Line
+	7800 1250 8300 1250
+Text Label 9550 1450 2    50   ~ 0
+GPIO3(SCL1)
+Wire Wire Line
+	9550 1450 9000 1450
+$Comp
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR?
+U 1 1 5CBFDF85
+P 9250 1650
+F 0 "#PWR?" H 9250 1400 50  0001 C CNN
+F 1 "GND" H 9250 1500 50  0000 C CNN
+F 2 "" H 9250 1650 50  0000 C CNN
+F 3 "" H 9250 1650 50  0000 C CNN
+	1    9250 1650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9250 1650 9000 1650
+$Comp
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR?
+U 1 1 5CC01F57
+P 7750 1450
+F 0 "#PWR?" H 7750 1300 50  0001 C CNN
+F 1 "+3.3V" H 7750 1590 50  0000 C CNN
+F 2 "" H 7750 1450 50  0000 C CNN
+F 3 "" H 7750 1450 50  0000 C CNN
+	1    7750 1450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7750 1450 8300 1450
+NoConn ~ 9000 1550
 $EndSCHEMATC
