@@ -743,13 +743,13 @@ $EndComp
 Wire Wire Line
 	7500 5650 7500 6000
 Wire Wire Line
-	7500 5350 6300 5350
+	7500 5350 6800 5350
 Wire Wire Line
 	6300 5350 6300 5450
 Wire Wire Line
 	6300 5450 5900 5450
 Wire Wire Line
-	5900 5250 6750 5250
+	5900 5250 6450 5250
 Wire Wire Line
 	6750 5250 6750 5450
 Wire Wire Line
@@ -912,4 +912,45 @@ Connection ~ 9150 5350
 Wire Wire Line
 	9150 5350 9050 5350
 NoConn ~ 7500 5150
+$Comp
+L Device:R R1
+U 1 1 5CBE7790
+P 6450 4800
+F 0 "R1" H 6520 4846 50  0000 L CNN
+F 1 "3k" H 6520 4755 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6380 4800 50  0001 C CNN
+F 3 "~" H 6450 4800 50  0001 C CNN
+	1    6450 4800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R2
+U 1 1 5CBE77D8
+P 6800 4800
+F 0 "R2" H 6870 4846 50  0000 L CNN
+F 1 "3k" H 6870 4755 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6730 4800 50  0001 C CNN
+F 3 "~" H 6800 4800 50  0001 C CNN
+	1    6800 4800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6450 5250 6450 4950
+Connection ~ 6450 5250
+Wire Wire Line
+	6450 5250 6750 5250
+Wire Wire Line
+	6450 4650 6450 4550
+Wire Wire Line
+	6450 4550 5300 4550
+Wire Wire Line
+	6800 4650 6800 4550
+Wire Wire Line
+	6800 4550 6450 4550
+Connection ~ 6450 4550
+Wire Wire Line
+	6800 4950 6800 5350
+Connection ~ 6800 5350
+Wire Wire Line
+	6800 5350 6300 5350
 $EndSCHEMATC
