@@ -491,17 +491,6 @@ Wire Wire Line
 	1600 5300 1750 5300
 Connection ~ 2350 4100
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0104
-U 1 1 5CB71953
-P 1000 4800
-F 0 "#PWR0104" H 1000 4650 50  0001 C CNN
-F 1 "+3.3V" H 1000 4940 50  0000 C CNN
-F 2 "" H 1000 4800 50  0000 C CNN
-F 3 "" H 1000 4800 50  0000 C CNN
-	1    1000 4800
-	1    0    0    -1  
-$EndComp
-$Comp
 L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0106
 U 1 1 5CB74877
 P 1650 5500
@@ -711,17 +700,6 @@ $EndComp
 Connection ~ 3100 1000
 Wire Wire Line
 	3100 1000 3100 1100
-$Comp
-L Device:R R1
-U 1 1 5CBD8F78
-P 1000 4950
-F 0 "R1" H 930 4904 50  0000 R CNN
-F 1 "10k" H 930 4995 50  0000 R CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 930 4950 50  0001 C CNN
-F 3 "~" H 1000 4950 50  0001 C CNN
-	1    1000 4950
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	1000 5100 1750 5100
 Text Notes 7300 4500 0    138  ~ 28
@@ -808,7 +786,7 @@ Wire Wire Line
 	9200 5450 9050 5450
 Connection ~ 9200 5350
 Wire Wire Line
-	9200 5350 9050 5350
+	9200 5350 9150 5350
 Wire Wire Line
 	9050 5650 9150 5650
 Wire Wire Line
@@ -819,7 +797,7 @@ Wire Wire Line
 Text Notes 8850 6000 0    50   ~ 0
 SDAIN: 0x67 --> Translation Byte: 0xF --> SDAOUT: 0x76
 Text Notes 9550 5700 0    50   ~ 0
-The translation byte is set by \nxorh and xorl according to \nthe datasheet pg. 9. This layout\nsets it to 0xF. Sample conversion\nshown below.
+The translation byte is set by \nxorh and xorl according to \nthe datasheet pg. 9. This layout\nsets it to 0x0F. Sample conversion\nshown below.
 Text Notes 4400 4150 0    50   ~ 0
 Default I2C address: 0x77 (SDO--Vdd), 0x76 (SDO--GND)
 Text Notes 1400 3850 0    50   ~ 0
@@ -890,23 +868,48 @@ $EndComp
 Wire Wire Line
 	7750 1450 8300 1450
 NoConn ~ 9000 1550
-$Comp
-L Connector:Conn_Coaxial J3
-U 1 1 5CBDB00B
-P 7900 1750
-F 0 "J3" H 8000 1634 50  0000 L CNN
-F 1 "Conn_Coaxial" H 8000 1725 50  0000 L CNN
-F 2 "footprints:5227161-1" H 7900 1750 50  0001 C CNN
-F 3 " ~" H 7900 1750 50  0001 C CNN
-	1    7900 1750
-	-1   0    0    1   
-$EndComp
 Wire Wire Line
 	8300 1550 7900 1550
 Wire Wire Line
 	8300 1650 8300 1750
 Wire Wire Line
 	8300 1750 8100 1750
-Text Notes 7650 1950 0    50   ~ 0
-50 Ohm BNC 
+$Comp
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR011
+U 1 1 5CBE8F10
+P 1000 5100
+F 0 "#PWR011" H 1000 4850 50  0001 C CNN
+F 1 "GND" H 1000 4950 50  0000 C CNN
+F 2 "" H 1000 5100 50  0000 C CNN
+F 3 "" H 1000 5100 50  0000 C CNN
+	1    1000 5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J3
+U 1 1 5CBED62E
+P 7500 1750
+F 0 "J3" H 7606 1928 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 7606 1837 50  0000 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x02_P3.81mm_Drill0.8mm" H 7500 1750 50  0001 C CNN
+F 3 "~" H 7500 1750 50  0001 C CNN
+	1    7500 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 1550 7900 1750
+Wire Wire Line
+	7900 1750 7700 1750
+Wire Wire Line
+	8100 1750 8100 1850
+Wire Wire Line
+	8100 1850 7700 1850
+Wire Wire Line
+	9050 5250 9150 5250
+Wire Wire Line
+	9150 5250 9150 5350
+Connection ~ 9150 5350
+Wire Wire Line
+	9150 5350 9050 5350
+NoConn ~ 7500 5150
 $EndSCHEMATC
