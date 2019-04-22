@@ -307,8 +307,8 @@ F 3 "~" H 4750 2000 50  0001 C CNN
 	1    4750 2000
 	1    0    0    -1  
 $EndComp
-Text Notes 4400 1000 0    157  ~ 31
-Sensor Connectors
+Text Notes 4400 800  0    157  ~ 31
+BlueRobotics Sensors
 Text Label 5900 1500 2    50   ~ 0
 GPIO2(SDA1)
 Text Label 5900 1600 2    50   ~ 0
@@ -524,7 +524,7 @@ P 5300 5350
 F 0 "U2" H 4870 5396 50  0000 R CNN
 F 1 "BME280" H 4870 5305 50  0000 R CNN
 F 2 "Package_LGA:Bosch_LGA-8_2.5x2.5mm_P0.65mm_ClockwisePinNumbering" H 5300 5150 50  0001 C CNN
-F 3 "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME280_DS001-11.pdf" H 5300 5150 50  0001 C CNN
+F 3 "https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf" H 5300 5150 50  0001 C CNN
 	1    5300 5350
 	1    0    0    -1  
 $EndComp
@@ -604,17 +604,6 @@ Wire Wire Line
 Connection ~ 5300 4550
 Wire Wire Line
 	5300 4550 5300 4650
-$Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0111
-U 1 1 5CB97771
-P 6200 4900
-F 0 "#PWR0111" H 6200 4650 50  0001 C CNN
-F 1 "GND" H 6200 4750 50  0000 C CNN
-F 2 "" H 6200 4900 50  0000 C CNN
-F 3 "" H 6200 4900 50  0000 C CNN
-	1    6200 4900
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	6200 4900 5900 4900
 Wire Wire Line
@@ -744,7 +733,7 @@ P 9900 5650
 F 0 "U4" H 11525 6015 50  0000 C CNN
 F 1 "LTC4316IDDPBF" H 11525 5924 50  0000 C CNN
 F 2 "LTC4316IDDPBF:DFN-10_DD" H 13450 5150 50  0001 L BNN
-F 3 "LTC4316IDD#PBF-ND" H 13250 5650 50  0001 L BNN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/4316fa.pdf" H 13250 5650 50  0001 L BNN
 F 4 "Linear Technology/Analog" H 13100 5950 50  0001 L BNN "Field4"
 F 5 "LTC4316 - Single I2C/SMBus Address Translator" H 12700 5800 50  0001 L BNN "Field5"
 F 6 "LTC4316IDD#PBF" H 13350 5300 50  0001 L BNN "Field7"
@@ -752,7 +741,7 @@ F 7 "DFN-10 Linear Technology" H 13150 5500 50  0001 L BNN "Field8"
 	1    9900 5650
 	-1   0    0    1   
 $EndComp
-Text Notes 7600 1000 0    138  ~ 28
+Text Notes 7600 800  0    138  ~ 28
 Atlas Scientific board
 Text Label 7000 5250 0    50   ~ 0
 GPIO2(SDA1)
@@ -827,4 +816,29 @@ Wire Wire Line
 Connection ~ 9150 5550
 Wire Wire Line
 	9150 5550 9050 5550
+Text Notes 8850 6000 0    50   ~ 0
+SDAIN: 0x67 --> Translation Byte: 0xF --> SDAOUT: 0x76
+Text Notes 9550 5700 0    50   ~ 0
+The translation byte is set by \nxorh and xorl according to \nthe datasheet pg. 9. This layout\nsets it to 0xF. Sample conversion\nshown below.
+Text Notes 4400 4150 0    50   ~ 0
+Default I2C address: 0x77 (SDO--Vdd), 0x76 (SDO--GND)
+Text Notes 1400 3850 0    50   ~ 0
+Default I2C address: 0x68(AD0--Vdd), 0x69(AD0--GND)
+Text Notes 3750 6600 0    50   ~ 0
+Default I2C address: 0x29
+Text Notes 8050 900  0    50   ~ 0
+Default I2C address: 0x68
+Text Notes 4550 900  0    50   ~ 0
+Default I2C address--Temp: 0x77; Pressure: 0x76
+$Comp
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR?
+U 1 1 5CBDF2B2
+P 6200 4900
+F 0 "#PWR?" H 6200 4650 50  0001 C CNN
+F 1 "GND" H 6200 4750 50  0000 C CNN
+F 2 "" H 6200 4900 50  0000 C CNN
+F 3 "" H 6200 4900 50  0000 C CNN
+	1    6200 4900
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
