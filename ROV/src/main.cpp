@@ -1,5 +1,5 @@
-
 #include "Network/Network.h"
+#include "Core/GlobalContext.h"
 
 int main() {
 	/*
@@ -44,16 +44,28 @@ int main() {
 
 	// Main Thread
 
+	// Initialize elapsed time clock
+	sf::Clock elapsedTime;
+	GlobalContext::set_clock(&elapsedTime);
+
+	Core::EventHandler<Core::Event, Core::Event::EventType::Count> coreEventHandler;
+	GlobalContext::set_core_event_handler(&coreEventHandler);
+
+	Core::Engine engine(&coreEventHandler);
+
 	Network::Network network;
 	bool done = false;
-	auto hook = network.hook([&](const Network::PacketContainer * p) -> bool {
+
+	const auto hook = coreEventHandler.add_event_callback([&](const Core::Event * p) -> bool {
 		done = true;
 		return false;
-	}, Network::PacketTypes::Shutdown);
+	}, Core::Event::EventType::Shutdown);
 
 	while (!done) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		engine.Loop();
 	}
+
+	coreEventHandler.unhook_event_callback_for_all_events(hook);
 
 	return 0;
 }

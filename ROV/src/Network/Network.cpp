@@ -1,4 +1,5 @@
 #include "Network.h"
+#include "../Core/GlobalContext.h"
 #include <chrono>
 
 Network::Network * Network::Network::instance = nullptr;
@@ -14,20 +15,14 @@ Network::Network::Network() : messenger(&Network::watch, this) {
 	connection.setBlocking(true);
 	selector.add(broadcast);
 	selector.add(listener);
-	pingHook = packetHandler.add_event_callback([&](const PacketContainer *p) -> bool {
-		sf::Packet ping;
-		ping << static_cast<unsigned char>(PacketTypes::Ping);
-		connection.send(ping);
-		return false;
-	}, PacketTypes::Ping);
 }
 
 Network::Network::~Network() {
 	done = true;
 	if (messenger.joinable()) messenger.join();
+	listener.close();
 	connection.disconnect();
 	broadcast.unbind();
-	listener.close();
 	selector.clear();
 	instance = nullptr;
 	while (!sendQueue.empty()) {
@@ -42,6 +37,9 @@ void Network::Network::watch() {
 	while (!done)
 	{
 		// No connection yet, broadcast ourselves.
+		//////////////////////////////////////////
+		///////    NO ACTIVE CONNECTION //////////
+		//////////////////////////////////////////
 		if (!connected) {
 			if (selector.wait(sf::milliseconds(packetWaitTimeout))) {
 				// Check if it was listener that got new data
@@ -64,7 +62,15 @@ void Network::Network::watch() {
 					lastBroadcastTime.restart();
 				}
 			}
+
+			if (closeConnection) {
+				closeConnection = false;
+			}
 		} else { // Otherwise we got a connection already open, we should constantly check it for stuff
+			////////////////////////////////////////
+			/////////   ACTIVE CONNECTION   ////////
+			////////////////////////////////////////
+
 			if(selector.wait(sf::milliseconds(packetWaitTimeout))) {
 				consecutiveTimeouts = 0;
 				// Somebody is trying to reconnect, did something happen to the previous connection?
@@ -80,10 +86,11 @@ void Network::Network::watch() {
 					sf::Packet p;
 					auto status = connection.receive(p);
 					if (status == sf::Socket::Done) {
-						handlePacket(p);
+						auto event = decode(p);
+						preProcess(event);
+						GlobalContext::get_engine()->add_event(event);
 					} else if (status == sf::Socket::Disconnected) {
-						connected = false;
-						selector.remove(connection);
+						closeConnection = true;
 					}
 				}
 			} else { // TODO: Handle too many timeouts
@@ -98,65 +105,103 @@ void Network::Network::watch() {
 			// Make sure we are still connected
 			if (connected) {
 				// Send things
-				sendQueueGuard.lock();
 				while (!sendQueue.empty()) {
+					sendQueueGuard.lock();
 					auto p = sendQueue.front();
-					// When we aren't done leave everything in the queue to be sent later
-					if (connection.send(*p) == sf::Socket::Done) {
+					auto status = connection.send(*p);
+					if (status == sf::Socket::Done) {
 						sendQueue.pop();
 						delete p;
-					} else {
-						break;
+					} else if (status == sf::Socket::Disconnected) {
+						closeConnection = true;
 					}
+					sendQueueGuard.unlock();
 				}
-				sendQueueGuard.unlock();
+			}
+
+			if (closeConnection) {
+				closeConnection = false;
+				connected = false;
+				selector.remove(connection);
+				connection.disconnect();
+				GlobalContext::get_engine()->add_event(new Core::Event(Core::Event::Disconnected));
 			}
 		}
 	}
 }
 
 void Network::Network::sendPacket(sf::Packet * packet) {
-	sendQueueGuard.lock();
-	sendQueue.push(packet);
-	sendQueueGuard.unlock();
-}
-
-PACKET_EVENT_FUNC_INDEX Network::Network::hook(const PACKET_EVENT_FUNC_TYPE_NS &hook, PacketTypes type) {
-	handlerGuard.lock();
-	auto index = packetHandler.add_event_callback(hook, type);
-	handlerGuard.unlock();
-	return index;
-}
-
-PACKET_EVENT_FUNC_INDEX Network::Network::hookAll(const PACKET_EVENT_FUNC_TYPE_NS &hook) {
-	handlerGuard.lock();
-	auto index = packetHandler.add_event_callback_for_all_events(hook);
-	handlerGuard.unlock();
-	return index;
-}
-
-void Network::Network::unhookAll(PACKET_EVENT_FUNC_INDEX_NS index) {
-	handlerGuard.lock();
-	packetHandler.unhook_event_callback_for_all_events(index);
-	handlerGuard.unlock();
-}
-
-void Network::Network::unhookOne(PACKET_EVENT_FUNC_INDEX_NS index, PacketTypes type) {
-	handlerGuard.lock();
-	packetHandler.unhook_event_callback(index, type);
-	handlerGuard.unlock();
-}
-
-void Network::Network::handlePacket(sf::Packet &packet) {
-	// TODO: Handle packets lol
-	unsigned char type;
-	PacketContainer c;
-	if (packet >> type) {
-		c.type = static_cast<PacketTypes>(type);
-		c.p = &packet;
+	if (isConnected()) {
+		// Place it on the packet queue
+		sendQueueGuard.lock();
+		sendQueue.push(packet);
+		sendQueueGuard.unlock();
 	} else {
-		// No type was sent I guess? So throw it away
-		return;
+		// Get rid of it if we aren't connected.
+		delete packet;
 	}
-	packetHandler.handle_event(&c);
+}
+
+bool Network::Network::isConnected() const {
+	return connected;
+}
+
+Core::Event *Network::Network::decode(sf::Packet &p) {
+	auto t = static_cast<sf::Uint8>(PacketTypes::Count);
+	if (!(p >> t)) {
+		// Error?
+		// No type sent? or something weird happened
+		return nullptr;
+	}
+	auto type = static_cast<PacketTypes>(t);
+
+	auto pEvent = new Core::Event;
+
+	// Decode all of the packets here
+	switch (type) {
+		case PacketTypes::Ping:
+			pEvent->type = Core::Event::PingReceived;
+			break;
+		case PacketTypes::Shutdown:
+			pEvent->type = Core::Event::Shutdown;
+			break;
+		case PacketTypes::Video:
+		case PacketTypes::StartVideo:
+		case PacketTypes::StopVideo:
+		case PacketTypes::StartTemp:
+		case PacketTypes::StopTemp:
+		case PacketTypes::StartPressure:
+		case PacketTypes::StopPressure:
+		case PacketTypes::Move:
+		case PacketTypes::Temperature:
+		case PacketTypes::Pressure:
+		default: //unknown packet type
+			delete pEvent;
+			return nullptr;
+	}
+	return pEvent;
+}
+
+void Network::Network::preProcess(Core::Event * ev) {
+	if(!ev) return;
+	switch (ev->type) {
+		case Core::Event::PingReceived:
+		{
+			// Immediately send back a ping
+			sf::Packet p;
+			p << static_cast<sf::Uint8>(PacketTypes::Ping);
+			if (connection.send(p) == sf::Socket::Status::Disconnected) {
+				closeConnection = true;
+			}
+			break;
+		}
+		case Core::Event::Disconnected:
+			disconnect();
+			break;
+		default: break;
+	}
+}
+
+void Network::Network::disconnect() {
+	closeConnection = true;
 }

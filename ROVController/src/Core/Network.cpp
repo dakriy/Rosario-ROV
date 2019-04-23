@@ -176,7 +176,7 @@ void Core::Network::run()
             // Send ping packet every 5 seconds
             if (pingClock.getElapsedTime().asSeconds() > 5) {
             	sf::Packet p;
-				p << static_cast<unsigned char>(PacketTypes::Ping);
+				p << static_cast<sf::Uint8>(PacketTypes::Ping);
 				pingClock.restart();
 				if (connection.send(p) == sf::Socket::Status::Disconnected) {
 					closeConnection = true;
@@ -258,10 +258,15 @@ Core::Network::~Network()
     connection.disconnect();
     broadcast.unbind();
     selector.clear();
+    while(!packetQueue.empty()) {
+    	delete packetQueue.front();
+    	packetQueue.pop();
+    }
     instance = nullptr;
 }
 
 void Core::Network::preProcess(Core::Event * ev) {
+	if(!ev) return;
 	switch (ev->type) {
 		case Core::Event::PingReceived:
 			if (pingCounter == pingWindow) pingCounter = 0;

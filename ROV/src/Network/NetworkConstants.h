@@ -1,6 +1,5 @@
 #pragma once
-#ifndef ROV_NETWORKCONSTANTS_H
-#define ROV_NETWORKCONSTANTS_H
+
 #include <SFML/Network.hpp>
 
 namespace Network {
@@ -27,12 +26,4 @@ namespace Network {
 		Shutdown = 254,
 		Count
 	};
-
-	struct PacketContainer
-	{
-		PacketTypes type = PacketTypes::Count;
-		sf::Packet * p = nullptr;
-	};
 }
-
-#endif //ROV_NETWORKCONSTANTS_H

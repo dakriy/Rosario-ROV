@@ -1,7 +1,7 @@
 #include "PacketFactory.h"
 
 void Factory::PacketFactory::add_type_to_packet(sf::Packet &p, Core::PacketTypes type) {
-	p << static_cast<unsigned char>(type);
+	p << static_cast<sf::Uint8>(type);
 }
 
 sf::Packet* Factory::PacketFactory::create_shutdown_packet() {
