@@ -11,7 +11,7 @@
 #include "../Interfaces/IUpdateable.h"
 #include <SFML/Graphics.hpp>
 #include "UIElement.h"
-#include "../Core/Event.h"
+#include "../Core/EventHandler.h"
 #include "../Frames/IFrame.h"
 #include <vector>
 #include <memory>

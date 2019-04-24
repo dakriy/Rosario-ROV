@@ -186,13 +186,3 @@ Core::Engine::~Engine()
 
 	GlobalContext::clear_engine();
 }
-
-Core::Event::~Event() {
-	switch (type) {
-		case VideoFrameReceived:
-			delete [] f.data;
-			break;
-		default:
-			break;
-	}
-}

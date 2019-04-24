@@ -1,7 +1,7 @@
 #include "Network.h"
 #include "../Utilities/Utilities.h"
 #include "GlobalContext.h"
-#include "Event.h"
+#include "EventHandler.h"
 #include <cstring>
 
 Core::Network * Core::Network::instance = nullptr;
@@ -195,58 +195,49 @@ Core::Event* Core::Network::decode(sf::Packet & p) {
     }
     auto type = static_cast<PacketTypes>(t);
 
-    auto packet = new Core::Event;
+    Core::Event * packet = nullptr;
 
     // Decode all of the packets here
     switch (type) {
         case PacketTypes::Ping:
-        	packet->type = Core::Event::PingReceived;
+        	packet = new Core::Event(Core::Event::PingReceived);
 			break;
-		case PacketTypes::Video:
-		{
-			packet->type = Core::Event::VideoFrameReceived;
-			sf::Uint32 size;
-
-			if (!(p >> size)) {
-				delete packet;
-				return nullptr;
-			}
-
-			packet->f.len = size;
-
-			// We'll let the event handler clean up the memory for us
-			auto pixels = new sf::Uint8[size];
-
-			bool read = true;
-
-			// Fill out the pixel array assuming we just send straight pixels
-			for (unsigned i = 0; i < size && read; ++i) {
-				read = (p >> pixels[i]);
-			}
-
-			// Something went wrong during read. Abort.
-			if (!read) {
-				delete [] pixels;
-				delete packet;
-				return nullptr;
-			}
-
-			packet->f.data = pixels;
-			break;
-		}
-		case PacketTypes::StartVideo:
-		case PacketTypes::StopVideo:
-		case PacketTypes::StartTemp:
-		case PacketTypes::StopTemp:
-		case PacketTypes::StartPressure:
-		case PacketTypes::StopPressure:
-		case PacketTypes::Move:
-        case PacketTypes::Temperature:
-        case PacketTypes::Pressure:
-        case PacketTypes::Shutdown:
+//		case PacketTypes::Video:
+//		{
+//			packet->type = Core::Event::VideoFrameReceived;
+//			sf::Uint32 size;
+//
+//			if (!(p >> size)) {
+//				delete packet;
+//				return nullptr;
+//			}
+//
+//			packet->f.len = size;
+//
+//			// We'll let the event handler clean up the memory for us
+//			auto pixels = new sf::Uint8[size];
+//
+//			bool read = true;
+//
+//			// Fill out the pixel array assuming we just send straight pixels
+//			for (unsigned i = 0; i < size && read; ++i) {
+//				read = (p >> pixels[i]);
+//			}
+//
+//			// Something went wrong during read. Abort.
+//			if (!read) {
+//				delete [] pixels;
+//				delete packet;
+//				return nullptr;
+//			}
+//
+//			packet->f.data = pixels;
+//			break;
+//		}
         default: //unknown packet type
         	delete packet;
-            return nullptr;
+        	packet = nullptr;
+        	break;
     }
     return packet;
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "IFrame.h"
 #include "../Globals.h"
-#include "../Core/Event.h"
+#include "../Core/EventHandler.h"
 
 namespace Frames
 {

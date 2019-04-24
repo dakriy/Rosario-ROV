@@ -9,57 +9,14 @@
  */
 
 #include "../Frames/IFrame.h"
-#include "Event.h"
+#include "EventHandler.h"
 #include <vector>
 #include <queue>
 #include <mutex>
+#include "Event.h"
 
 namespace Core
 {
-
-	class Event
-	{
-	public:
-		struct VideoFrame
-		{
-			unsigned len;
-			const sf::Uint8 * data;
-		};
-
-		struct Temperature
-		{
-			double temp;
-		};
-
-		struct Pressure
-		{
-			double pressure;
-		};
-
-		enum EventType
-		{
-			PingReceived,
-			VideoFrameReceived,
-			TemperatureReceived,
-			PressureReceived,
-
-			Count
-		};
-
-		EventType type = Count;
-
-		union
-		{
-			VideoFrame f;
-			Temperature t;
-			Pressure p;
-		};
-
-		explicit Event(EventType t) : type(t){}
-		Event() = default;
-		~Event();
-	};
-
 	/**
 	 * List of actions we can do to a frame
 	 * Must end with FrameActionCount
