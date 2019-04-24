@@ -279,8 +279,6 @@ Wire Wire Line
 Wire Wire Line
 	3000 2000 3000 2500
 Wire Wire Line
-	2300 3000 2300 3150
-Wire Wire Line
 	2200 1100 2200 1900
 Wire Wire Line
 	2300 2300 2300 3000
@@ -486,8 +484,6 @@ F 3 "" H 3350 5700 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3150 5700 3250 5700
-Wire Wire Line
 	2350 4100 1600 4100
 Wire Wire Line
 	1600 4100 1600 5300
@@ -598,8 +594,6 @@ Wire Wire Line
 Connection ~ 5300 4550
 Wire Wire Line
 	5300 4550 5300 4650
-Wire Wire Line
-	6200 4900 5900 4900
 Wire Wire Line
 	5900 4900 5900 5050
 Text Notes 4000 6500 0    138  ~ 28
@@ -836,7 +830,7 @@ F 2 "Adafruit TSL2591:OEM Board" H 8650 1400 50  0001 C CNN
 F 3 "${KIPRJMOD}\\Datasheets\\EC_oem_datasheet.pdf" H 8650 1400 50  0001 C CNN
 F 4 "EC-OEM" H 8650 1400 50  0001 C CNN "manf#"
 	1    8650 1400
-	-1   0    0    1   
+	1    0    0    -1  
 $EndComp
 NoConn ~ 9000 1250
 NoConn ~ 9000 1350
@@ -961,20 +955,6 @@ Wire Wire Line
 Connection ~ 6800 5350
 Wire Wire Line
 	6800 5350 6300 5350
-$Comp
-L power:PWR_FLAG #FLG0103
-U 1 1 5CBFE387
-P 3250 5700
-F 0 "#FLG0103" H 3250 5775 50  0001 C CNN
-F 1 "PWR_FLAG" V 3250 5828 50  0000 L CNN
-F 2 "" H 3250 5700 50  0001 C CNN
-F 3 "~" H 3250 5700 50  0001 C CNN
-	1    3250 5700
-	-1   0    0    1   
-$EndComp
-Connection ~ 3250 5700
-Wire Wire Line
-	3250 5700 3350 5700
 $Comp
 L Adafruit_TSL2591-eagle-import:LTC2451CTS8-TRMPBF U6
 U 1 1 5CC0994E
@@ -1140,4 +1120,10 @@ F 3 "~" H 10700 3050 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	10500 3050 10400 3050
+Wire Wire Line
+	3150 5700 3350 5700
+Wire Wire Line
+	5900 4900 6200 4900
+Wire Wire Line
+	2300 3000 2300 3150
 $EndSCHEMATC
