@@ -1,0 +1,36 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#(c) SnapEDA 2016 (snapeda.com)
+#This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA) with Design Exception 1.0
+#
+# LTC4316CMSPBF
+#
+DEF LTC4316CMSPBF U 0 40 Y Y 1 L N
+F0 "U" 1215 359 50 H V L BNN
+F1 "LTC4316CMSPBF" 1190 259 50 H V L BNN
+F2 "MSOP-10_MS" 0 0 50 H I L BNN
+F3 "LTC4316CMS#PBF" 0 0 50 H I L BNN
+F4 "LTC4316CMS#PBF-ND" 0 0 50 H I L BNN
+F5 "Linear Technology/Analog" 0 0 50 H I L BNN
+F6 "LTC4316 - Single I2C/SMBus Address Translator" 0 0 50 H I L BNN
+F7 "https://www.digikey.com/product-detail/en/linear-technology-analog-devices/LTC4316CMS-PBF/LTC4316CMS-PBF-ND/5297620?utm_source=snapeda&utm_medium=aggregator&utm_campaign=symbol" 0 0 50 H I L BNN
+F8 "MSOP-10 Linear Technology" 0 0 50 H I L BNN
+DRAW
+P 2 0 0 6 300 200 300 -600 N
+P 2 0 0 6 300 -600 2500 -600 N
+P 2 0 0 6 2500 -600 2500 200 N
+P 2 0 0 6 2500 200 300 200 N
+X GND 1 0 0 300 R 40 40 0 0 W 
+X XORH 2 0 -100 300 R 40 40 0 0 I 
+X XORL 3 0 -200 300 R 40 40 0 0 I 
+X VCC 4 0 -300 300 R 40 40 0 0 W 
+X ENABLE 5 0 -400 300 R 40 40 0 0 I 
+X READY 6 2800 -400 300 L 40 40 0 0 O 
+X SDAIN 7 2800 -300 300 L 40 40 0 0 B 
+X SDAOUT 8 2800 -200 300 L 40 40 0 0 B 
+X SCLOUT 9 2800 -100 300 L 40 40 0 0 B 
+X SCLIN 10 2800 0 300 L 40 40 0 0 B 
+ENDDRAW
+ENDDEF
+#
+# End Library
