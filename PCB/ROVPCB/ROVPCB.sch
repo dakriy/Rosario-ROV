@@ -262,6 +262,7 @@ F 0 "P1" H 2650 3117 50  0000 C CNN
 F 1 "Conn_02x20_Odd_Even" H 2650 3026 50  0000 C CNN
 F 2 "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical" H -2250 1050 50  0001 C CNN
 F 3 "" H -2250 1050 50  0001 C CNN
+F 4 "M52-5001045" H 2600 2000 50  0001 C CNN "manf#"
 	1    2600 2000
 	1    0    0    -1  
 $EndComp
@@ -293,6 +294,7 @@ F 0 "J1" H 4856 1778 50  0000 C CNN
 F 1 "Conn_01x04_Male" H 4856 1687 50  0000 C CNN
 F 2 "Connector_Hirose:Hirose_DF13-04P-1.25DSA_1x04_P1.25mm_Vertical" H 4750 1500 50  0001 C CNN
 F 3 "~" H 4750 1500 50  0001 C CNN
+F 4 "DF13-04P-1.25DSA" H 4750 1500 50  0001 C CNN "manf#"
 	1    4750 1500
 	1    0    0    -1  
 $EndComp
@@ -304,6 +306,7 @@ F 0 "J2" H 4856 2278 50  0000 C CNN
 F 1 "Conn_01x04_Male" H 4856 2187 50  0000 C CNN
 F 2 "Connector_Hirose:Hirose_DF13-04P-1.25DSA_1x04_P1.25mm_Vertical" H 4750 2000 50  0001 C CNN
 F 3 "~" H 4750 2000 50  0001 C CNN
+F 4 "DF13-04P-1.25DSA" H 4750 2000 50  0001 C CNN "manf#"
 	1    4750 2000
 	1    0    0    -1  
 $EndComp
@@ -422,7 +425,8 @@ P 2450 5300
 F 0 "U1" H 2450 4314 50  0000 C CNN
 F 1 "MPU-9250" H 2450 4223 50  0000 C CNN
 F 2 "Sensor_Motion:InvenSense_QFN-24_3x3mm_P0.4mm" H 2450 4300 50  0001 C CNN
-F 3 "https://store.invensense.com/datasheets/invensense/MPU9250REV1.0.pdf" H 2450 5150 50  0001 C CNN
+F 3 "${KIPRJMOD}\\Datasheets\\MPU9250.pdf" H 2450 5150 50  0001 C CNN
+F 4 "MPU-9250" H 2450 5300 50  0001 C CNN "manf#"
 	1    2450 5300
 	1    0    0    -1  
 $EndComp
@@ -482,7 +486,7 @@ F 3 "" H 3350 5700 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3150 5700 3350 5700
+	3150 5700 3250 5700
 Wire Wire Line
 	2350 4100 1600 4100
 Wire Wire Line
@@ -513,7 +517,8 @@ P 5300 5350
 F 0 "U2" H 4870 5396 50  0000 R CNN
 F 1 "BME280" H 4870 5305 50  0000 R CNN
 F 2 "Package_LGA:Bosch_LGA-8_2.5x2.5mm_P0.65mm_ClockwisePinNumbering" H 5300 5150 50  0001 C CNN
-F 3 "https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf" H 5300 5150 50  0001 C CNN
+F 3 "${KIPRJMOD}\\Datasheets\\BME280.pdf" H 5300 5150 50  0001 C CNN
+F 4 "BME280" H 5300 5350 50  0001 C CNN "manf#"
 	1    5300 5350
 	1    0    0    -1  
 $EndComp
@@ -606,7 +611,8 @@ P 5150 7050
 F 0 "U3" H 5377 7040 42  0000 L CNN
 F 1 "LIGHT_TSL2591" H 5377 6961 42  0000 L CNN
 F 2 "Adafruit TSL2591:DFN6_TAOS" H 5150 7050 50  0001 C CNN
-F 3 "" H 5150 7050 50  0001 C CNN
+F 3 "${KIPRJMOD}\\Datasheets\\TSL25911.pdf" H 5150 7050 50  0001 C CNN
+F 4 "DFN6_TAOS" H 5150 7050 50  0001 C CNN "manf#"
 	1    5150 7050
 	1    0    0    -1  
 $EndComp
@@ -711,11 +717,12 @@ P 9900 5650
 F 0 "U4" H 11525 6015 50  0000 C CNN
 F 1 "LTC4316IDDPBF" H 11525 5924 50  0000 C CNN
 F 2 "LTC4316IDDPBF:DFN-10_DD" H 13450 5150 50  0001 L BNN
-F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/4316fa.pdf" H 13250 5650 50  0001 L BNN
+F 3 "${KIPRJMOD}\\Datasheets\\LTC4316.pdf" H 13250 5650 50  0001 L BNN
 F 4 "Linear Technology/Analog" H 13100 5950 50  0001 L BNN "Field4"
 F 5 "LTC4316 - Single I2C/SMBus Address Translator" H 12700 5800 50  0001 L BNN "Field5"
 F 6 "LTC4316IDD#PBF" H 13350 5300 50  0001 L BNN "Field7"
 F 7 "DFN-10 Linear Technology" H 13150 5500 50  0001 L BNN "Field8"
+F 8 "LTC4316IDD" H 9900 5650 50  0001 C CNN "manf#"
 	1    9900 5650
 	-1   0    0    1   
 $EndComp
@@ -826,9 +833,10 @@ P 8650 1400
 F 0 "U5" H 8650 1775 50  0000 C CNN
 F 1 "AtlasOEM" H 8650 1684 50  0000 C CNN
 F 2 "Adafruit TSL2591:OEM Board" H 8650 1400 50  0001 C CNN
-F 3 "https://www.atlas-scientific.com/_files/_datasheets/_oem/EC_oem_datasheet.pdf" H 8650 1400 50  0001 C CNN
+F 3 "${KIPRJMOD}\\Datasheets\\EC_oem_datasheet.pdf" H 8650 1400 50  0001 C CNN
+F 4 "EC-OEM" H 8650 1400 50  0001 C CNN "manf#"
 	1    8650 1400
-	1    0    0    -1  
+	-1   0    0    1   
 $EndComp
 NoConn ~ 9000 1250
 NoConn ~ 9000 1350
@@ -953,4 +961,183 @@ Wire Wire Line
 Connection ~ 6800 5350
 Wire Wire Line
 	6800 5350 6300 5350
+$Comp
+L power:PWR_FLAG #FLG0103
+U 1 1 5CBFE387
+P 3250 5700
+F 0 "#FLG0103" H 3250 5775 50  0001 C CNN
+F 1 "PWR_FLAG" V 3250 5828 50  0000 L CNN
+F 2 "" H 3250 5700 50  0001 C CNN
+F 3 "~" H 3250 5700 50  0001 C CNN
+	1    3250 5700
+	-1   0    0    1   
+$EndComp
+Connection ~ 3250 5700
+Wire Wire Line
+	3250 5700 3350 5700
+$Comp
+L Adafruit_TSL2591-eagle-import:LTC2451CTS8-TRMPBF U6
+U 1 1 5CC0994E
+P 7600 2850
+F 0 "U6" H 8825 3237 60  0000 C CNN
+F 1 "LTC2451CTS8-TRMPBF" H 8825 3131 60  0000 C CNN
+F 2 "footprints:LTC2451CTS8-TRMPBF" H 8850 3050 60  0001 C CNN
+F 3 "${KIPRJMOD}\\Datasheets\\LTC2451.pdf" H 8825 3131 60  0001 C CNN
+	1    7600 2850
+	1    0    0    -1  
+$EndComp
+Text Label 10150 2950 2    50   ~ 0
+GPIO3(SCL1)
+Text Label 10150 2850 2    50   ~ 0
+GPIO2(SDA1)
+Wire Wire Line
+	9500 2950 10150 2950
+Wire Wire Line
+	10150 2850 9500 2850
+$Comp
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0104
+U 1 1 5CC19AEF
+P 9750 3400
+F 0 "#PWR0104" H 9750 3150 50  0001 C CNN
+F 1 "GND" H 9750 3250 50  0000 C CNN
+F 2 "" H 9750 3400 50  0000 C CNN
+F 3 "" H 9750 3400 50  0000 C CNN
+	1    9750 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0115
+U 1 1 5CC19B4E
+P 7900 2850
+F 0 "#PWR0115" H 7900 2600 50  0001 C CNN
+F 1 "GND" H 7900 2700 50  0000 C CNN
+F 2 "" H 7900 2850 50  0000 C CNN
+F 3 "" H 7900 2850 50  0000 C CNN
+	1    7900 2850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8150 2850 7900 2850
+$Comp
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0116
+U 1 1 5CC1F2DC
+P 7650 3150
+F 0 "#PWR0116" H 7650 3000 50  0001 C CNN
+F 1 "+3.3V" H 7650 3290 50  0000 C CNN
+F 2 "" H 7650 3150 50  0000 C CNN
+F 3 "" H 7650 3150 50  0000 C CNN
+	1    7650 3150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C5
+U 1 1 5CC24DAB
+P 8050 3400
+F 0 "C5" H 8165 3446 50  0000 L CNN
+F 1 "0.1uF" H 8165 3355 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 8088 3250 50  0001 C CNN
+F 3 "~" H 8050 3400 50  0001 C CNN
+	1    8050 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8150 2850 8150 2950
+Connection ~ 8150 2850
+$Comp
+L Device:C C4
+U 1 1 5CC2A628
+P 7650 3400
+F 0 "C4" H 7765 3446 50  0000 L CNN
+F 1 "10uF" H 7765 3355 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 7688 3250 50  0001 C CNN
+F 3 "~" H 7650 3400 50  0001 C CNN
+	1    7650 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7650 3150 7650 3250
+Wire Wire Line
+	8150 3150 8050 3150
+Connection ~ 7650 3150
+Wire Wire Line
+	8050 3150 8050 3250
+Connection ~ 8050 3150
+Wire Wire Line
+	8050 3150 7650 3150
+Wire Wire Line
+	8150 3050 8150 3150
+Connection ~ 8150 3150
+$Comp
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0117
+U 1 1 5CC40D88
+P 8050 3550
+F 0 "#PWR0117" H 8050 3300 50  0001 C CNN
+F 1 "GND" H 8050 3400 50  0000 C CNN
+F 2 "" H 8050 3550 50  0000 C CNN
+F 3 "" H 8050 3550 50  0000 C CNN
+	1    8050 3550
+	1    0    0    -1  
+$EndComp
+$Comp
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0118
+U 1 1 5CC46ADC
+P 7650 3550
+F 0 "#PWR0118" H 7650 3300 50  0001 C CNN
+F 1 "GND" H 7650 3400 50  0000 C CNN
+F 2 "" H 7650 3550 50  0000 C CNN
+F 3 "" H 7650 3550 50  0000 C CNN
+	1    7650 3550
+	1    0    0    -1  
+$EndComp
+Text Notes 7550 2350 0    138  ~ 28
+ADC for Current Sense
+Wire Wire Line
+	9550 3150 9500 3150
+$Comp
+L Device:C C6
+U 1 1 5CC5F4A9
+P 9750 3200
+F 0 "C6" H 9865 3246 50  0000 L CNN
+F 1 "0.1uF" H 9865 3155 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 9788 3050 50  0001 C CNN
+F 3 "~" H 9750 3200 50  0001 C CNN
+	1    9750 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9750 3350 9750 3400
+Wire Wire Line
+	9550 3150 9550 3350
+Wire Wire Line
+	9550 3350 9750 3350
+Connection ~ 9750 3350
+Wire Wire Line
+	9750 3050 9500 3050
+$Comp
+L Device:R R3
+U 1 1 5CC715CB
+P 10250 3050
+F 0 "R3" H 10320 3096 50  0000 L CNN
+F 1 "1k" H 10320 3005 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 10180 3050 50  0001 C CNN
+F 3 "~" H 10250 3050 50  0001 C CNN
+	1    10250 3050
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	10100 3050 9750 3050
+Connection ~ 9750 3050
+$Comp
+L Connector:Conn_01x01_Male J4
+U 1 1 5CC779A0
+P 10700 3050
+F 0 "J4" H 10700 3150 50  0000 R CNN
+F 1 "Conn_01x01_Male" H 10900 3250 50  0000 R CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill0.8mm" H 10700 3050 50  0001 C CNN
+F 3 "~" H 10700 3050 50  0001 C CNN
+	1    10700 3050
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	10500 3050 10400 3050
 $EndSCHEMATC
