@@ -1,6 +1,6 @@
 EESchema Schematic File Version 4
 LIBS:ROVPCB-cache
-EELAYER 26 0
+EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -15,7 +15,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L ROVPCB-rescue:+5V-power-ROVPCB-rescue-ROVPCB-rescue #PWR01
+L ROVPCB-rescue:+5V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR01
 U 1 1 580C1B61
 P 3100 950
 F 0 "#PWR01" H 3100 800 50  0001 C CNN
@@ -33,7 +33,7 @@ Wire Wire Line
 	3100 1200 2900 1200
 Connection ~ 3100 1100
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR02
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR02
 U 1 1 580C1D11
 P 3000 3150
 F 0 "#PWR02" H 3000 2900 50  0001 C CNN
@@ -57,7 +57,7 @@ Wire Wire Line
 	3000 1700 2900 1700
 Connection ~ 3000 2000
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR03
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR03
 U 1 1 580C1E01
 P 2300 3150
 F 0 "#PWR03" H 2300 2900 50  0001 C CNN
@@ -82,7 +82,7 @@ Wire Wire Line
 Wire Wire Line
 	2200 950  2200 1100
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR04
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR04
 U 1 1 580C1BC1
 P 2200 950
 F 0 "#PWR04" H 2200 800 50  0001 C CNN
@@ -209,7 +209,7 @@ Connection ~ 3000 1700
 Text Notes 650  7600 0    50   ~ 0
 ID_SD and ID_SC PINS:\nThese pins are reserved for HAT ID EEPROM.\n\nAt boot time this I2C interface will be\ninterrogated to look for an EEPROM\nthat identifes the attached board and\nallows automagic setup of the GPIOs\n(and optionally, Linux drivers).\n\nDO NOT USE these pins for anything other\nthan attaching an I2C ID EEPROM. Leave\nunconnected if ID EEPROM not required.
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue MK1
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue MK1
 U 1 1 5834FB2E
 P 3000 7200
 F 0 "MK1" H 3100 7246 50  0000 L CNN
@@ -220,7 +220,7 @@ F 3 "" H 3000 7200 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue MK3
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue MK3
 U 1 1 5834FBEF
 P 3450 7200
 F 0 "MK3" H 3550 7246 50  0000 L CNN
@@ -231,7 +231,7 @@ F 3 "" H 3450 7200 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue MK2
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue MK2
 U 1 1 5834FC19
 P 3000 7400
 F 0 "MK2" H 3100 7446 50  0000 L CNN
@@ -242,7 +242,7 @@ F 3 "" H 3000 7400 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue MK4
+L ROVPCB-rescue:Mounting_Hole-Mechanical-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue MK4
 U 1 1 5834FC4F
 P 3450 7400
 F 0 "MK4" H 3550 7446 50  0000 L CNN
@@ -255,7 +255,7 @@ $EndComp
 Text Notes 3000 7050 0    50   ~ 0
 Mounting Holes
 $Comp
-L ROVPCB-rescue:Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue-ROVPCB-rescue P1
+L ROVPCB-rescue:Conn_02x20_Odd_Even-Connector_Generic-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue P1
 U 1 1 59AD464A
 P 2600 2000
 F 0 "P1" H 2650 3117 50  0000 C CNN
@@ -315,7 +315,7 @@ GPIO2(SDA1)
 Text Label 5900 1600 2    50   ~ 0
 GPIO3(SCL1)
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR06
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR06
 U 1 1 5C61D5CB
 P 6250 2200
 F 0 "#PWR06" H 6250 1950 50  0001 C CNN
@@ -326,7 +326,7 @@ F 3 "" H 6250 2200 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR05
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR05
 U 1 1 5C61D5E4
 P 6000 1300
 F 0 "#PWR05" H 6000 1150 50  0001 C CNN
@@ -378,7 +378,7 @@ F 3 "~" H 3050 4300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0102
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0102
 U 1 1 5C62556F
 P 3050 4450
 F 0 "#PWR0102" H 3050 4200 50  0001 C CNN
@@ -389,7 +389,7 @@ F 3 "" H 3050 4450 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0103
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0103
 U 1 1 5C62558E
 P 3050 6200
 F 0 "#PWR0103" H 3050 5950 50  0001 C CNN
@@ -400,7 +400,7 @@ F 3 "" H 3050 6200 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0105
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0105
 U 1 1 5C62A4AF
 P 3050 4050
 F 0 "#PWR0105" H 3050 3900 50  0001 C CNN
@@ -473,7 +473,7 @@ Wire Wire Line
 Wire Wire Line
 	3500 5600 3150 5600
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0101
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0101
 U 1 1 5CB6C0D3
 P 3350 5700
 F 0 "#PWR0101" H 3350 5450 50  0001 C CNN
@@ -491,7 +491,7 @@ Wire Wire Line
 	1600 5300 1750 5300
 Connection ~ 2350 4100
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0106
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0106
 U 1 1 5CB74877
 P 1650 5500
 F 0 "#PWR0106" H 1650 5250 50  0001 C CNN
@@ -521,7 +521,7 @@ $EndComp
 Text Notes 4350 4000 0    138  ~ 28
 Temp/Press/Humid
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0107
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0107
 U 1 1 5CB8835A
 P 5300 5950
 F 0 "#PWR0107" H 5300 5700 50  0001 C CNN
@@ -548,7 +548,7 @@ F 3 "~" H 4700 4700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0108
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0108
 U 1 1 5CB8AB73
 P 4700 4850
 F 0 "#PWR0108" H 4700 4600 50  0001 C CNN
@@ -559,7 +559,7 @@ F 3 "" H 4700 4850 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0109
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0109
 U 1 1 5CB8D386
 P 5300 4450
 F 0 "#PWR0109" H 5300 4300 50  0001 C CNN
@@ -572,7 +572,7 @@ $EndComp
 Wire Wire Line
 	5200 4750 5300 4750
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0110
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0110
 U 1 1 5CB8FE0A
 P 6050 5650
 F 0 "#PWR0110" H 6050 5500 50  0001 C CNN
@@ -611,7 +611,7 @@ F 4 "DFN6_TAOS" H 5150 7050 50  0001 C CNN "manf#"
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR07
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR07
 U 1 1 5CB72608
 P 4400 7250
 F 0 "#PWR07" H 4400 7100 50  0001 C CNN
@@ -624,7 +624,7 @@ $EndComp
 Wire Wire Line
 	4400 7250 4750 7250
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR08
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR08
 U 1 1 5CB7546E
 P 4600 7350
 F 0 "#PWR08" H 4600 7100 50  0001 C CNN
@@ -731,7 +731,7 @@ Wire Wire Line
 Wire Wire Line
 	7000 5250 7500 5250
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0111
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0111
 U 1 1 5CB8FA80
 P 7500 6000
 F 0 "#PWR0111" H 7500 5750 50  0001 C CNN
@@ -756,7 +756,7 @@ Wire Wire Line
 Wire Wire Line
 	6750 5450 7500 5450
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0112
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0112
 U 1 1 5CBA3506
 P 9250 5550
 F 0 "#PWR0112" H 9250 5300 50  0001 C CNN
@@ -769,7 +769,7 @@ $EndComp
 Wire Wire Line
 	9250 5550 9150 5550
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0113
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0113
 U 1 1 5CBA6BEC
 P 9350 5350
 F 0 "#PWR0113" H 9350 5200 50  0001 C CNN
@@ -810,7 +810,7 @@ Default I2C address: 0x64
 Text Notes 4550 900  0    50   ~ 0
 Default I2C address--Temp: 0x77; Pressure: 0x76
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0114
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0114
 U 1 1 5CBDF2B2
 P 6200 4900
 F 0 "#PWR0114" H 6200 4650 50  0001 C CNN
@@ -844,7 +844,7 @@ GPIO3(SCL1)
 Wire Wire Line
 	9550 1450 9000 1450
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR010
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR010
 U 1 1 5CBFDF85
 P 9250 1650
 F 0 "#PWR010" H 9250 1400 50  0001 C CNN
@@ -857,7 +857,7 @@ $EndComp
 Wire Wire Line
 	9250 1650 9000 1650
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR09
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR09
 U 1 1 5CC01F57
 P 7750 1450
 F 0 "#PWR09" H 7750 1300 50  0001 C CNN
@@ -877,7 +877,7 @@ Wire Wire Line
 Wire Wire Line
 	8300 1750 8100 1750
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR011
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR011
 U 1 1 5CBE8F10
 P 1000 5100
 F 0 "#PWR011" H 1000 4850 50  0001 C CNN
@@ -975,7 +975,7 @@ Wire Wire Line
 Wire Wire Line
 	10150 2850 9500 2850
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0104
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0104
 U 1 1 5CC19AEF
 P 9750 3400
 F 0 "#PWR0104" H 9750 3150 50  0001 C CNN
@@ -986,7 +986,7 @@ F 3 "" H 9750 3400 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0115
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0115
 U 1 1 5CC19B4E
 P 7900 2850
 F 0 "#PWR0115" H 7900 2600 50  0001 C CNN
@@ -999,7 +999,7 @@ $EndComp
 Wire Wire Line
 	8150 2850 7900 2850
 $Comp
-L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue #PWR0116
+L ROVPCB-rescue:+3.3V-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0116
 U 1 1 5CC1F2DC
 P 7650 3150
 F 0 "#PWR0116" H 7650 3000 50  0001 C CNN
@@ -1048,7 +1048,7 @@ Wire Wire Line
 	8150 3050 8150 3150
 Connection ~ 8150 3150
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0117
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0117
 U 1 1 5CC40D88
 P 8050 3550
 F 0 "#PWR0117" H 8050 3300 50  0001 C CNN
@@ -1059,7 +1059,7 @@ F 3 "" H 8050 3550 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue #PWR0118
+L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0118
 U 1 1 5CC46ADC
 P 7650 3550
 F 0 "#PWR0118" H 7650 3300 50  0001 C CNN
