@@ -150,7 +150,7 @@ void Core::Network::run()
                         // Do any necessary pre-processing
                         preProcess(event);
                         // Pass it to the event handler
-                        GlobalContext::get_engine()->add_event(event);
+                        GlobalContext::get_engine()->add_event(std::move(event));
                     }
                 }
             }
@@ -186,7 +186,7 @@ void Core::Network::run()
     }
 }
 
-Core::Event* Core::Network::decode(sf::Packet & p) {
+std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
     auto t = static_cast<sf::Uint8>(PacketTypes::Count);
     if (!(p >> t)) {
         // Error?
@@ -195,12 +195,12 @@ Core::Event* Core::Network::decode(sf::Packet & p) {
     }
     auto type = static_cast<PacketTypes>(t);
 
-    Core::Event * packet = nullptr;
+    std::unique_ptr<Core::Event> packet = nullptr;
 
     // Decode all of the packets here
     switch (type) {
         case PacketTypes::Ping:
-        	packet = new Core::Event(Core::Event::PingReceived);
+            packet = std::make_unique<Core::Event>(Core::Event::PingReceived);
 			break;
 //		case PacketTypes::Video:
 //		{
@@ -235,7 +235,6 @@ Core::Event* Core::Network::decode(sf::Packet & p) {
 //			break;
 //		}
         default: //unknown packet type
-        	delete packet;
         	packet = nullptr;
         	break;
     }
@@ -256,7 +255,7 @@ Core::Network::~Network()
     instance = nullptr;
 }
 
-void Core::Network::preProcess(Core::Event * ev) {
+void Core::Network::preProcess(std::unique_ptr<Event> &ev) {
 	if(!ev) return;
 	switch (ev->type) {
 		case Core::Event::PingReceived:

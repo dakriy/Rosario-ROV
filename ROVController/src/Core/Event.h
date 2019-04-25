@@ -2,6 +2,9 @@
 
 #include <SFML/Config.hpp>
 #include <SFML/System.hpp>
+#include <vector>
+#include <tuple>
+#include <unordered_map>
 
 namespace Core {
 	struct SensorInfo {
@@ -87,19 +90,23 @@ namespace Core {
 
 		sf::Time time = sf::Time::Zero;
 
-		Sensor type = Count;
+        union Measurement {
+            TemperatureMeas t;
+            PressureMeas p;
+            ConductivityMeas c;
+            InternalTemperatureMeas iT;
+            InternalPressureMeas iP;
+            InternalHumidityMeas iH;
+            LightMeas l;
+            VideoFrame f;
+        };
 
-		union {
-			TemperatureMeas t;
-			PressureMeas p;
-			ConductivityMeas c;
-			InternalTemperatureMeas iT;
-			InternalPressureMeas iP;
-			InternalHumidityMeas iH;
-			LightMeas l;
-			VideoFrame f;
-		};
-	};
+		std::unordered_map<Sensor, Measurement> intelligence;
+
+		bool hasDataForSensor(Sensor s) const;
+
+        const Measurement * getSensorData(Sensor s) const;
+    };
 
 	class Event
 	{
@@ -114,12 +121,11 @@ namespace Core {
 		EventType type = Count;
 
 		// Turn this into union when we get more things.
-		union {
-			SensorInfo sInfo;
-		};
+//		union {
+//		};
 
+        SensorInfo sInfo;
 		explicit Event(EventType t) : type(t){}
-		~Event();
 	};
 
 }

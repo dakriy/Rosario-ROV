@@ -38,16 +38,16 @@ namespace Core
 		FAction() = default;
 		FAction(FrameAction a, Frames::IFrame* f) : action(a), frame(f){}
 		FrameAction action = static_cast<FrameAction>(0);
-		Frames::IFrame* frame = nullptr;
+		std::unique_ptr<Frames::IFrame> frame = nullptr;
 	} FAction;
 
 	class Engine
 	{
 	protected:
 		// Frames currently on the stack
-		std::vector<Frames::IFrame *> frame_stack_;
+		std::vector<std::unique_ptr<Frames::IFrame>> frame_stack_;
 
-		std::queue<Core::Event*> core_events_;
+		std::queue<std::unique_ptr<Core::Event>> core_events_;
 
 		// Event processor
 		void Events();
@@ -98,7 +98,7 @@ namespace Core
 		/**
 		 *
 		 */
-		void add_event(Core::Event *e);
+		void add_event(std::unique_ptr<Event> e);
 
 		/**
 		 * Main loop. Order is:

@@ -8,8 +8,9 @@ Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		//image.create(e->f.w, e->f.h, e->f.data);
-		if (e->sInfo.type == Core::SensorInfo::Video) {
-            if(!image.loadFromMemory(e->sInfo.f.data, e->sInfo.f.len))
+		if (e->sInfo.hasDataForSensor(Core::SensorInfo::Video)) {
+		    auto newImg = e->sInfo.getSensorData(Core::SensorInfo::Video);
+            if(!image.loadFromMemory(newImg->f.data, newImg->f.len))
             {
                 std::cout << "NOOO but here" << std::endl;
                 return false;
@@ -34,15 +35,15 @@ Frames::ViewFrame::ViewFrame()
 	}, Core::Event::EventType::SensorInfoReceived);
 
 	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-	    if (e->sInfo.type == Core::SensorInfo::Pressure) {
-            pressure = e->sInfo.p.pressure;
+	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Pressure)) {
+	        pressure = e->sInfo.getSensorData(Core::SensorInfo::Pressure)->p.pressure;
 	    }
 		return false;
 	}, Core::Event::EventType::SensorInfoReceived);
 
 	temperatureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-	    if (e->sInfo.type == Core::SensorInfo::Temperature) {
-	        temp = e->sInfo.t.temperature;
+	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Temperature)) {
+	        temp = e->sInfo.getSensorData(Core::SensorInfo::Temperature)->t.temperature;
 	    }
 		return false;
 	}, Core::Event::EventType::SensorInfoReceived);

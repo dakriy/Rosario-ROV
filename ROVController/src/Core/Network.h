@@ -71,8 +71,8 @@ namespace Core
         std::mutex packetQueueLock;
         std::queue<sf::Packet *> packetQueue;
 
-        Core::Event* decode(sf::Packet &p);
-        void preProcess(Core::Event *);
+        std::unique_ptr<Event> decode(sf::Packet &p);
+        void preProcess(std::unique_ptr<Event> &ev);
 
         std::mutex devicesLock;
 

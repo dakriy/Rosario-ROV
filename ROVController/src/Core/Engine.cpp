@@ -50,7 +50,7 @@ void Core::Engine::Update()
 	}
 	
 	// Update all frames except paused ones.
-	for (auto f : frame_stack_)
+	for (auto &f : frame_stack_)
 		if(!f->isPaused())
 			f->update(dt += rate_clock_.restart());
 }
@@ -61,7 +61,7 @@ void Core::Engine::Render()
 
 	auto t = false;
 	
-	for (auto f : frame_stack_)
+	for (auto & f : frame_stack_)
 	{
 		t = t || !f->isHidden();
 		if (!f->isHidden())
@@ -82,13 +82,11 @@ void Core::Engine::ProcessCustomEvents()
 	while (!core_events_.empty()) {
 		coreEventHandlerLock.lock();
 		// Pull off event as quick as possible while we have the lock
-		Event *e = core_events_.front();
+        std::unique_ptr<Core::Event> e = std::move(core_events_.front());
 		core_events_.pop();
 		// Release control of the lock
 		coreEventHandlerLock.unlock();
-		cev_->handle_event(e);
-		// Delete it so we don't end up with memory leaks
-		delete e;
+		cev_->handle_event(e.get());
 	}
 }
 
@@ -97,18 +95,16 @@ void Core::Engine::ProcessFrameAction(FAction& f_action)
 	switch (f_action.action)
 	{
 	case PopFrame:
-		delete frame_stack_.back();
 		frame_stack_.pop_back();
 		frame_stack_.back()->show();
 		frame_stack_.back()->unpause();
 		break;
 	case PushFrame:
-		frame_stack_.emplace_back(f_action.frame);
+		frame_stack_.emplace_back(std::move(f_action.frame));
 		break;
 	case ReplaceTopFrame:
-		delete frame_stack_.back();
 		frame_stack_.pop_back();
-		frame_stack_.emplace_back(f_action.frame);
+		frame_stack_.emplace_back(std::move(f_action.frame));
 	case FrameActionCount:
 	default:
 		break;
@@ -129,18 +125,17 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::Eve
 	// Enable vertical sync enabled. Don't do framerate
 	window_->setVerticalSyncEnabled(true);
 	// Initialize it to the first main menu frame.
-	let firstFrame = new Frames::TitleFrame;
-	frame_stack_.emplace_back(firstFrame);
+	frame_stack_.emplace_back(std::make_unique<Frames::TitleFrame>());
 
 	GlobalContext::set_engine(this);
 }
 
-void Core::Engine::add_event(Core::Event *e)
+void Core::Engine::add_event(std::unique_ptr<Event> e)
 {
 	// Make sure we are not sent a nullptr or an invalid type
 	if (e && e->type != Core::Event::EventType::Count) {
 		coreEventHandlerLock.lock();
-		core_events_.push(e);
+		core_events_.push(std::move(e));
 		coreEventHandlerLock.unlock();
 	}
 }
@@ -178,11 +173,5 @@ void Core::Engine::frame_action(FrameAction action, Frames::IFrame* frame)
 
 Core::Engine::~Engine()
 {
-	while (!frame_stack_.empty())
-	{
-		delete frame_stack_.back();
-		frame_stack_.pop_back();
-	}
-
 	GlobalContext::clear_engine();
 }
