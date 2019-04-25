@@ -8,37 +8,44 @@ Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		//image.create(e->f.w, e->f.h, e->f.data);
-		if(!image.loadFromMemory(e->f.data, e->f.len))
-		{
-			std::cout << "NOOO but here" << std::endl;
-			return false;
+		if (e->sInfo.type == Core::SensorInfo::Video) {
+            if(!image.loadFromMemory(e->sInfo.f.data, e->sInfo.f.len))
+            {
+                std::cout << "NOOO but here" << std::endl;
+                return false;
+            }
+
+            if (!tex.loadFromImage(image))
+            {
+                std::cout << "NOOOOO" << std::endl;
+                return false;
+            }
+            std::cout << "New Image" << std::endl;
+            sprite.setTexture(tex);
+
+            // Set scale only once
+            if (!frame)
+                sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
+
+            frame = true;
+            return true;
 		}
-
-		if (!tex.loadFromImage(image))
-		{
-			std::cout << "NOOOOO" << std::endl;
-			return false;
-		}
-		std::cout << "New Image" << std::endl;
-		sprite.setTexture(tex);
-
-		// Set scale only once
-		if (!frame)
-			sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
-
-		frame = true;
-		return true;
-	}, Core::Event::EventType::VideoFrameReceived);
+		return false;
+	}, Core::Event::EventType::SensorInfoReceived);
 
 	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		pressure = e->p.pressure;
-		return true;
-	}, Core::Event::EventType::PressureReceived);
+	    if (e->sInfo.type == Core::SensorInfo::Pressure) {
+            pressure = e->sInfo.p.pressure;
+	    }
+		return false;
+	}, Core::Event::EventType::SensorInfoReceived);
 
 	temperatureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		temp = e->t.temp;
-		return true;
-	}, Core::Event::EventType::TemperatureReceived);
+	    if (e->sInfo.type == Core::SensorInfo::Temperature) {
+	        temp = e->sInfo.t.temperature;
+	    }
+		return false;
+	}, Core::Event::EventType::SensorInfoReceived);
 
 
 	auto vidP = Factory::PacketFactory::create_video_stream_start_packet();
