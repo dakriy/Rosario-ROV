@@ -1126,4 +1126,6 @@ Wire Wire Line
 	5900 4900 6200 4900
 Wire Wire Line
 	2300 3000 2300 3150
+Text Notes 8325 2425 0    50   ~ 0
+Default I2C address: 0x14
 $EndSCHEMATC
