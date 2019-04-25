@@ -25,10 +25,6 @@ Network::Network::~Network() {
 	broadcast.unbind();
 	selector.clear();
 	instance = nullptr;
-	while (!sendQueue.empty()) {
-		delete sendQueue.front();
-		sendQueue.pop();
-	}
 }
 
 void Network::Network::watch() {
@@ -88,7 +84,7 @@ void Network::Network::watch() {
 					if (status == sf::Socket::Done) {
 						auto event = decode(p);
 						preProcess(event);
-						GlobalContext::get_engine()->add_event(event);
+						GlobalContext::get_engine()->add_event(std::move(event));
 					} else if (status == sf::Socket::Disconnected) {
 						closeConnection = true;
 					}
@@ -107,12 +103,10 @@ void Network::Network::watch() {
 				// Send things
 				while (!sendQueue.empty()) {
 					sendQueueGuard.lock();
-					auto p = sendQueue.front();
+					auto p = std::move(sendQueue.front());
+					sendQueue.pop();
 					auto status = connection.send(*p);
-					if (status == sf::Socket::Done) {
-						sendQueue.pop();
-						delete p;
-					} else if (status == sf::Socket::Disconnected) {
+					if (status == sf::Socket::Disconnected) {
 						closeConnection = true;
 					}
 					sendQueueGuard.unlock();
@@ -124,21 +118,18 @@ void Network::Network::watch() {
 				connected = false;
 				selector.remove(connection);
 				connection.disconnect();
-				GlobalContext::get_engine()->add_event(new Core::Event(Core::Event::Disconnected));
+				GlobalContext::get_engine()->add_event(std::make_unique<Core::Event>(Core::Event::Disconnected));
 			}
 		}
 	}
 }
 
-void Network::Network::sendPacket(sf::Packet * packet) {
+void Network::Network::sendPacket(std::unique_ptr<sf::Packet> packet) {
 	if (isConnected()) {
 		// Place it on the packet queue
 		sendQueueGuard.lock();
-		sendQueue.push(packet);
+		sendQueue.push(std::move(packet));
 		sendQueueGuard.unlock();
-	} else {
-		// Get rid of it if we aren't connected.
-		delete packet;
 	}
 }
 
@@ -146,7 +137,7 @@ bool Network::Network::isConnected() const {
 	return connected;
 }
 
-Core::Event *Network::Network::decode(sf::Packet &p) {
+std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 	auto t = static_cast<sf::Uint8>(PacketTypes::Count);
 	if (!(p >> t)) {
 		// Error?
@@ -155,7 +146,7 @@ Core::Event *Network::Network::decode(sf::Packet &p) {
 	}
 	auto type = static_cast<PacketTypes>(t);
 
-	auto pEvent = new Core::Event;
+	std::unique_ptr<Core::Event> pEvent = std::make_unique<Core::Event>();
 
 	// Decode all of the packets here
 	switch (type) {
@@ -176,13 +167,13 @@ Core::Event *Network::Network::decode(sf::Packet &p) {
 		case PacketTypes::Temperature:
 		case PacketTypes::Pressure:
 		default: //unknown packet type
-			delete pEvent;
-			return nullptr;
+			pEvent.reset();
+			break;
 	}
 	return pEvent;
 }
 
-void Network::Network::preProcess(Core::Event * ev) {
+void Network::Network::preProcess(std::unique_ptr<Core::Event> &ev) {
 	if(!ev) return;
 	switch (ev->type) {
 		case Core::Event::PingReceived:

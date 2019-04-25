@@ -4,6 +4,7 @@
 #include <vector>
 #include <queue>
 #include <mutex>
+#include <memory>
 
 namespace Core
 {
@@ -54,7 +55,7 @@ namespace Core
 	{
 	protected:
 
-		std::queue<Core::Event*> core_events_;
+		std::queue<std::unique_ptr<Core::Event>> core_events_;
 
 		// Event processor
 		void Events();
@@ -80,7 +81,7 @@ namespace Core
 		/**
 		 *
 		 */
-		void add_event(Core::Event *e);
+		void add_event(std::unique_ptr<Event> e);
 
 		void Loop();
 

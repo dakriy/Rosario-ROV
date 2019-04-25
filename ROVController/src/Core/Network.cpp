@@ -159,7 +159,7 @@ void Core::Network::run()
             while(!packetQueue.empty()) {
                 packetQueueLock.lock();
                 // Get packet pointer
-                auto p = packetQueue.front();
+                auto p = std::move(packetQueue.front());
                 // Pop it off the top.
                 packetQueue.pop();
                 packetQueueLock.unlock();
@@ -168,8 +168,6 @@ void Core::Network::run()
                 if (status == sf::Socket::Status::Disconnected) {
                     closeConnection = true;
                 }
-                // Prevent memory leaks
-                delete p;
                 // TODO: Don't drop packet if error in socket maybe? At least look into it
             }
 
@@ -248,10 +246,6 @@ Core::Network::~Network()
     connection.disconnect();
     broadcast.unbind();
     selector.clear();
-    while(!packetQueue.empty()) {
-    	delete packetQueue.front();
-    	packetQueue.pop();
-    }
     instance = nullptr;
 }
 
@@ -301,17 +295,13 @@ sf::IpAddress Core::Network::getConnectedHost() const {
 	return ROV;
 }
 
-void Core::Network::send_packet(sf::Packet *p) {
+void Core::Network::send_packet(std::unique_ptr<sf::Packet> p) {
 	if (isConnected()) {
 		// Place it on the packet queue
 		packetQueueLock.lock();
-		packetQueue.push(p);
+		packetQueue.push(std::move(p));
 		packetQueueLock.unlock();
-	} else {
-		// Get rid of it if we aren't connected.
-		delete p;
 	}
-
 }
 
 void Core::Network::disconnect() {

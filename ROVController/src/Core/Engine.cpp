@@ -43,8 +43,7 @@ void Core::Engine::Update()
 		}
 		if (ImGui::Button("Shutdown ROV"))
 		{
-			auto p = Factory::PacketFactory::create_shutdown_packet();
-			network->send_packet(p);
+			network->send_packet(Factory::PacketFactory::create_shutdown_packet());
 		}
 		ImGui::End();
 	}

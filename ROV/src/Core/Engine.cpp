@@ -10,13 +10,11 @@ void Core::Engine::Events()
 	while (!core_events_.empty()) {
 		coreEventHandlerLock.lock();
 		// Pull off event as quick as possible while we have the lock
-		Event *e = core_events_.front();
+		std::unique_ptr<Event> e = std::move(core_events_.front());
 		core_events_.pop();
 		// Release control of the lock
 		coreEventHandlerLock.unlock();
-		cev_->handle_event(e);
-		// Delete it so we don't end up with memory leaks
-		delete e;
+		cev_->handle_event(e.get());
 	}
 }
 
@@ -34,12 +32,12 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 	GlobalContext::set_engine(this);
 }
 
-void Core::Engine::add_event(Core::Event *e)
+void Core::Engine::add_event(std::unique_ptr<Event> e)
 {
 	// Make sure we are not sent a nullptr or an invalid type
 	if (e && e->type != Core::Event::EventType::Count) {
 		coreEventHandlerLock.lock();
-		core_events_.push(e);
+		core_events_.push(std::move(e));
 		coreEventHandlerLock.unlock();
 	}
 }

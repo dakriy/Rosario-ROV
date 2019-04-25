@@ -10,6 +10,7 @@
 #include "../Core/Event.h"
 #include "../Core/Engine.h"
 #include <atomic>
+#include <memory>
 
 namespace Network {
 	class Network {
@@ -30,7 +31,7 @@ namespace Network {
 		std::mutex sendQueueGuard;
 
 		// Incoming and outgoing queues
-		std::queue<sf::Packet *> sendQueue;
+		std::queue<std::unique_ptr<sf::Packet>> sendQueue;
 
 		static Network * instance;
 
@@ -38,12 +39,12 @@ namespace Network {
 
 		void watch();
 
-		Core::Event* decode(sf::Packet &p);
-		void preProcess(Core::Event *);
+		std::unique_ptr<Core::Event> decode(sf::Packet &p);
+		void preProcess(std::unique_ptr<Core::Event> &ev);
 	public:
 		Network();
 
-		void sendPacket(sf::Packet *packet);
+		void sendPacket(std::unique_ptr<sf::Packet> packet);
 
 		bool isConnected() const;
 

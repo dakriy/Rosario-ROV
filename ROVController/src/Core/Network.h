@@ -9,6 +9,7 @@
 #include <atomic>
 #include <queue>
 #include <mutex>
+#include <memory>
 
 namespace Core
 {
@@ -69,7 +70,7 @@ namespace Core
         void run();
 
         std::mutex packetQueueLock;
-        std::queue<sf::Packet *> packetQueue;
+        std::queue<std::unique_ptr<sf::Packet>> packetQueue;
 
         std::unique_ptr<Event> decode(sf::Packet &p);
         void preProcess(std::unique_ptr<Event> &ev);
@@ -97,7 +98,7 @@ namespace Core
 
 		void connect_to_host(sf::IpAddress addr);
 
-		void send_packet(sf::Packet *);
+		void send_packet(std::unique_ptr<sf::Packet> p);
 
 		void disconnect();
 

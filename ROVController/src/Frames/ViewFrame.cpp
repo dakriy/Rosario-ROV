@@ -48,13 +48,9 @@ Frames::ViewFrame::ViewFrame()
 		return false;
 	}, Core::Event::EventType::SensorInfoReceived);
 
-
-	auto vidP = Factory::PacketFactory::create_video_stream_start_packet();
-	auto pressP = Factory::PacketFactory::create_pressure_data_start_packet();
-	auto tempP = Factory::PacketFactory::create_temperature_data_start_packet();
-	GlobalContext::get_network()->send_packet(vidP);
-	GlobalContext::get_network()->send_packet(pressP);
-	GlobalContext::get_network()->send_packet(tempP);
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_video_stream_start_packet());
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_pressure_data_start_packet());
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_temperature_data_start_packet());
 }
 
 void Frames::ViewFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -95,8 +91,7 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 		let down = 3.4f;
 		let range = up - down;
 		var amount = (pos + 100.f) / 200.f * range + down;
-		auto p = Factory::PacketFactory::create_camera_move_packet(amount);
-		GlobalContext::get_network()->send_packet(p);
+		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_camera_move_packet(amount));
 		updateCounter = 0;
 	} else
 	{
@@ -111,12 +106,9 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
-	auto vidP = Factory::PacketFactory::create_video_stream_stop_packet();
-	auto pressP = Factory::PacketFactory::create_pressure_data_stop_packet();
-	auto tempP = Factory::PacketFactory::create_temperature_data_stop_packet();
-	GlobalContext::get_network()->send_packet(vidP);
-	GlobalContext::get_network()->send_packet(pressP);
-	GlobalContext::get_network()->send_packet(tempP);
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_video_stream_stop_packet());
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_pressure_data_stop_packet());
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_temperature_data_stop_packet());
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(pressureHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(temperatureHook);
