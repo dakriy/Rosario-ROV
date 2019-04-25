@@ -21,8 +21,9 @@ void Core::Engine::Events()
 }
 
 void Core::Engine::Update()
-{	
+{
 	// Update here.
+
 }
 
 Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* cev)

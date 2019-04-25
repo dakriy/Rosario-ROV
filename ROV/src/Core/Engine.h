@@ -66,6 +66,9 @@ namespace Core
 
 		std::mutex coreEventHandlerLock;
 
+		// In milliseconds
+		static const unsigned defaultTimeout = 250;
+
 	public:
 		/**
 		 * Engine Constructor

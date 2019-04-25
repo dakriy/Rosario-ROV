@@ -15,10 +15,12 @@ set(CPP_DIR_1 src)
 set(CPP_DIR_2 src/Network)
 set(CPP_DIR_3 src/Core)
 set(CPP_DIR_4 src/Factories)
+set(CPP_DIR_5 src/Sensors)
 set(HEADER_DIR_1 src)
 set(HEADER_DIR_2 src/Network)
 set(HEADER_DIR_3 src/Core)
 set(HEADER_DIR_4 src/Factories)
+set(HEADER_DIR_5 src/Sensors)
 
 ############## CMake Project ################
 #        The main options of project        #
@@ -99,10 +101,12 @@ file(GLOB SRC_FILES
     ${CPP_DIR_2}/*.cpp
     ${CPP_DIR_3}/*.cpp
     ${CPP_DIR_4}/*.cpp
+    ${CPP_DIR_5}/*.cpp
     ${HEADER_DIR_1}/*.h
     ${HEADER_DIR_2}/*.h
     ${HEADER_DIR_3}/*.h
     ${HEADER_DIR_4}/*.h
+    ${HEADER_DIR_5}/*.h
 )
 
 # Add executable to build.
