@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Event.h"
+#include "EventHandler.h"
 #include <vector>
 #include <queue>
 #include <mutex>
 #include <memory>
+#include "../Sensors/Sensor.h"
 
 namespace Core
 {
@@ -28,9 +29,16 @@ namespace Core
 			double pressure;
 		};
 
+		struct SensorsRequested
+		{
+			float frequency;
+			std::vector<Sensor::SensorInfo::Sensor> sensors;
+		};
+
 		enum EventType
 		{
 			PingReceived,
+			DataRequested,
 			Disconnected,
 			Shutdown,
 
@@ -44,11 +52,11 @@ namespace Core
 			VideoFrame f;
 			Temperature t;
 			Pressure p;
+			SensorsRequested r;
 		};
 
 		explicit Event(EventType t) : type(t) {}
 		Event() = default;
-		~Event();
 	};
 
 	class Engine

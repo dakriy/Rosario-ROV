@@ -1,5 +1,6 @@
 #include "Network.h"
 #include "../Core/GlobalContext.h"
+#include "../Sensors/Sensor.h"
 #include <chrono>
 
 Network::Network * Network::Network::instance = nullptr;
@@ -156,16 +157,33 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 		case PacketTypes::Shutdown:
 			pEvent->type = Core::Event::Shutdown;
 			break;
-		case PacketTypes::Video:
-		case PacketTypes::StartVideo:
-		case PacketTypes::StopVideo:
-		case PacketTypes::StartTemp:
-		case PacketTypes::StopTemp:
-		case PacketTypes::StartPressure:
-		case PacketTypes::StopPressure:
-		case PacketTypes::Move:
-		case PacketTypes::Temperature:
-		case PacketTypes::Pressure:
+		case PacketTypes::RequestData:
+			pEvent->type = Core::Event::DataRequested;
+
+			float frequency = 0.f;
+
+			if (!(p >> frequency)) {
+				return nullptr;
+			}
+
+			pEvent->r.frequency = frequency;
+
+			size_t sensorNum = 0;
+
+			if (!(p >> sensorNum)) {
+				return nullptr;
+			}
+
+			pEvent->r.sensors.resize(sensorNum);
+
+			for (auto i = 0; i < sensorNum; ++i) {
+				unsigned sensorType = Sensor::SensorInfo::Sensor::Count;
+				if (!(p >> sensorType)) {
+					return nullptr;
+				}
+				pEvent->r.sensors.push_back(static_cast<Sensor::SensorInfo::Sensor>(sensorType));
+			}
+			break;
 		default: //unknown packet type
 			pEvent.reset();
 			break;

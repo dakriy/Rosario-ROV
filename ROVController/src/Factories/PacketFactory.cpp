@@ -16,3 +16,15 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(fl
 	*p << amount;
 	return p;
 }
+
+std::unique_ptr<sf::Packet>
+Factory::PacketFactory::create_request_data_packet(float frequency, std::vector<Core::SensorInfo::Sensor> sensors) {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::RequestData, p);
+	*p << frequency;
+	*p << sensors.size();
+	for (const auto & sensor : sensors) {
+		*p << static_cast<unsigned>(sensor);
+	}
+	return p;
+}

@@ -19,3 +19,16 @@ void Sensor::Sensor::setPeriod(float T) {
 bool Sensor::Sensor::needsPolled() {
     return timer.getElapsedTime().asSeconds() > period;
 }
+
+
+bool Sensor::SensorInfo::hasDataForSensor(Sensor::SensorInfo::Sensor s) const {
+    return intelligence.find(s) != intelligence.end();
+}
+
+const Sensor::SensorInfo::Measurement * Sensor::SensorInfo::getSensorData(Sensor::SensorInfo::Sensor s) const {
+    auto i = intelligence.find(s);
+    if (i == intelligence.end())
+        return nullptr;
+    return &i->second;
+}
+

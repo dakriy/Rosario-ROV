@@ -3,21 +3,20 @@
 #include <SFML/Config.hpp>
 #include <SFML/System.hpp>
 #include <vector>
-#include <tuple>
 #include <unordered_map>
 
 namespace Core {
 	struct SensorInfo {
 		enum Sensor {
 			// Sensor List
-			Temperature,
-			Pressure,
-			Conductivity,
-			InternalTemperature,
-			InternalPressure,
-			InternalHumidity,
-			Lux,
-			Video,
+			Temperature = 0,
+			Pressure = 1,
+			Conductivity = 2,
+			InternalTemperature = 3,
+			InternalPressure = 4,
+			InternalHumidity = 5,
+			Lux = 6,
+			Video = 7,
 
 			Count
 		};

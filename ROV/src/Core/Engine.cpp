@@ -53,10 +53,3 @@ Core::Engine::~Engine()
 {
 	GlobalContext::clear_engine();
 }
-
-Core::Event::~Event() {
-	switch (type) {
-		default:
-			break;
-	}
-}

@@ -7,7 +7,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <queue>
-#include "../Core/Event.h"
+#include "../Core/EventHandler.h"
 #include "../Core/Engine.h"
 #include <atomic>
 #include <memory>
