@@ -15,6 +15,8 @@ double Computation::Token::compute(double x, double y) {
 			return x;
 		case Computation::TokenType::Y:
 			return y;
+		default:
+			return 0.;
 	}
 }
 
@@ -73,6 +75,8 @@ double Computation::Token::operate(double x, double y) {
 			return abs(lval - rval) < zero;
 		case Operator::Negate:
 			return -lval;
+		default:
+			return 0.;
 	}
 }
 
@@ -135,6 +139,8 @@ double Computation::Token::exec(double x, double y) {
 			return tanh(lval);
 		case Function::Sinh:
 			return sinh(lval);
+		default:
+			return 0.;
 	}
 }
 

@@ -48,9 +48,7 @@ Frames::ViewFrame::ViewFrame()
 		return false;
 	}, Core::Event::EventType::SensorInfoReceived);
 
-	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_video_stream_start_packet());
-	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_pressure_data_start_packet());
-	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_temperature_data_start_packet());
+	// TODO: Request data somehow
 }
 
 void Frames::ViewFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -106,9 +104,7 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
-	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_video_stream_stop_packet());
-	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_pressure_data_stop_packet());
-	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_temperature_data_stop_packet());
+	// TODO: Stop data send somehow
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(pressureHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(temperatureHook);

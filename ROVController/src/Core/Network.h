@@ -16,16 +16,9 @@ namespace Core
 	enum class PacketTypes
 	{
 		Ping = 0,
-		StartVideo = 1,
-		StopVideo = 2,
-		StartTemp = 3,
-		StopTemp = 4,
-		StartPressure = 5,
-		StopPressure = 6,
-		Move = 7,
-		Video = 11,
-		Temperature = 12,
-		Pressure = 13,
+		RequestData = 1,
+		Data = 2,
+		Move = 3,
 		Shutdown = 254,
 		Count
 	};
