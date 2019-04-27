@@ -214,6 +214,6 @@ namespace Controls
 		/**
 		 * Destructor
 		 */
-		~Options();
+		~Options() override;
 	};
 }
