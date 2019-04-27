@@ -7,7 +7,7 @@ Controls::UIElement::UIElement()
 	box.setFillColor(sf::Color(0, 0, 0, 200));
 }
 
-bool Controls::UIElement::isInFocus(sf::Vector2i mouse_pos) const
+bool Controls::UIElement::isInFocus(const sf::Vector2i mouse_pos) const
 {
 	return isInFocus(mouse_pos.x, mouse_pos.y);
 }
