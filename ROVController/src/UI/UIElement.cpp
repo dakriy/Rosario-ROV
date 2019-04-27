@@ -1,3 +1,4 @@
+#include <imgui.h>
 #include "UIElement.h"
 
 Controls::UIElement::UIElement()
@@ -8,11 +9,15 @@ Controls::UIElement::UIElement()
 
 bool Controls::UIElement::isInFocus(sf::Vector2i mouse_pos) const
 {
+	if (ImGui::IsMouseHoveringAnyWindow())
+		return false;
 	return box.getGlobalBounds().contains(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y));
 }
 
 bool Controls::UIElement::isInFocus(const int x, const int y) const
 {
+	if (ImGui::IsMouseHoveringAnyWindow())
+		return false;
 	return box.getGlobalBounds().contains(static_cast<float>(x), static_cast<float>(y));
 }
 
