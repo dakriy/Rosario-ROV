@@ -87,11 +87,11 @@ namespace Core
 
 		bool showAppLog = true;
 
-		AppLog log;
-
-		void drawAppLog();
+		void updateAppLog();
 
 	public:
+		AppLog log;
+
 		/**
 		 * Engine Constructor
 		 * 

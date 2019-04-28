@@ -199,6 +199,9 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
     switch (type) {
         case PacketTypes::Ping:
             packet = std::make_unique<Core::Event>(Core::Event::PingReceived);
+            GlobalContext::get_engine()->log.AddLog(
+            		"[%.1f] [%s] Ping packet received",
+            		GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			break;
 //		case PacketTypes::Video:
 //		{

@@ -11,22 +11,31 @@ AppLog::AppLog() {
 }
 
 void AppLog::Clear() {
+	protection.lock();
 	Buf.clear();
 	LineOffsets.clear();
 	LineOffsets.push_back(0);
+	protection.unlock();
 }
 
 void AppLog::AddLog(const char *fmt, ...) {
+	protection.lock();
 	int old_size = Buf.size();
 	va_list args;
 			va_start(args, fmt);
 	Buf.appendfv(fmt, args);
 			va_end(args);
-	for (int new_size = Buf.size(); old_size < new_size; old_size++)
-		if (Buf[old_size] == '\n')
+	for (int new_size = Buf.size(); old_size < new_size; old_size++) {
+		if (Buf[old_size] == '\n') {
 			LineOffsets.push_back(old_size + 1);
-	if (AutoScroll)
+		}
+	}
+
+	protection.unlock();
+
+	if (AutoScroll) {
 		ScrollToBottom = true;
+	}
 }
 
 void AppLog::Draw(const char *title, bool* p_open) {
@@ -64,6 +73,7 @@ void AppLog::Draw(const char *title, bool* p_open) {
 		ImGui::LogToClipboard();
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+	protection.lock();
 	const char* buf = Buf.begin();
 	const char* buf_end = Buf.end();
 	if (Filter.IsActive())
@@ -104,6 +114,7 @@ void AppLog::Draw(const char *title, bool* p_open) {
 		}
 		clipper.End();
 	}
+	protection.unlock();
 	ImGui::PopStyleVar();
 
 	if (ScrollToBottom)
