@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8.0 FATAL_ERROR)
 ################### Variables. ####################
 # Change if you want modify path or other values. #
 ###################################################
@@ -78,7 +78,7 @@ if(WIN32)
     link_directories(${SFML_LIB})
     include_directories(${SFML_INCLUDE})
 else()
-		find_package(SFML 2.4.1 COMPONENTS system network REQUIRED)
+		find_package(SFML 2.5.1 COMPONENTS system network REQUIRED)
 endif()
 
 
