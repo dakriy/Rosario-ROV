@@ -78,8 +78,7 @@ if(WIN32)
     link_directories(${SFML_LIB})
     include_directories(${SFML_INCLUDE})
 else()
-		find_package(SFML 2.5.1 COMPONENTS system network REQUIRED)
-        find_library(FOO_LIB foo)
+		find_package(SFML 2.4.1 COMPONENTS system network REQUIRED)
 endif()
 
 
