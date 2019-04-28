@@ -1,7 +1,7 @@
 #include "PacketFactory.h"
 
 void Factory::PacketFactory::add_type_to_packet(std::unique_ptr<sf::Packet> &p, Network::PacketTypes type) {
-	*p << static_cast<unsigned char>(type);
+	*p << static_cast<sf::Uint8>(type);
 }
 
 std::unique_ptr<sf::Packet> Factory::PacketFactory::createVideoPacket() {

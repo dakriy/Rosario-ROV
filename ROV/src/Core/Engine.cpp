@@ -31,12 +31,23 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 
 	GlobalContext::set_engine(this);
 
-	cev_->add_event_callback([&](const Event * e) -> bool {
-		dataRequested = true;
+	watchForRequest = cev_->add_event_callback([&](const Event * e) -> bool {
+		missionInProgress = true;
 
+		sensorFrequency = e->r.frequency;
+		for(auto requestedSensorId : e->r.sensors) {
+			for (auto [sensorIndex, actualSensor] : enumerate(sensors)) {
+				if (actualSensor.getSensorInfo().id == requestedSensorId) {
+					requestedSensors.push_back(sensorIndex);
+					// No need to look through the rest
+					break;
+				}
+			}
+		}
 
-		return false;
-	}, Core::Event::DataRequested);
+		// Don't think anything else needs to process this type of packet so go ahead and report it handled
+		return true;
+	}, Core::Event::MissionStart);
 }
 
 void Core::Engine::add_event(std::unique_ptr<Event> e)

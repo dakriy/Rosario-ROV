@@ -157,9 +157,9 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 		case PacketTypes::Shutdown:
 			pEvent = std::make_unique<Core::Event>(Core::Event::Shutdown);
 			break;
-		case PacketTypes::RequestData:
+		case PacketTypes::MissionStart:
 		{
-			pEvent = std::make_unique<Core::Event>(Core::Event::DataRequested);
+			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
 
 			float frequency = 0.f;
 

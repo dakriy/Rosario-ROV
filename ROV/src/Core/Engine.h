@@ -29,9 +29,7 @@ namespace Core
 		static const unsigned defaultTimeout = 250;
 
 
-		std::array<Sensor::Sensor, 5> sensors = {
-
-		};
+		std::array<Sensor::Sensor, 5> sensors;
 
 
 		// Requested sensor vars
@@ -40,7 +38,7 @@ namespace Core
 		// Vector of indexes into the sensors vector of the wanted sensors...
 		// "By default, use vector when you need a container" - Bjarne Stroustrup.
 		std::vector<size_t> requestedSensors;
-		bool dataRequested = false;
+		bool missionInProgress = false;
 
 		EVENT_FUNC_INDEX_CORE watchForRequest;
 

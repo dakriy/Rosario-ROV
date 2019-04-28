@@ -15,10 +15,11 @@ namespace Core
 {
 	enum class PacketTypes
 	{
-		Ping = 0,
-		RequestData = 1,
-		Data = 2,
-		Move = 3,
+		Ping,
+		MissionStart,
+		MissionStop,
+		Data,
+		Move,
 		Shutdown = 254,
 		Count
 	};

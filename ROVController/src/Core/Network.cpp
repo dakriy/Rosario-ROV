@@ -147,10 +147,12 @@ void Core::Network::run()
                     } else {
                     	// Decode the packet
                         auto event = decode(p);
-                        // Do any necessary pre-processing
-                        preProcess(event);
-                        // Pass it to the event handler
-                        GlobalContext::get_engine()->add_event(std::move(event));
+                        if (event) {
+							// Do any necessary pre-processing
+							preProcess(event);
+							// Pass it to the event handler
+							GlobalContext::get_engine()->add_event(std::move(event));
+                        }
                     }
                 }
             }

@@ -15,7 +15,8 @@ namespace Core {
 		enum EventType
 		{
 			PingReceived,
-			DataRequested,
+			MissionStart,
+			MissionStop,
 			Disconnected,
 			Shutdown,
 
@@ -24,10 +25,7 @@ namespace Core {
 
 		EventType type = Count;
 
-		union
-		{
-			SensorsRequested r;
-		};
+		SensorsRequested r;
 
 		explicit Event(EventType t) : type(t) {}
 	};
