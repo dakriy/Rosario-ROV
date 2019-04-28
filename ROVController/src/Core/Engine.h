@@ -14,6 +14,7 @@
 #include <queue>
 #include <mutex>
 #include "Event.h"
+#include "../UI/AppLog.h"
 
 namespace Core
 {
@@ -83,6 +84,12 @@ namespace Core
 		EventHandler<Core::Event, Core::Event::EventType::Count>* cev_;
 
 		std::mutex coreEventHandlerLock;
+
+		bool showAppLog = true;
+
+		AppLog log;
+
+		void drawAppLog();
 
 	public:
 		/**

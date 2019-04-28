@@ -52,6 +52,8 @@ void Core::Engine::Update()
 		}
 		ImGui::End();
 	}
+
+	ImGui::ShowDemoWindow();
 	
 	// Update all frames except paused ones.
 	for (auto &f : frame_stack_)
@@ -73,6 +75,8 @@ void Core::Engine::Render()
 	}
 	// Make sure all frames are not hidden.
 	assert(t);
+
+	drawAppLog();
 	
 	// Render imgui on top
 	ImGui::SFML::Render(*window_);
@@ -178,4 +182,9 @@ void Core::Engine::frame_action(FrameAction action, Frames::IFrame* frame)
 Core::Engine::~Engine()
 {
 	GlobalContext::clear_engine();
+}
+
+void Core::Engine::drawAppLog() {
+	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+	log.Draw("App Log:", &showAppLog);
 }
