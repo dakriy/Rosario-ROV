@@ -19,6 +19,8 @@
 
 #define EVENT_FUNC_TYPE(T) std::function<bool(const T*)>
 #define EVENT_FUNC_INDEX(T, S) const Core::EventHook<T, S>*
+#define EVENT_FUNC_TYPE_CORE EVENT_FUNC_TYPE(Core::Event)
+#define EVENT_FUNC_INDEX_CORE EVENT_FUNC_INDEX(Core::Event, Core::Event::Count)
 
 namespace Core
 {

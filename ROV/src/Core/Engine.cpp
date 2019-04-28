@@ -30,6 +30,13 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 	cev_ = cev;
 
 	GlobalContext::set_engine(this);
+
+	cev_->add_event_callback([&](const Event * e) -> bool {
+		dataRequested = true;
+
+
+		return false;
+	}, Core::Event::DataRequested);
 }
 
 void Core::Engine::add_event(std::unique_ptr<Event> e)

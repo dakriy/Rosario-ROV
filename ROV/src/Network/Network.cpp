@@ -147,18 +147,19 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 	}
 	auto type = static_cast<PacketTypes>(t);
 
-	std::unique_ptr<Core::Event> pEvent = std::make_unique<Core::Event>();
+	std::unique_ptr<Core::Event> pEvent = nullptr;
 
 	// Decode all of the packets here
 	switch (type) {
 		case PacketTypes::Ping:
-			pEvent->type = Core::Event::PingReceived;
+			pEvent = std::make_unique<Core::Event>(Core::Event::PingReceived);
 			break;
 		case PacketTypes::Shutdown:
-			pEvent->type = Core::Event::Shutdown;
+			pEvent = std::make_unique<Core::Event>(Core::Event::Shutdown);
 			break;
 		case PacketTypes::RequestData:
-			pEvent->type = Core::Event::DataRequested;
+		{
+			pEvent = std::make_unique<Core::Event>(Core::Event::DataRequested);
 
 			float frequency = 0.f;
 
@@ -184,6 +185,7 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 				pEvent->r.sensors.push_back(static_cast<Sensor::SensorInfo::Sensor>(sensorType));
 			}
 			break;
+		}
 		default: //unknown packet type
 			pEvent.reset();
 			break;

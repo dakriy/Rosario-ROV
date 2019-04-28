@@ -186,5 +186,6 @@ Core::Engine::~Engine()
 
 void Core::Engine::updateAppLog() {
 	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-	log.Draw("App Log:", &showAppLog);
+	if (showAppLog)
+		log.Draw("App Log:", &showAppLog);
 }

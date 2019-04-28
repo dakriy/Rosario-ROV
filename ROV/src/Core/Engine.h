@@ -5,60 +5,10 @@
 #include <queue>
 #include <mutex>
 #include <memory>
-#include "../Sensors/Sensor.h"
+#include "Event.h"
 
 namespace Core
 {
-
-	class Event
-	{
-	public:
-		struct VideoFrame
-		{
-			unsigned len;
-			const sf::Uint8 * data;
-		};
-
-		struct Temperature
-		{
-			double temp;
-		};
-
-		struct Pressure
-		{
-			double pressure;
-		};
-
-		struct SensorsRequested
-		{
-			float frequency;
-			std::vector<Sensor::SensorInfo::Sensor> sensors;
-		};
-
-		enum EventType
-		{
-			PingReceived,
-			DataRequested,
-			Disconnected,
-			Shutdown,
-
-			Count
-		};
-
-		EventType type = Count;
-
-		union
-		{
-			VideoFrame f;
-			Temperature t;
-			Pressure p;
-			SensorsRequested r;
-		};
-
-		explicit Event(EventType t) : type(t) {}
-		Event() = default;
-	};
-
 	class Engine
 	{
 	protected:
@@ -77,6 +27,22 @@ namespace Core
 
 		// In milliseconds
 		static const unsigned defaultTimeout = 250;
+
+
+		std::array<Sensor::Sensor, 5> sensors = {
+
+		};
+
+
+		// Requested sensor vars
+		sf::Clock dataTimer;
+		float sensorFrequency;
+		// Vector of indexes into the sensors vector of the wanted sensors...
+		// "By default, use vector when you need a container" - Bjarne Stroustrup.
+		std::vector<size_t> requestedSensors;
+		bool dataRequested = false;
+
+		EVENT_FUNC_INDEX_CORE watchForRequest;
 
 	public:
 		/**
