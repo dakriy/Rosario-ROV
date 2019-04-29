@@ -6,6 +6,7 @@
 #include <mutex>
 #include <memory>
 #include "Event.h"
+#include "../Sensors/Pressure.h"
 
 namespace Core
 {
@@ -26,10 +27,12 @@ namespace Core
 		std::mutex coreEventHandlerLock;
 
 		// In milliseconds
-		static const unsigned defaultTimeout = 250;
+		const unsigned defaultTimeout = 250;
 
 
-		std::array<Sensor::Sensor, 5> sensors;
+		std::array<std::unique_ptr<Sensor::Sensor>, 1> sensors = {
+				std::make_unique<Sensor::Pressure>()
+		};
 
 
 		// Requested sensor vars
@@ -41,6 +44,7 @@ namespace Core
 		bool missionInProgress = false;
 
 		EVENT_FUNC_INDEX_CORE watchForRequest;
+		EVENT_FUNC_INDEX_CORE sensorRequest;
 
 	public:
 		/**

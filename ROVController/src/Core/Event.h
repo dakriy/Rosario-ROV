@@ -7,104 +7,16 @@
 
 namespace Core {
 	struct SensorInfo {
-		enum Sensor {
-			// Sensor List
-			Temperature = 0,
-			Pressure = 1,
-			Conductivity = 2,
-			InternalTemperature = 3,
-			InternalPressure = 4,
-			InternalHumidity = 5,
-			Lux = 6,
-			Video = 7,
-
-			Count
-		};
-
-		struct TemperatureMeas {
-			enum Units {
-				Fahrenheit,
-				Celsius
-			};
-			Units units = Celsius;
-			float temperature = 0.f;
-		};
-
-		struct PressureMeas {
-			enum Units {
-				PSI,
-				Bar,
-				Pascal
-			};
-			Units units = PSI;
-			float pressure = 0.f;
-		};
-
-		struct ConductivityMeas {
-			enum Units {
-				// Siemens per meter
-				SiemensM,
-				// Ohm Meters
-				OhmM,
-			};
-			Units units = SiemensM;
-			float conductivity = 0.f;
-		};
-
-		struct InternalTemperatureMeas {
-			enum Units {
-				Fahrenheit,
-				Celsius
-			};
-			Units units = Celsius;
-			float temperature = 0.f;
-		};
-
-		struct InternalPressureMeas {
-			enum Units {
-				PSI,
-				Bar,
-				Pascal
-			};
-			Units units = PSI;
-			float pressure = 0.f;
-		};
-
-		struct InternalHumidityMeas {
-			// Only one unit
-			// Grams of vapor / m^3 of air
-			float humidity = 0.f;
-		};
-
-		struct LightMeas {
-			// Only one unit
-			// Lux
-			float lux = 0.f;
-		};
-
-		struct VideoFrame {
-			unsigned len = 0;
-			const sf::Uint8 * data = nullptr;
-		};
-
-		sf::Time time = sf::Time::Zero;
-
-        union Measurement {
-            TemperatureMeas t;
-            PressureMeas p;
-            ConductivityMeas c;
-            InternalTemperatureMeas iT;
-            InternalPressureMeas iP;
-            InternalHumidityMeas iH;
-            LightMeas l;
-            VideoFrame f;
-        };
-
-		std::unordered_map<Sensor, Measurement> intelligence;
-
-		bool hasDataForSensor(Sensor s) const;
-
-        const Measurement * getSensorData(Sensor s) const;
+		sf::Uint8 id = 255;
+		float maxFrequency = 0.f;
+		std::string name;
+		std::string units;
+		SensorInfo(
+				sf::Uint8 id,
+		float maxFrequency,
+		std::string name,
+		std::string units) : id(id), maxFrequency(maxFrequency), name(std::move(name)), units(std::move(units)) {}
+		SensorInfo() = default;
     };
 
 	class Event
@@ -114,6 +26,7 @@ namespace Core {
 		{
 			PingReceived,
 			SensorInfoReceived,
+			DataReceived,
 			Count
 		};
 
@@ -123,7 +36,7 @@ namespace Core {
 //		union {
 //		};
 
-        SensorInfo sInfo;
+        std::vector<SensorInfo> sInfo;
 		explicit Event(EventType t) : type(t){}
 	};
 

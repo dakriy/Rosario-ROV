@@ -17,12 +17,16 @@ set(CPP_DIR_3 src/Core)
 set(CPP_DIR_4 src/Factories)
 set(CPP_DIR_5 src/Sensors)
 set(CPP_DIR_6 src/Utilities)
+set(CPP_DIR_7 src/Sensors/lib)
 set(HEADER_DIR_1 src)
 set(HEADER_DIR_2 src/Network)
 set(HEADER_DIR_3 src/Core)
 set(HEADER_DIR_4 src/Factories)
 set(HEADER_DIR_5 src/Sensors)
 set(HEADER_DIR_6 src/Utilities)
+set(HEADER_DIR_7 src/Sensors/lib)
+set(wiringPi_INCLUDE wiringPi/wiringPi)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 ############## CMake Project ################
 #        The main options of project        #
@@ -81,6 +85,12 @@ else()
 		find_package(SFML 2.5.1 COMPONENTS system network REQUIRED)
 endif()
 
+include_directories(${wiringPi_INCLUDE})
+
+find_library(wiringPi_LIB wiringPi)
+find_library(sfml_system_LIB sfml-system)
+find_library(sfml_network_LIB sfml-network)
+find_package(Threads REQUIRED)
 
 if(MSVC)
    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3 /MDd /Od /EHsc")
@@ -104,12 +114,14 @@ file(GLOB SRC_FILES
     ${CPP_DIR_4}/*.cpp
     ${CPP_DIR_5}/*.cpp
     ${CPP_DIR_6}/*.cpp
+    ${CPP_DIR_7}/*.cpp
     ${HEADER_DIR_1}/*.h
     ${HEADER_DIR_2}/*.h
     ${HEADER_DIR_3}/*.h
     ${HEADER_DIR_4}/*.h
     ${HEADER_DIR_5}/*.h
     ${HEADER_DIR_6}/*.h
+    ${HEADER_DIR_7}/*.h
 )
 
 # Add executable to build.
@@ -120,5 +132,5 @@ add_executable(${PROJECT_NAME}
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} ${SFML_LIBS} freetype.lib gdi32.lib openal32.lib flac.lib vorbisenc.lib vorbisfile.lib vorbis.lib ogg.lib ws2_32.lib winmm.lib)
 else()
-    target_link_libraries(${PROJECT_NAME} sfml-system sfml-network)
+    target_link_libraries(${PROJECT_NAME} ${wiringPi_LIB} ${sfml_network_LIB} ${sfml_system_LIB} Threads::Threads)
 endif()

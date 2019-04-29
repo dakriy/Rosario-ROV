@@ -1,5 +1,6 @@
 #include "Network/Network.h"
 #include "Core/GlobalContext.h"
+#include <wiringPi.h>
 
 int main() {
 	/*
@@ -43,6 +44,7 @@ int main() {
 	 */
 
 	// Main Thread
+	wiringPiSetup();
 
 	// Initialize elapsed time clock
 	sf::Clock elapsedTime;

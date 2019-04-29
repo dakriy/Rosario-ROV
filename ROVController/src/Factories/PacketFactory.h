@@ -24,6 +24,7 @@ namespace Factory {
 		 * @param sensors
 		 * @return
 		 */
-		static std::unique_ptr<sf::Packet> create_request_data_packet(float frequency, std::vector<Core::SensorInfo::Sensor> sensors);
+		static std::unique_ptr<sf::Packet> create_request_data_packet(float frequency, std::vector<sf::Uint8> sensors);
+		static std::unique_ptr<sf::Packet> create_sensor_request_packet();
 	};
 }

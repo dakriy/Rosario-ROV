@@ -8,45 +8,45 @@ Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		//image.create(e->f.w, e->f.h, e->f.data);
-		if (e->sInfo.hasDataForSensor(Core::SensorInfo::Video)) {
-		    auto newImg = e->sInfo.getSensorData(Core::SensorInfo::Video);
-            if(!image.loadFromMemory(newImg->f.data, newImg->f.len))
-            {
-                std::cout << "NOOO but here" << std::endl;
-                return false;
-            }
-
-            if (!tex.loadFromImage(image))
-            {
-                std::cout << "NOOOOO" << std::endl;
-                return false;
-            }
-            std::cout << "New Image" << std::endl;
-            sprite.setTexture(tex);
-
-            // Set scale only once
-            if (!frame)
-                sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
-
-            frame = true;
-            return true;
-		}
+//		if (e->sInfo.hasDataForSensor(Core::SensorInfo::Video)) {
+//		    auto newImg = e->sInfo.getSensorData(Core::SensorInfo::Video);
+//            if(!image.loadFromMemory(newImg->f.data, newImg->f.len))
+//            {
+//                std::cout << "NOOO but here" << std::endl;
+//                return false;
+//            }
+//
+//            if (!tex.loadFromImage(image))
+//            {
+//                std::cout << "NOOOOO" << std::endl;
+//                return false;
+//            }
+//            std::cout << "New Image" << std::endl;
+//            sprite.setTexture(tex);
+//
+//            // Set scale only once
+//            if (!frame)
+//                sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
+//
+//            frame = true;
+//            return true;
+//		}
 		return false;
 	}, Core::Event::EventType::SensorInfoReceived);
 
-	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Pressure)) {
-	        pressure = e->sInfo.getSensorData(Core::SensorInfo::Pressure)->p.pressure;
-	    }
-		return false;
-	}, Core::Event::EventType::SensorInfoReceived);
-
-	temperatureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Temperature)) {
-	        temp = e->sInfo.getSensorData(Core::SensorInfo::Temperature)->t.temperature;
-	    }
-		return false;
-	}, Core::Event::EventType::SensorInfoReceived);
+//	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
+//	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Pressure)) {
+//	        pressure = e->sInfo.getSensorData(Core::SensorInfo::Pressure)->p.pressure;
+//	    }
+//		return false;
+//	}, Core::Event::EventType::SensorInfoReceived);
+//
+//	temperatureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
+//	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Temperature)) {
+//	        temp = e->sInfo.getSensorData(Core::SensorInfo::Temperature)->t.temperature;
+//	    }
+//		return false;
+//	}, Core::Event::EventType::SensorInfoReceived);
 
 	// TODO: Request data somehow
 }

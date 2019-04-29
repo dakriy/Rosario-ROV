@@ -108,23 +108,30 @@ namespace Sensor {
 //		const Measurement * getSensorData(Sensor s) const;
 //	};
 
+	enum class SensorId {
+		Pressure,
+		Count
+	};
+
 	struct SensorInfo {
 		sf::Uint8 id;
 		float maxFrequency;
-		const char * name;
-		const char * units;
-		SensorInfo(
-			sf::Uint8 id,
-			float maxFreq,
-			const char * name,
-			const char * units
-		) : id(id),	maxFrequency(maxFreq), name(name), units(units)
-		{}
+		std::string name;
+		std::string units;
+//		SensorInfo(
+//			sf::Uint8 id,
+//			float maxFreq,
+//			const char * name,
+//			const char * units
+//		) : id(id),	maxFrequency(maxFreq), name(name), units(units)
+//		{}
 	};
 
 	class Sensor {
 	public:
+		virtual bool setup() = 0;
 		virtual const SensorInfo& getSensorInfo() = 0;
+		virtual void initiateConversion() = 0;
 		virtual float queryDevice() = 0;
 	};
 }

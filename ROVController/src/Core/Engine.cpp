@@ -50,6 +50,10 @@ void Core::Engine::Update()
 		{
 			network->send_packet(Factory::PacketFactory::create_shutdown_packet());
 		}
+		if (ImGui::Button("Get Sensor List"))
+		{
+			network->send_packet(Factory::PacketFactory::create_sensor_request_packet());
+		}
 		ImGui::End();
 	}
 

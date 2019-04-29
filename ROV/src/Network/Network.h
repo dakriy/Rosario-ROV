@@ -20,9 +20,7 @@ namespace Network {
 		sf::TcpSocket connection;
 		sf::TcpListener listener;
 
-		std::atomic_bool done = false, closeConnection = false;
-		bool connected = false;
-
+		std::atomic_bool done = false, closeConnection = false, connected = false;
 
 		// Running threads
 		std::thread messenger;

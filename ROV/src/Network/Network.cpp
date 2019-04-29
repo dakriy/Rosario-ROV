@@ -2,6 +2,7 @@
 #include "../Core/GlobalContext.h"
 #include "../Sensors/Sensor.h"
 #include <chrono>
+#include <cstring>
 
 Network::Network * Network::Network::instance = nullptr;
 
@@ -84,8 +85,10 @@ void Network::Network::watch() {
 					auto status = connection.receive(p);
 					if (status == sf::Socket::Done) {
 						auto event = decode(p);
-						preProcess(event);
-						GlobalContext::get_engine()->add_event(std::move(event));
+						if (event) {
+							preProcess(event);
+							GlobalContext::get_engine()->add_event(std::move(event));
+						}
 					} else if (status == sf::Socket::Disconnected) {
 						closeConnection = true;
 					}
@@ -162,30 +165,27 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
 
 			float frequency = 0.f;
+			size_t sensorNum = 0;
 
-			if (!(p >> frequency)) {
+			if (!(p >> frequency >> sensorNum)) {
 				return nullptr;
 			}
 
 			pEvent->r.frequency = frequency;
-
-			size_t sensorNum = 0;
-
-			if (!(p >> sensorNum)) {
-				return nullptr;
-			}
-
 			pEvent->r.sensors.resize(sensorNum);
 
 			for (auto i = 0; i < sensorNum; ++i) {
-				unsigned sensorType = Sensor::SensorInfo::Sensor::Count;
+				auto sensorType = static_cast<sf::Uint8>(Sensor::SensorId::Count);
 				if (!(p >> sensorType)) {
 					return nullptr;
 				}
-				pEvent->r.sensors.push_back(static_cast<Sensor::SensorInfo::Sensor>(sensorType));
+				pEvent->r.sensors.push_back(sensorType);
 			}
 			break;
 		}
+		case PacketTypes::RequestSensors:
+			pEvent = std::make_unique<Core::Event>(Core::Event::SensorRequest);
+			break;
 		default: //unknown packet type
 			pEvent.reset();
 			break;

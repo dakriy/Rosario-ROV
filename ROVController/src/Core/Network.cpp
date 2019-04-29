@@ -195,16 +195,37 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
     }
     auto type = static_cast<PacketTypes>(t);
 
-    std::unique_ptr<Core::Event> packet = nullptr;
+    std::unique_ptr<Core::Event> event = nullptr;
 
     // Decode all of the packets here
     switch (type) {
         case PacketTypes::Ping:
-            packet = std::make_unique<Core::Event>(Core::Event::PingReceived);
+            event = std::make_unique<Core::Event>(Core::Event::PingReceived);
             GlobalContext::get_engine()->log.AddLog(
-            		"[%.1f] [%s] Ping packet received",
+            		"[%.1f] [%s] Ping packet received\n",
             		GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			break;
+    	case PacketTypes::Sensors:
+		{
+			event = std::make_unique<Core::Event>(Core::Event::SensorInfoReceived);
+			sf::Uint32 sensorsNumber = 0;
+			if (!(p >> sensorsNumber)) {
+				return nullptr;
+			}
+
+			for (unsigned i = 0; i < sensorsNumber; ++i) {
+				sf::Uint8 id;
+				float maxFrequency;
+				std::string name;
+				std::string units;
+				if (!(p >> id >> maxFrequency >> name >> units)) return nullptr;
+				event->sInfo.emplace_back(id, maxFrequency, name, units);
+				GlobalContext::get_engine()->log.AddLog(
+						"[%.1f] [%s] New Sensor Info:\nId: %u \nFreq: %f\nName: %s\nUnits: %s\n",
+						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", id, maxFrequency, name.c_str(), units.c_str());
+			}
+			break;
+		}
 //		case PacketTypes::Video:
 //		{
 //			packet->type = Core::Event::VideoFrameReceived;
@@ -238,10 +259,10 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 //			break;
 //		}
         default: //unknown packet type
-        	packet = nullptr;
+        	event = nullptr;
         	break;
     }
-    return packet;
+    return event;
 }
 
 Core::Network::~Network()

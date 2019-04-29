@@ -18,13 +18,19 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(fl
 }
 
 std::unique_ptr<sf::Packet>
-Factory::PacketFactory::create_request_data_packet(float frequency, std::vector<Core::SensorInfo::Sensor> sensors) {
+Factory::PacketFactory::create_request_data_packet(float frequency, std::vector<sf::Uint8> sensors) {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::MissionStart, p);
 	*p << frequency;
 	*p << sensors.size();
-	for (const auto & sensor : sensors) {
-		*p << static_cast<unsigned>(sensor);
+	for (auto sensor : sensors) {
+		*p << sensor;
 	}
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_sensor_request_packet() {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::RequestSensors, p);
 	return p;
 }

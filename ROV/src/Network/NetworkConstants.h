@@ -15,6 +15,8 @@ namespace Network {
 		Ping,
 		MissionStart,
 		MissionStop,
+		RequestSensors,
+		Sensors,
 		Data,
 		Move,
 		Shutdown = 254,

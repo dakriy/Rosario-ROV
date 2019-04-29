@@ -17,6 +17,7 @@ namespace Core {
 			PingReceived,
 			MissionStart,
 			MissionStop,
+			SensorRequest,
 			Disconnected,
 			Shutdown,
 
