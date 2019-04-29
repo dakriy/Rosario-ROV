@@ -6,7 +6,7 @@
 
 Network::Network * Network::Network::instance = nullptr;
 
-Network::Network::Network() : messenger(&Network::watch, this) {
+Network::Network::Network() : messenger(&Network::watch, this), done(false), closeConnection(false), connected(false) {
 	if (instance != nullptr)
 		throw "Only one instance should exist at a time.";
 	instance = this;
@@ -32,7 +32,7 @@ Network::Network::~Network() {
 void Network::Network::watch() {
 	sf::Clock lastBroadcastTime;
 
-	while (!done)
+	while (!done.load())
 	{
 		// No connection yet, broadcast ourselves.
 		//////////////////////////////////////////
@@ -103,7 +103,7 @@ void Network::Network::watch() {
 			///////////////////////////////////////////
 
 			// Make sure we are still connected
-			if (connected) {
+			if (connected.load()) {
 				// Send things
 				while (!sendQueue.empty()) {
 					sendQueueGuard.lock();
@@ -138,7 +138,7 @@ void Network::Network::sendPacket(std::unique_ptr<sf::Packet> packet) {
 }
 
 bool Network::Network::isConnected() const {
-	return connected;
+	return connected.load();
 }
 
 std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
