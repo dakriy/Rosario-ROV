@@ -22,7 +22,7 @@
 //#define I2C_SMBUS_QUICK		    0
 //#define I2C_SMBUS_BYTE		    1
 //#define I2C_SMBUS_BYTE_DATA	    2
-//#define I2C_SMBUS_WORD_DATA	    3
+#define I2C_SMBUS_WORD_DATA	    3
 //#define I2C_SMBUS_PROC_CALL	    4
 //#define I2C_SMBUS_BLOCK_DATA	    5
 //#define I2C_SMBUS_I2C_BLOCK_BROKEN  6
@@ -40,6 +40,7 @@ union i2c_smbus_data
 {
 	uint8_t  byte ;
 //	uint16_t word ;
+	uint32_t dword;
 	uint8_t  block [I2C_SMBUS_BLOCK_MAX + 2] ;	// block [0] is used for length + one more for PEC
 } ;
 
@@ -63,19 +64,14 @@ static inline int i2c_smbus_access (int fd, char rw, uint8_t command, int size, 
 	return ioctl (fd, I2C_SMBUS, &args) ;
 }
 
-int I2CRead(int fd, unsigned char * data, unsigned char size)
+int I2CReadReg24(int fd, uint8_t reg)
 {
-	if (size > I2C_SMBUS_BLOCK_MAX)
-		size = I2C_SMBUS_BLOCK_MAX;
-
 	i2c_smbus_data d {
 		.byte = 0
 	};
 
-	if (i2c_smbus_access(fd, I2C_SMBUS_READ, 0, size, &d)) {
-		std::cout << std::strerror(errno) << std::endl;
+	if (i2c_smbus_access(fd, I2C_SMBUS_READ, reg, I2C_SMBUS_WORD_DATA, &d)) {
 		return -1;
 	}
-	memcpy(data, d.block, size);
-	return 0;
+	return d.dword & 0xFFFFFF;
 }

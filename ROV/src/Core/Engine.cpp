@@ -25,8 +25,7 @@ void Core::Engine::Update()
 	std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
 	if (missionInProgress) {
 		sensors[0]->initiateConversion();
-		auto p = Factory::PacketFactory::create_data_packet();
-		*p << sensors[0]->queryDevice();
+		auto p = Factory::PacketFactory::create_data_packet(sensors[0]->queryDevice());
 		GlobalContext::get_network()->sendPacket(std::move(p));
 	}
 }
@@ -55,6 +54,12 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 		// Don't think anything else needs to process this type of packet so go ahead and report it handled
 		return true;
 	}, Core::Event::MissionStart);
+
+	watchForRequestStop = cev_->add_event_callback([&](const Event * e) -> bool {
+		missionInProgress = false;
+		requestedSensors.clear();
+		return true;
+	}, Core::Event::MissionStop);
 
 	sensorRequest = cev_->add_event_callback([&](const Event * e) -> bool {
 		std::vector<Sensor::SensorInfo> sensorInformation;

@@ -229,6 +229,19 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			}
 			break;
 		}
+    	case PacketTypes::Data:
+		{
+			event = std::make_unique<Core::Event>(Core::Event::DataReceived);
+			float val = 0.f;
+			if (!(p >> val)) {
+				return nullptr;
+			}
+			event->data = val;
+			GlobalContext::get_engine()->log.AddLog(
+					"[%.1f] [%s] New Sensor Data:\ndata: %f\n",
+					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", val);
+
+		}
 //		case PacketTypes::Video:
 //		{
 //			packet->type = Core::Event::VideoFrameReceived;

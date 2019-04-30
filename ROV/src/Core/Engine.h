@@ -44,6 +44,7 @@ namespace Core
 		bool missionInProgress = false;
 
 		EVENT_FUNC_INDEX_CORE watchForRequest;
+		EVENT_FUNC_INDEX_CORE watchForRequestStop;
 		EVENT_FUNC_INDEX_CORE sensorRequest;
 
 	public:

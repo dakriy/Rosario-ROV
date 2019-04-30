@@ -11,6 +11,6 @@ namespace Factory {
 	public:
 		static std::unique_ptr<sf::Packet> createVideoPacket();
 		static std::unique_ptr<sf::Packet> create_sensor_list_packet(std::vector<Sensor::SensorInfo>& sensors);
-		static std::unique_ptr<sf::Packet> create_data_packet();
+		static std::unique_ptr<sf::Packet> create_data_packet(float data);
 	};
 }

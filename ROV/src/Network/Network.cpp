@@ -183,6 +183,9 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			}
 			break;
 		}
+		case PacketTypes::MissionStop:
+			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStop);
+			break;
 		case PacketTypes::RequestSensors:
 			pEvent = std::make_unique<Core::Event>(Core::Event::SensorRequest);
 			break;

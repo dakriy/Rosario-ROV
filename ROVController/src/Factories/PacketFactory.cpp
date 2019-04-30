@@ -34,3 +34,19 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_sensor_request_packet
 	add_type_to_packet(Core::PacketTypes::RequestSensors, p);
 	return p;
 }
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_start_mission_packet() {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::MissionStart, p);
+	size_t num = 1;
+	sf::Uint8 sensor = 0;
+	float frequency = 1.f;
+	*p << frequency << num << sensor;
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_stop_mission_packet() {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::MissionStop, p);
+	return p;
+}

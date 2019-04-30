@@ -48,7 +48,7 @@ bool Sensor::MS5837::init() {
 
 //		uint8_t data[2];
 
-//		if (I2CRead(deviceHandle, data, 2) < 0) {
+//		if (I2CReadReg24(deviceHandle, data, 2) < 0) {
 //			return false;
 //		}
 		if (result < 0) {
@@ -85,23 +85,24 @@ void Sensor::MS5837::read() {
 
 	delay(20); // Max conversion time per datasheet
 
-	wiringPiI2CWrite(deviceHandle, MS5837_ADC_READ);
+//	wiringPiI2CWrite(deviceHandle, MS5837_ADC_READ);
 //	Wire.beginTransmission(MS5837_ADDR);
 //	Wire.write(MS5837_ADC_READ);
 //	Wire.endTransmission();
 
 //	Wire.requestFrom(MS5837_ADDR,3);
-
-	uint8_t data[3];
-	if (I2CRead(deviceHandle, data, 3) < 0) {
-		throw "REEEEEEEEEEEE I'M DONE WITH THIS BULLSHIT 1";
+	auto result = I2CReadReg24(deviceHandle, MS5837_ADC_READ);
+	if (result < 0) {
+		throw "RuhRoh";
 	}
 //	read(deviceHandle, data, 3);
 
-	D1 = 0;
-	D1 = data[0];
-	D1 = (D1 << 8) | data[1];
-	D1 = (D1 << 8) | data[2];
+	D1 = __builtin_bswap32(result);
+
+//	D1 = 0;
+//	D1 = data[0];
+//	D1 = (D1 << 8) | data[1];
+//	D1 = (D1 << 8) | data[2];
 
 	// Request D2 conversion
 	wiringPiI2CWrite(deviceHandle, MS5837_CONVERT_D2_8192);
@@ -111,19 +112,22 @@ void Sensor::MS5837::read() {
 
 	delay(20); // Max conversion time per datasheet
 
-	wiringPiI2CWrite(deviceHandle, MS5837_ADC_READ);
+//	wiringPiI2CWrite(deviceHandle, MS5837_ADC_READ);
 //	Wire.beginTransmission(MS5837_ADDR);
 //	Wire.write(MS5837_ADC_READ);
 //	Wire.endTransmission();
 
 //	Wire.requestFrom(MS5837_ADDR,3);
-	if (I2CRead(deviceHandle, data, 3) < 0) {
-		throw "REEEEEEEEEEEE I'M DONE WITH THIS BULLSHIT 2";
+	result = I2CReadReg24(deviceHandle, MS5837_ADC_READ);
+	if (result < 0) {
+		throw "RuhRoh 2";
 	}
-	D2 = 0;
-	D2 = data[0];
-	D2 = (D2 << 8) | data[1];
-	D2 = (D2 << 8) | data[2];
+//	D2 = 0;
+//	D2 = data[0];
+//	D2 = (D2 << 8) | data[1];
+//	D2 = (D2 << 8) | data[2];
+
+	D2 = __builtin_bswap32(result);
 
 	calculate();
 }

@@ -37,6 +37,7 @@ namespace Core {
 //		};
 
         std::vector<SensorInfo> sInfo;
+        float data = 0.f;
 		explicit Event(EventType t) : type(t){}
 	};
 

@@ -54,6 +54,14 @@ void Core::Engine::Update()
 		{
 			network->send_packet(Factory::PacketFactory::create_sensor_request_packet());
 		}
+		if (ImGui::Button("Start Pressure"))
+		{
+			network->send_packet(Factory::PacketFactory::create_start_mission_packet());
+		}
+		if (ImGui::Button("Stop Pressure"))
+		{
+			network->send_packet(Factory::PacketFactory::create_stop_mission_packet());
+		}
 		ImGui::End();
 	}
 
