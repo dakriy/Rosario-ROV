@@ -56,6 +56,7 @@ int main() {
 	Core::Engine engine(&coreEventHandler);
 
 	Network::Network network;
+	GlobalContext::set_network(&network);
 	bool done = false;
 
 	const auto hook = coreEventHandler.add_event_callback([&](const Core::Event * p) -> bool {

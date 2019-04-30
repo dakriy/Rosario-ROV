@@ -20,7 +20,8 @@ namespace Network {
 		sf::TcpSocket connection;
 		sf::TcpListener listener;
 
-		std::atomic_bool done, closeConnection, connected;
+		std::atomic_bool done, closeConnection;
+		bool connected;
 
 		// Running threads
 		std::thread messenger;
@@ -44,7 +45,7 @@ namespace Network {
 
 		void sendPacket(std::unique_ptr<sf::Packet> packet);
 
-		bool isConnected() const;
+		bool isConnected();
 
 		void disconnect();
 

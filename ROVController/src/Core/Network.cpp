@@ -207,6 +207,9 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			break;
     	case PacketTypes::Sensors:
 		{
+			GlobalContext::get_engine()->log.AddLog(
+					"[%.1f] [%s] New Sensors\n",
+					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			event = std::make_unique<Core::Event>(Core::Event::SensorInfoReceived);
 			sf::Uint32 sensorsNumber = 0;
 			if (!(p >> sensorsNumber)) {

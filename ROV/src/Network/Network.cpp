@@ -103,7 +103,7 @@ void Network::Network::watch() {
 			///////////////////////////////////////////
 
 			// Make sure we are still connected
-			if (connected.load()) {
+			if (connected) {
 				// Send things
 				while (!sendQueue.empty()) {
 					sendQueueGuard.lock();
@@ -129,7 +129,7 @@ void Network::Network::watch() {
 }
 
 void Network::Network::sendPacket(std::unique_ptr<sf::Packet> packet) {
-	if (isConnected()) {
+	if (connected) {
 		// Place it on the packet queue
 		sendQueueGuard.lock();
 		sendQueue.push(std::move(packet));
@@ -137,8 +137,8 @@ void Network::Network::sendPacket(std::unique_ptr<sf::Packet> packet) {
 	}
 }
 
-bool Network::Network::isConnected() const {
-	return connected.load();
+bool Network::Network::isConnected() {
+	return connected;
 }
 
 std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
