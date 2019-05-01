@@ -79,55 +79,28 @@ void Sensor::MS5837::setFluidDensity(float density) {
 void Sensor::MS5837::read() {
 	// Request D1 conversion
 	wiringPiI2CWrite(deviceHandle, MS5837_CONVERT_D1_8192);
-//	Wire.beginTransmission(MS5837_ADDR);
-//	Wire.write(MS5837_CONVERT_D1_8192);
-//	Wire.endTransmission();
 
 	delay(20); // Max conversion time per datasheet
 
-//	wiringPiI2CWrite(deviceHandle, MS5837_ADC_READ);
-//	Wire.beginTransmission(MS5837_ADDR);
-//	Wire.write(MS5837_ADC_READ);
-//	Wire.endTransmission();
-
-//	Wire.requestFrom(MS5837_ADDR,3);
 	auto result = I2CReadReg24(deviceHandle, MS5837_ADC_READ);
 	if (result < 0) {
-		throw "RuhRoh";
+		return;
 	}
-//	read(deviceHandle, data, 3);
 
-	D1 = __builtin_bswap32(result);
-
-//	D1 = 0;
-//	D1 = data[0];
-//	D1 = (D1 << 8) | data[1];
-//	D1 = (D1 << 8) | data[2];
+	// Endianness conversion? Hopefully... This is dumb
+	D1 = __builtin_bswap32(result) >> 8;
 
 	// Request D2 conversion
 	wiringPiI2CWrite(deviceHandle, MS5837_CONVERT_D2_8192);
-//	Wire.beginTransmission(MS5837_ADDR);
-//	Wire.write(MS5837_CONVERT_D2_8192);
-//	Wire.endTransmission();
 
 	delay(20); // Max conversion time per datasheet
 
-//	wiringPiI2CWrite(deviceHandle, MS5837_ADC_READ);
-//	Wire.beginTransmission(MS5837_ADDR);
-//	Wire.write(MS5837_ADC_READ);
-//	Wire.endTransmission();
-
-//	Wire.requestFrom(MS5837_ADDR,3);
 	result = I2CReadReg24(deviceHandle, MS5837_ADC_READ);
 	if (result < 0) {
-		throw "RuhRoh 2";
+		return;
 	}
-//	D2 = 0;
-//	D2 = data[0];
-//	D2 = (D2 << 8) | data[1];
-//	D2 = (D2 << 8) | data[2];
 
-	D2 = __builtin_bswap32(result);
+	D2 = __builtin_bswap32(result) >> 8;
 
 	calculate();
 }
@@ -148,12 +121,12 @@ void Sensor::MS5837::calculate() {
 	// Terms called
 	dT = D2-uint32_t(C[5])*256l;
 	if ( _model == MS5837_02BA ) {
-		SENS = int64_t(C[1])*65536l+(int64_t(C[3])*dT)/128l;
-		OFF = int64_t(C[2])*131072l+(int64_t(C[4])*dT)/64l;
+		SENS = static_cast<int64_t>(C[1])*65536l+(static_cast<int64_t>(C[3])*dT)/128l;
+		OFF = static_cast<int64_t>(C[2])*131072l+(static_cast<int64_t>(C[4])*dT)/64l;
 		P = static_cast<int32_t>((D1*SENS/(2097152l)-OFF)/(32768l));
 	} else {
-		SENS = int64_t(C[1])*32768l+(int64_t(C[3])*dT)/256l;
-		OFF = int64_t(C[2])*65536l+(int64_t(C[4])*dT)/128l;
+		SENS = static_cast<int64_t>(C[1])*32768l+(static_cast<int64_t>(C[3])*dT)/256l;
+		OFF = static_cast<int64_t>(C[2])*65536l+(static_cast<int64_t>(C[4])*dT)/128l;
 		P = static_cast<int32_t>((D1*SENS/(2097152l)-OFF)/(8192l));
 	}
 
@@ -163,13 +136,13 @@ void Sensor::MS5837::calculate() {
 	//Second order compensation
 	if ( _model == MS5837_02BA ) {
 		if((TEMP/100)<20){         //Low temp
-			Ti = static_cast<int32_t>((11*int64_t(dT)*int64_t(dT))/(34359738368LL));
+			Ti = static_cast<int32_t>((11*static_cast<int64_t>(dT)*static_cast<int64_t>(dT))/(34359738368LL));
 			OFFi = (31*(TEMP-2000)*(TEMP-2000))/8;
 			SENSi = (63*(TEMP-2000)*(TEMP-2000))/32;
 		}
 	} else {
 		if((TEMP/100)<20){         //Low temp
-			Ti = static_cast<int32_t>((3*int64_t(dT)*int64_t(dT))/(8589934592LL));
+			Ti = static_cast<int32_t>((3*static_cast<int64_t>(dT)*static_cast<int64_t>(dT))/(8589934592LL));
 			OFFi = (3*(TEMP-2000)*(TEMP-2000))/2;
 			SENSi = (5*(TEMP-2000)*(TEMP-2000))/8;
 			if((TEMP/100)<-15){    //Very low temp

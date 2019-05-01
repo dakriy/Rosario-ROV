@@ -110,6 +110,7 @@ namespace Sensor {
 
 	enum class SensorId {
 		Pressure,
+		Lux,
 		Count
 	};
 
