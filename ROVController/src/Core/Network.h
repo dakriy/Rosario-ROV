@@ -5,22 +5,23 @@
 #include <array>
 #include <chrono>
 #include "Engine.h"
+#include <thread>
+#include <atomic>
+#include <queue>
+#include <mutex>
+#include <memory>
 
 namespace Core
 {
 	enum class PacketTypes
 	{
-		Ping = 0,
-		StartVideo = 1,
-		StopVideo = 2,
-		StartTemp = 3,
-		StopTemp = 4,
-		StartPressure = 5,
-		StopPressure = 6,
-		Move = 7,
-		Video = 11,
-		Temperature = 12,
-		Pressure = 13,
+		Ping,
+		MissionStart,
+		MissionStop,
+		RequestSensors,
+		Sensors,
+		Data,
+		Move,
 		Shutdown = 254,
 		Count
 	};
@@ -28,59 +29,49 @@ namespace Core
 	class Network
 	{
 	protected:
-
 		// Constants
 		static const int broadcastBufferLen = 100;
+		static const int pingWindow = 5;
+		// In milliseconds
+        static const int packetWaitTimeout = 10;
 
-		// max packet size in bytes
-		static const int bufferLen = 4096;
+		// Global Instance
+        static Network * instance;
 
-		static const int pingWindow = 10;
-		
 		// Flags
 		bool connected = false;
-
-		bool connecting = false;
-
 		bool search = false;
+        std::atomic_bool done = false;
 
+		std::atomic_bool stopSearch = false, startSearch = false, startConnect = false, closeConnection = false;
 		
-		
-		// Sockets and buffers
+		// Sockets
 		sf::UdpSocket broadcast;
-
 		sf::TcpSocket connection;
+		sf::SocketSelector selector;
 
+		// Buffers and caches
 		sf::IpAddress ROV;
-
 		std::vector<std::pair<sf::IpAddress, std::string>> found_devices;
-
-		std::array<unsigned char, 1024> tempBuff;
-
 		std::array<char, broadcastBufferLen> broadcastBuffer;
 
 		// Ping information
-		unsigned int pingCounter = 0;
-
 		sf::Clock pingClock;
+		std::array<sf::Time, pingWindow> pingVals;
+		int pingCounter = 0;
 
-		std::array<sf::Time, pingWindow> pingvals;
+		// Threads and synchronization
+		std::thread runner;
 
+        void run();
 
-		size_t recvall(size_t len);
+        std::mutex packetQueueLock;
+        std::queue<std::unique_ptr<sf::Packet>> packetQueue;
 
-		bool continueRecv();
+        std::unique_ptr<Event> decode(sf::Packet &p);
+        void preProcess(std::unique_ptr<Event> &ev);
 
-		void startPacket(PacketTypes);
-
-		std::vector<sf::Uint8> buffer;
-		
-		size_t frameBuffSize = 1920 * 1080 * 4 + 100;
-
-		PacketTypes currentIncomingType = PacketTypes::Count;
-		Event * incoming = nullptr;
-		size_t received = 0;
-		size_t expectedSize = 1;
+        std::mutex devicesLock;
 
 	public:
 		static const unsigned short connectionPort = 42069;
@@ -89,27 +80,23 @@ namespace Core
 
 		Network();
 
-		bool isConnected() const;
-
-		sf::IpAddress connectedHost() const;
-
-		const std::vector<std::pair<sf::IpAddress, std::string>>& get_devices() const;
+		std::vector<std::pair<sf::IpAddress, std::string>> get_devices();
 
 		void search_for_devices();
 
 		void stop_search_for_devices();
 
-		void process_packets();
+		float get_ping_time() const;
 
-		void send_packet(PacketTypes t, void * data = nullptr, size_t size = 0);
+		bool isConnected() const;
 
-		void process_packet(PacketTypes t);
+		sf::IpAddress getConnectedHost() const;
+
+		void connect_to_host(sf::IpAddress addr);
+
+		void send_packet(std::unique_ptr<sf::Packet> p);
 
 		void disconnect();
-
-		float get_ping_time();
-
-		void connect_to_host(sf::IpAddress);
 
 		~Network();
 	};

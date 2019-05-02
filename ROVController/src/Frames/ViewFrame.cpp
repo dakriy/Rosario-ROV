@@ -1,5 +1,6 @@
 #include "ViewFrame.h"
 #include "../Core/GlobalContext.h"
+#include "../Factories/PacketFactory.h"
 #include <iostream>
 #include <imgui.h>
 
@@ -7,42 +8,47 @@ Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		//image.create(e->f.w, e->f.h, e->f.data);
-		if(!image.loadFromMemory(e->f.data, e->f.len))
-		{
-			std::cout << "NOOO but here" << std::endl;
-			return false;
-		}
+//		if (e->sInfo.hasDataForSensor(Core::SensorInfo::Video)) {
+//		    auto newImg = e->sInfo.getSensorData(Core::SensorInfo::Video);
+//            if(!image.loadFromMemory(newImg->f.data, newImg->f.len))
+//            {
+//                std::cout << "NOOO but here" << std::endl;
+//                return false;
+//            }
+//
+//            if (!tex.loadFromImage(image))
+//            {
+//                std::cout << "NOOOOO" << std::endl;
+//                return false;
+//            }
+//            std::cout << "New Image" << std::endl;
+//            sprite.setTexture(tex);
+//
+//            // Set scale only once
+//            if (!frame)
+//                sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
+//
+//            frame = true;
+//            return true;
+//		}
+		return false;
+	}, Core::Event::EventType::SensorInfoReceived);
 
-		if (!tex.loadFromImage(image))
-		{
-			std::cout << "NOOOOO" << std::endl;
-			return false;
-		}
-		std::cout << "New Image" << std::endl;
-		sprite.setTexture(tex);
+//	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
+//	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Pressure)) {
+//	        pressure = e->sInfo.getSensorData(Core::SensorInfo::Pressure)->p.pressure;
+//	    }
+//		return false;
+//	}, Core::Event::EventType::SensorInfoReceived);
+//
+//	temperatureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
+//	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Temperature)) {
+//	        temp = e->sInfo.getSensorData(Core::SensorInfo::Temperature)->t.temperature;
+//	    }
+//		return false;
+//	}, Core::Event::EventType::SensorInfoReceived);
 
-		// Set scale only once
-		if (!frame)
-			sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
-
-		frame = true;
-		return true;
-	}, Core::Event::EventType::VideoFrameReceived);
-
-	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		pressure = e->p.pressure;
-		return true;
-	}, Core::Event::EventType::PressureReceived);
-
-	temperatureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		temp = e->t.temp;
-		return true;
-	}, Core::Event::EventType::TemperatureReceived);
-
-
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StartVideo);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StartPressure);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StartTemp);
+	// TODO: Request data somehow
 }
 
 void Frames::ViewFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -83,7 +89,7 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 		let down = 3.4f;
 		let range = up - down;
 		var amount = (pos + 100.f) / 200.f * range + down;
-		GlobalContext::get_network()->send_packet(Core::PacketTypes::Move, reinterpret_cast<void*>(&amount), sizeof amount);
+		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_camera_move_packet(amount));
 		updateCounter = 0;
 	} else
 	{
@@ -98,9 +104,7 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StopVideo);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StopTemp);
-	GlobalContext::get_network()->send_packet(Core::PacketTypes::StopPressure);
+	// TODO: Stop data send somehow
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(pressureHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(temperatureHook);

@@ -117,7 +117,9 @@ void Controls::Options::set_hooks()
 			return false;
 		if (e->type == sf::Event::MouseWheelScrolled)
 		{
-			if (!bounds_.contains(e->mouseWheelScroll.x, e->mouseWheelScroll.y) || e->mouseWheelScroll.wheel != sf::Mouse::VerticalWheel)
+			if (!bounds_.contains(
+					static_cast<float>(e->mouseWheelScroll.x),
+					static_cast<float>(e->mouseWheelScroll.y)) || e->mouseWheelScroll.wheel != sf::Mouse::VerticalWheel)
 				return false;
 			// Scrolled up
 			if (e->mouseWheelScroll.delta > 0 && this->row_scroll_position_ > 0)
@@ -128,7 +130,7 @@ void Controls::Options::set_hooks()
 			// idek
 			if (e->mouseWheelScroll.delta == 0)
 				return false;
-			this->position_options();
+			position_options();
 			return true;
 		}
 		return false;

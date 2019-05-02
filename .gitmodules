@@ -4,3 +4,6 @@
 [submodule "ROVController/imgui-sfml"]
 	path = ROVController/imgui-sfml
 	url = https://github.com/eliasdaler/imgui-sfml
+[submodule "ROV/wiringPi"]
+	path = ROV/wiringPi
+	url = git://git.drogon.net/wiringPi

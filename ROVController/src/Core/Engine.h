@@ -9,57 +9,15 @@
  */
 
 #include "../Frames/IFrame.h"
-#include "Event.h"
+#include "EventHandler.h"
 #include <vector>
-#include <list>
-
-class DebugTerminal;
+#include <queue>
+#include <mutex>
+#include "Event.h"
+#include "../UI/AppLog.h"
 
 namespace Core
 {
-
-	class Event
-	{
-	public:
-		struct VideoFrame
-		{
-			unsigned len;
-			const sf::Uint8 * data;
-		};
-
-		struct Temperature
-		{
-			double temp;
-		};
-
-		struct Pressure
-		{
-			double pressure;
-		};
-
-		enum EventType
-		{
-			PingReceived,
-			VideoFrameReceived,
-			TemperatureReceived,
-			PressureReceived,
-
-			Count
-		};
-
-		EventType type = Count;
-
-		union
-		{
-			VideoFrame f;
-			Temperature t;
-			Pressure p;
-		};
-
-		explicit Event(EventType t) : type(t){}
-		Event() = default;
-	};
-
 	/**
 	 * List of actions we can do to a frame
 	 * Must end with FrameActionCount
@@ -81,16 +39,16 @@ namespace Core
 		FAction() = default;
 		FAction(FrameAction a, Frames::IFrame* f) : action(a), frame(f){}
 		FrameAction action = static_cast<FrameAction>(0);
-		Frames::IFrame* frame = nullptr;
+		std::unique_ptr<Frames::IFrame> frame = nullptr;
 	} FAction;
 
 	class Engine
 	{
 	protected:
 		// Frames currently on the stack
-		std::vector<Frames::IFrame *> frame_stack_;
+		std::vector<std::unique_ptr<Frames::IFrame>> frame_stack_;
 
-		std::list<Core::Event*> core_events_;
+		std::queue<std::unique_ptr<Core::Event>> core_events_;
 
 		// Event processor
 		void Events();
@@ -119,16 +77,21 @@ namespace Core
 		// Global clock to keep track of time passing when updating frames
 		sf::Clock * global_clock_;
 
-		// Frame push queue
-		std::vector<Frames::IFrame *> push_frame_; 
-
 		// Frame action queue
 		std::vector<FAction> frame_action_list_;
 
 		EventHandler<sf::Event, sf::Event::EventType::Count>* ev_;
 		EventHandler<Core::Event, Core::Event::EventType::Count>* cev_;
 
+		std::mutex coreEventHandlerLock;
+
+		bool showAppLog = true;
+
+		void updateAppLog();
+
 	public:
+		AppLog log;
+
 		/**
 		 * Engine Constructor
 		 * 
@@ -142,7 +105,7 @@ namespace Core
 		/**
 		 *
 		 */
-		void add_event(Core::Event *e);
+		void add_event(std::unique_ptr<Event> e);
 
 		/**
 		 * Main loop. Order is:

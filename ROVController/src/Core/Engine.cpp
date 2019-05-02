@@ -5,6 +5,7 @@
 #include "../Frames/TitleFrame.h"
 #include "../Globals.h"
 #include "../Utilities/Utilities.h"
+#include "../Factories/PacketFactory.h"
 #include <imgui-SFML.h>
 #include <imgui.h>
 
@@ -14,6 +15,11 @@ void Core::Engine::Events()
 	while (window_->pollEvent(event)) {
 		// Let ImGUI have a round at the event
 		ImGui::SFML::ProcessEvent(event);
+
+		if (ImGui::IsAnyItemFocused()) {
+			// Don't process it on our end as it is ImGui's to handle...
+			continue;
+		}
 
 		ev_->handle_event(&event);
 	}
@@ -33,7 +39,7 @@ void Core::Engine::Update()
 	if (network->isConnected())
 	{
 		std::string title = "Connected to ";
-		title += network->connectedHost().toString();
+		title += network->getConnectedHost().toString();
 		ImGui::Begin(title.c_str());
 		ImGui::Text("Round Trip Ping: = %f ms", network->get_ping_time());
 		if (ImGui::Button("Disconnect"))
@@ -42,13 +48,29 @@ void Core::Engine::Update()
 		}
 		if (ImGui::Button("Shutdown ROV"))
 		{
-			network->send_packet(PacketTypes::Shutdown);
+			network->send_packet(Factory::PacketFactory::create_shutdown_packet());
+		}
+		if (ImGui::Button("Get Sensor List"))
+		{
+			network->send_packet(Factory::PacketFactory::create_sensor_request_packet());
+		}
+		if (ImGui::Button("Start Pressure"))
+		{
+			network->send_packet(Factory::PacketFactory::create_start_mission_packet());
+		}
+		if (ImGui::Button("Stop Pressure"))
+		{
+			network->send_packet(Factory::PacketFactory::create_stop_mission_packet());
 		}
 		ImGui::End();
 	}
+
+	ImGui::ShowDemoWindow();
+
+	updateAppLog();
 	
 	// Update all frames except paused ones.
-	for (auto f : frame_stack_)
+	for (auto &f : frame_stack_)
 		if(!f->isPaused())
 			f->update(dt += rate_clock_.restart());
 }
@@ -59,7 +81,7 @@ void Core::Engine::Render()
 
 	auto t = false;
 	
-	for (auto f : frame_stack_)
+	for (auto & f : frame_stack_)
 	{
 		t = t || !f->isHidden();
 		if (!f->isHidden())
@@ -76,12 +98,16 @@ void Core::Engine::Render()
 
 void Core::Engine::ProcessCustomEvents()
 {
-	for (auto e : core_events_)
-	{
-		cev_->handle_event(e);
-		delete e;
+	// Not locking *should* be safe because we always lock before we do any actual writing
+	while (!core_events_.empty()) {
+		coreEventHandlerLock.lock();
+		// Pull off event as quick as possible while we have the lock
+        std::unique_ptr<Core::Event> e = std::move(core_events_.front());
+		core_events_.pop();
+		// Release control of the lock
+		coreEventHandlerLock.unlock();
+		cev_->handle_event(e.get());
 	}
-	core_events_.clear();
 }
 
 void Core::Engine::ProcessFrameAction(FAction& f_action)
@@ -89,18 +115,16 @@ void Core::Engine::ProcessFrameAction(FAction& f_action)
 	switch (f_action.action)
 	{
 	case PopFrame:
-		delete frame_stack_.back();
 		frame_stack_.pop_back();
 		frame_stack_.back()->show();
 		frame_stack_.back()->unpause();
 		break;
 	case PushFrame:
-		frame_stack_.emplace_back(f_action.frame);
+		frame_stack_.emplace_back(std::move(f_action.frame));
 		break;
 	case ReplaceTopFrame:
-		delete frame_stack_.back();
 		frame_stack_.pop_back();
-		frame_stack_.emplace_back(f_action.frame);
+		frame_stack_.emplace_back(std::move(f_action.frame));
 	case FrameActionCount:
 	default:
 		break;
@@ -121,21 +145,23 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::Eve
 	// Enable vertical sync enabled. Don't do framerate
 	window_->setVerticalSyncEnabled(true);
 	// Initialize it to the first main menu frame.
-	let firstFrame = new Frames::TitleFrame;
-	frame_stack_.emplace_back(firstFrame);
+	frame_stack_.emplace_back(std::make_unique<Frames::TitleFrame>());
 
 	GlobalContext::set_engine(this);
 }
 
-void Core::Engine::add_event(Core::Event *e)
+void Core::Engine::add_event(std::unique_ptr<Event> e)
 {
-	if (e->type != Core::Event::EventType::Count)
-		core_events_.emplace_back(e);
+	// Make sure we are not sent a nullptr or an invalid type
+	if (e && e->type != Core::Event::EventType::Count) {
+		coreEventHandlerLock.lock();
+		core_events_.push(std::move(e));
+		coreEventHandlerLock.unlock();
+	}
 }
 
 void Core::Engine::Loop()
 {
-	GlobalContext::get_network()->process_packets();
 	Events();
 
 	Update();
@@ -155,10 +181,6 @@ void Core::Engine::Loop()
 
 	frame_action_list_.clear();
 
-	// Process events again cause why not
-	GlobalContext::get_network()->process_packets();
-	ProcessCustomEvents();
-
 	Render();
 }
 
@@ -171,11 +193,11 @@ void Core::Engine::frame_action(FrameAction action, Frames::IFrame* frame)
 
 Core::Engine::~Engine()
 {
-	while (!frame_stack_.empty())
-	{
-		delete frame_stack_.back();
-		frame_stack_.pop_back();
-	}
-
 	GlobalContext::clear_engine();
+}
+
+void Core::Engine::updateAppLog() {
+	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+	if (showAppLog)
+		log.Draw("App Log:", &showAppLog);
 }

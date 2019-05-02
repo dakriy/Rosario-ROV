@@ -79,7 +79,7 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
     for (auto x = RoundToNearest(graphBounds.left, scaleX); x < graphBounds.left + graphBounds.width; x += scaleX)
     {
         auto screen = convertToScreenCoords(graphBounds, sf::Vector2<double>(x, 0.));
-        line[0] = sf::Vertex(sf::Vector2f(screen.x, windowSize.y));
+        line[0] = sf::Vertex(sf::Vector2f(screen.x, static_cast<float>(windowSize.y)));
         line[1] = sf::Vertex(sf::Vector2f(screen.x, 0));
         line[0].color = line[1].color = sf::Color(128, 128, 128);
         target.draw(line, 2, sf::Lines);
@@ -90,7 +90,7 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
         std::string strNum = num.str();
         auto text = Factory::TextFactory::create_displayable_string(strNum);
         // For now just place it on the bottom
-        text.setPosition(screen.x, windowSize.y - text.getCharacterSize());
+        text.setPosition(screen.x, static_cast<float>(windowSize.y - text.getCharacterSize()));
         text.setFillColor(sf::Color::White);
         target.draw(text);
     }
@@ -98,7 +98,7 @@ void Frames::GraphFrame::drawGrid(sf::RenderTarget& target, sf::RenderStates sta
     for (auto y = RoundToNearest(graphBounds.top, scaleY); y > graphBounds.top - graphBounds.height; y -= scaleY)
     {
         auto screen = convertToScreenCoords(graphBounds, sf::Vector2<double>(0., y));
-        line[0] = sf::Vertex(sf::Vector2f(windowSize.x, screen.y));
+        line[0] = sf::Vertex(sf::Vector2f(static_cast<float>(windowSize.x), screen.y));
         line[1] = sf::Vertex(sf::Vector2f(0, screen.y));
         line[0].color = line[1].color = sf::Color(128, 128, 128);
         target.draw(line, 2, sf::Lines);
@@ -156,8 +156,8 @@ double Frames::GraphFrame::calculateGridScale(double targetScale) const
 
 void Frames::GraphFrame::zoomRelative(int x, int y, float amount)
 {
-	assert(x >= 0 && x <= windowSize.x && "X is out of window range");
-	assert(y >= 0 && y <= windowSize.y && "Y is out of window range");
+	assert(x >= 0 && static_cast<unsigned>(x) <= windowSize.x && "X is out of window range");
+	assert(y >= 0 && static_cast<unsigned>(y) <= windowSize.y && "Y is out of window range");
 	double percentLeftZoom = static_cast<double>(x) / static_cast<double>(windowSize.x);
 	double percentTopZoom = static_cast<double>(y) / static_cast<double>(windowSize.y);
 
