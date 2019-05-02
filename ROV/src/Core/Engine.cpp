@@ -22,11 +22,17 @@ void Core::Engine::Events()
 void Core::Engine::Update()
 {
 	// Update here.
-	std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
+	std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout - 150));
 	if (missionInProgress) {
-		sensors[0]->initiateConversion();
-		auto p = Factory::PacketFactory::create_data_packet(sensors[0]->queryDevice());
-		GlobalContext::get_network()->sendPacket(std::move(p));
+		for (auto & sensor : sensors) {
+			sensor->initiateConversion();
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(150));
+		std::vector<float> data;
+		for (auto & sensor : sensors) {
+			data.push_back(sensor->queryDevice());
+		}
+		GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
 	}
 }
 
@@ -94,8 +100,9 @@ void Core::Engine::Loop()
 
 Core::Engine::~Engine()
 {
-	cev_->unhook_event_callback_for_all_events(watchForRequest);
 	cev_->unhook_event_callback_for_all_events(sensorRequest);
-
+	cev_->unhook_event_callback_for_all_events(watchForRequest);
+	cev_->unhook_event_callback_for_all_events(watchForRequestStop);
+	missionInProgress = false;
 	GlobalContext::clear_engine();
 }

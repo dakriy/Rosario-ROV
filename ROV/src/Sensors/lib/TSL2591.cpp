@@ -2,7 +2,7 @@
 /*!
     @file     Sensor::TSL2591.cpp
     @author   KT0WN (adafruit.com)
-    @modified dakriy WWU
+    @modified dakriy (WWU)
     This is a library for the Adafruit TSL2591 breakout board
     This library works with the Adafruit TSL2591 breakout
     ----> https://www.adafruit.com/products/1980
@@ -38,31 +38,14 @@
 */
 /**************************************************************************/
 
-#if defined(__AVR__)
-#include <util/delay.h>
-#endif
-#include <cstdlib>
 #include "TSL2591.h"
-
-
-/**************************************************************************/
-/*!
-    @brief  Instantiates a new Adafruit TSL2591 class
-    @param  sensorID An optional ID # so you can track this sensor, it will tag sensorEvents you create.
-*/
-/**************************************************************************/
-//Sensor::TSL2591::Sensor::TSL2591(int32_t sensorID)
-//{
-//	_initialized = false;
-//	_integration = TSL2591_INTEGRATIONTIME_100MS;
-//	_gain        = TSL2591_GAIN_MED;
-//	_sensorID    = sensorID;
-//
-//	// we cant do wire initialization till later, because we havent loaded Wire yet
-//}
+#include <wiringPi.h>
+#include <wiringPiI2C.h>
 
 Sensor::TSL2591::TSL2591() {
 	_initialized = false;
+	_integration = TSL2591_INTEGRATIONTIME_100MS;
+	_gain        = TSL2591_GAIN_MED;
 }
 
 /**************************************************************************/
@@ -71,24 +54,19 @@ Sensor::TSL2591::TSL2591() {
     @returns True if a TSL2591 is found, false on any failure
 */
 /**************************************************************************/
-bool Sensor::TSL2591::begin(void)
+bool Sensor::TSL2591::begin()
 {
-	Wire.begin();
+	if (_initialized)
+		return true;
 
-	/*
-	for (uint8_t i=0; i<0x20; i++)
-	{
-	  uint8_t id = read8(0x12);
-	  Serial.print("$"); Serial.print(i, HEX);
-	  Serial.print(" = 0x"); Serial.println(read8(i), HEX);
-	}
-	*/
+	deviceHandle = wiringPiI2CSetup(TSL2591_ADDR);
+
+	if (deviceHandle < 0)
+		return false;
 
 	uint8_t id = read8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_DEVICE_ID);
-	if (id != 0x50 ) {
+	if (id != 0x50 )
 		return false;
-	}
-	// Serial.println("Found Sensor::TSL2591");
 
 	_initialized = true;
 
@@ -107,7 +85,7 @@ bool Sensor::TSL2591::begin(void)
     @brief  Enables the chip, so it's ready to take readings
 */
 /**************************************************************************/
-void Sensor::TSL2591::enable(void)
+void Sensor::TSL2591::enable()
 {
 	if (!_initialized)
 	{
@@ -119,7 +97,7 @@ void Sensor::TSL2591::enable(void)
 
 	// Enable the device by setting the control bit to 0x01
 	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_ENABLE,
-		   TSL2591_ENABLE_POWERON | TSL2591_ENABLE_AEN | TSL2591_ENABLE_AIEN | TSL2591_ENABLE_NPIEN);
+		   TSL2591_ENABLE_POWERON | TSL2591_ENABLE_AEN);
 }
 
 
@@ -128,7 +106,7 @@ void Sensor::TSL2591::enable(void)
     @brief Disables the chip, so it's in power down mode
 */
 /**************************************************************************/
-void Sensor::TSL2591::disable(void)
+void Sensor::TSL2591::disable()
 {
 	if (!_initialized) {
 		if (!begin()) {
@@ -166,7 +144,7 @@ void Sensor::TSL2591::setGain(tsl2591Gain_t gain)
     @returns {@link tsl2591Gain_t} gain value
 */
 /**************************************************************************/
-tsl2591Gain_t Sensor::TSL2591::getGain()
+Sensor::tsl2591Gain_t Sensor::TSL2591::getGain()
 {
 	return _gain;
 }
@@ -197,7 +175,7 @@ void Sensor::TSL2591::setTiming(tsl2591IntegrationTime_t integration)
     @returns {@link tsl2591IntegrationTime_t} integration time
 */
 /**************************************************************************/
-tsl2591IntegrationTime_t Sensor::TSL2591::getTiming()
+Sensor::tsl2591IntegrationTime_t Sensor::TSL2591::getTiming()
 {
 	return _integration;
 }
@@ -289,13 +267,41 @@ float Sensor::TSL2591::calculateLux(uint16_t ch0, uint16_t ch1)
 	return lux;
 }
 
+void Sensor::TSL2591::startConversion() {
+	if (!_initialized) {
+		if (!begin()) {
+			return;
+		}
+	}
+
+	// Enable the device
+	// I guess just enabling it starts a conversion?
+	enable();
+}
+
+float Sensor::TSL2591::getLight() {
+	// CHAN0 must be read before CHAN1
+	// See: https://forums.adafruit.com/viewtopic.php?f=19&t=124176
+	auto ch0 = read16(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CHAN0_LOW);
+	auto ch1 = read16(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CHAN1_LOW);
+	// Disable the chip again to save power...
+	disable();
+
+	/* Early silicon seems to have issues when there is a sudden jump in */
+	/* light levels. :( To work around this for now sample the sensor 2x */
+	// I really don't wanna sample it twice, cause that's a max of 2 seconds. Can't wait that long. That's stupid...
+	// Also we'll be sampling it lots so we should be fine.
+
+	return calculateLux(ch0, ch1);
+}
+
 /************************************************************************/
 /*!
     @brief  Reads the raw data from both light channels
     @returns 32-bit raw count where high word is IR, low word is IR+Visible
 */
 /**************************************************************************/
-uint32_t Sensor::TSL2591::getFullLuminosity (void)
+uint32_t Sensor::TSL2591::getFullLuminosity()
 {
 	if (!_initialized) {
 		if (!begin()) {
@@ -314,8 +320,8 @@ uint32_t Sensor::TSL2591::getFullLuminosity (void)
 
 	// CHAN0 must be read before CHAN1
 	// See: https://forums.adafruit.com/viewtopic.php?f=19&t=124176
-	uint32_t x;
-	uint16_t y;
+	uint32_t x = 0;
+	uint16_t y = 0;
 	y |= read16(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CHAN0_LOW);
 	x = read16(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CHAN1_LOW);
 	x <<= 16;
@@ -333,24 +339,24 @@ uint32_t Sensor::TSL2591::getFullLuminosity (void)
     @returns 16-bit raw count, or 0 if channel is invalid
 */
 /**************************************************************************/
-uint16_t Sensor::TSL2591::getLuminosity (uint8_t channel)
+uint16_t Sensor::TSL2591::getLuminosity(uint8_t channel)
 {
 	uint32_t x = getFullLuminosity();
 
 	if (channel == TSL2591_FULLSPECTRUM)
 	{
 		// Reads two byte value from channel 0 (visible + infrared)
-		return (x & 0xFFFF);
+		return static_cast<uint16_t>(x & 0xFFFF);
 	}
 	else if (channel == TSL2591_INFRARED)
 	{
 		// Reads two byte value from channel 1 (infrared)
-		return (x >> 16);
+		return static_cast<uint16_t>(x >> 16);
 	}
 	else if (channel == TSL2591_VISIBLE)
 	{
 		// Reads all and subtracts out just the visible!
-		return ( (x & 0xFFFF) - (x >> 16));
+		return static_cast<uint16_t>( (x & 0xFFFF) - (x >> 16));
 	}
 
 	// unknown channel!
@@ -365,40 +371,40 @@ uint16_t Sensor::TSL2591::getLuminosity (uint8_t channel)
     @param  persist How many counts we must be outside range for interrupt to fire, default is any single value
 */
 /**************************************************************************/
-void Sensor::TSL2591::registerInterrupt(uint16_t lowerThreshold, uint16_t upperThreshold, tsl2591Persist_t persist = TSL2591_PERSIST_ANY)
-{
-	if (!_initialized) {
-		if (!begin()) {
-			return;
-		}
-	}
-
-	enable();
-	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_PERSIST_FILTER,  persist);
-	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AILTL, lowerThreshold);
-	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AILTH, lowerThreshold >> 8);
-	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AIHTL, upperThreshold);
-	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AIHTH, upperThreshold >> 8);
-	disable();
-}
+//void Sensor::TSL2591::registerInterrupt(uint16_t lowerThreshold, uint16_t upperThreshold, tsl2591Persist_t persist = TSL2591_PERSIST_ANY)
+//{
+//	if (!_initialized) {
+//		if (!begin()) {
+//			return;
+//		}
+//	}
+//
+//	enable();
+//	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_PERSIST_FILTER,  persist);
+//	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AILTL, lowerThreshold);
+//	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AILTH, lowerThreshold >> 8);
+//	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AIHTL, upperThreshold);
+//	write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_THRESHOLD_AIHTH, upperThreshold >> 8);
+//	disable();
+//}
 
 /************************************************************************/
 /*!
     @brief  Clear interrupt status
 */
 /**************************************************************************/
-void Sensor::TSL2591::clearInterrupt()
-{
-	if (!_initialized) {
-		if (!begin()) {
-			return;
-		}
-	}
-
-	enable();
-	write8(TSL2591_CLEAR_INT);
-	disable();
-}
+//void Sensor::TSL2591::clearInterrupt()
+//{
+//	if (!_initialized) {
+//		if (!begin()) {
+//			return;
+//		}
+//	}
+//
+//	enable();
+//	write8(TSL2591_CLEAR_INT);
+//	disable();
+//}
 
 
 /************************************************************************/
@@ -407,73 +413,51 @@ void Sensor::TSL2591::clearInterrupt()
     @return Sensor status as a byte. Bit 0 is ALS Valid. Bit 4 is ALS Interrupt. Bit 5 is No-persist Interrupt.
 */
 /**************************************************************************/
-uint8_t Sensor::TSL2591::getStatus(void)
+//uint8_t Sensor::TSL2591::getStatus()
+//{
+//	if (!_initialized) {
+//		if (!begin()) {
+//			return 0;
+//		}
+//	}
+//
+//	// Enable the device
+//	enable();
+//	uint8_t x;
+//	x = read8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_DEVICE_STATUS);
+//	disable();
+//	return x;
+//}
+
+
+uint8_t Sensor::TSL2591::read8(uint8_t reg)
 {
-	if (!_initialized) {
-		if (!begin()) {
-			return 0;
-		}
+	auto result = wiringPiI2CReadReg8(deviceHandle, reg);
+
+	if (result < 0) {
+		return 0;
 	}
 
-	// Enable the device
-	enable();
-	uint8_t x;
-	x = read8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_DEVICE_STATUS);
-	disable();
-	return x;
+	return static_cast<uint8_t>(result);
 }
 
-/************************************************************************/
-/*!
-    @brief  Gets the most recent sensor event
-    @param  event Pointer to Adafruit_Sensor sensors_event_t object that will be filled with sensor data
-    @return True on success, False on failure
-*/
-/**************************************************************************/
-bool Sensor::TSL2591::getEvent(sensors_event_t *event)
+uint16_t Sensor::TSL2591::read16(uint8_t reg)
 {
-	uint16_t ir, full;
-	uint32_t lum = getFullLuminosity();
-	/* Early silicon seems to have issues when there is a sudden jump in */
-	/* light levels. :( To work around this for now sample the sensor 2x */
-	lum = getFullLuminosity();
-	ir = lum >> 16;
-	full = lum & 0xFFFF;
+	auto result = wiringPiI2CReadReg16(deviceHandle, reg);
 
-	/* Clear the event */
-	memset(event, 0, sizeof(sensors_event_t));
-
-	event->version   = sizeof(sensors_event_t);
-	event->sensor_id = _sensorID;
-	event->type      = SENSOR_TYPE_LIGHT;
-	event->timestamp = millis();
-
-	/* Calculate the actual lux value */
-	/* 0 = sensor overflow (too much light) */
-	event->light = calculateLux(full, ir);
-
-	return true;
+	if (result < 0) {
+		return 0;
+	}
+	return __builtin_bswap16(static_cast<uint16_t>(result));
 }
 
-/**************************************************************************/
-/*!
-    @brief  Gets the overall sensor_t data including the type, range and resulution
-    @param  sensor Pointer to Adafruit_Sensor sensor_t object that will be filled with sensor type data
-*/
-/**************************************************************************/
-void Sensor::TSL2591::getSensor(sensor_t *sensor)
+void Sensor::TSL2591::write8(uint8_t reg, uint8_t value)
 {
-	/* Clear the sensor_t object */
-	memset(sensor, 0, sizeof(sensor_t));
+	wiringPiI2CWriteReg8(deviceHandle, reg, value);
+}
 
-	/* Insert the sensor name in the fixed length char array */
-	strncpy (sensor->name, "TSL2591", sizeof(sensor->name) - 1);
-	sensor->name[sizeof(sensor->name)- 1] = 0;
-	sensor->version     = 1;
-	sensor->sensor_id   = _sensorID;
-	sensor->type        = SENSOR_TYPE_LIGHT;
-	sensor->min_delay   = 0;
-	sensor->max_value   = 88000.0;
-	sensor->min_value   = 0.0;
-	sensor->resolution  = 0.001;
+
+void Sensor::TSL2591::write8(uint8_t reg)
+{
+	wiringPiI2CWrite(deviceHandle, reg);
 }

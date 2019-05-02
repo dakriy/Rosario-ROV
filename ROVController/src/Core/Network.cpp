@@ -207,15 +207,17 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			break;
     	case PacketTypes::Sensors:
 		{
-			GlobalContext::get_engine()->log.AddLog(
-					"[%.1f] [%s] New Sensors\n",
-					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			event = std::make_unique<Core::Event>(Core::Event::SensorInfoReceived);
+
+			// Get number of sensors returned
 			sf::Uint32 sensorsNumber = 0;
 			if (!(p >> sensorsNumber)) {
 				return nullptr;
 			}
 
+			event->sInfo.reserve(sensorsNumber);
+
+			// Retrieve sensor information from each sensor.
 			for (unsigned i = 0; i < sensorsNumber; ++i) {
 				sf::Uint8 id;
 				float maxFrequency;
@@ -232,15 +234,27 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
     	case PacketTypes::Data:
 		{
 			event = std::make_unique<Core::Event>(Core::Event::DataReceived);
-			float val = 0.f;
-			if (!(p >> val)) {
+
+			// Pull number of measurements from packet
+			sf::Uint32 sensorsNumber = 0;
+			if (!(p >> sensorsNumber)) {
 				return nullptr;
 			}
-			event->data = val;
-			GlobalContext::get_engine()->log.AddLog(
-					"[%.1f] [%s] New Sensor Data:\ndata: %f\n",
-					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", val);
 
+			event->data.reserve(sensorsNumber);
+
+			// Get each piece of data.
+			for (unsigned i = 0; i < sensorsNumber; ++i) {
+				float val = 0.f;
+				if (!(p >> val)) {
+					return nullptr;
+				}
+				event->data.emplace_back(val);
+				GlobalContext::get_engine()->log.AddLog(
+						"[%.1f] [%s] New Sensor Data %u:\ndata: %f\n",
+						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", i, val);
+			}
+			break;
 		}
 //		case PacketTypes::Video:
 //		{

@@ -20,11 +20,11 @@ const uint8_t Sensor::MS5837::MS5837_30BA = 0;
 const uint8_t Sensor::MS5837::MS5837_02BA = 1;
 
 Sensor::MS5837::MS5837() {
-	deviceHandle = wiringPiI2CSetup(MS5837_ADDR);
 	fluidDensity = 1029;
 }
 
 bool Sensor::MS5837::init() {
+	deviceHandle = wiringPiI2CSetup(MS5837_ADDR);
 	// Reset the MS5837, per datasheet
 	if (wiringPiI2CWrite(deviceHandle, MS5837_RESET) < 0) return false;
 	// Wait for reset to complete

@@ -34,10 +34,12 @@ namespace Core {
 
 		// Turn this into union when we get more things.
 //		union {
+//			std::vector<SensorInfo> sInfo;
+//			std::vector<float> data;
 //		};
 
-        std::vector<SensorInfo> sInfo;
-        float data = 0.f;
+		std::vector<SensorInfo> sInfo;
+		std::vector<float> data;
 		explicit Event(EventType t) : type(t){}
 	};
 

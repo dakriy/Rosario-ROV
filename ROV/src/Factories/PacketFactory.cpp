@@ -21,9 +21,12 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_sensor_list_packet(st
 	return p;
 }
 
-std::unique_ptr<sf::Packet> Factory::PacketFactory::create_data_packet(float data) {
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_data_packet(std::vector<float>& data) {
 	auto p = std::make_unique<sf::Packet>();
 	add_type_to_packet(p, Network::PacketTypes::Data);
-	*p << data;
+	*p << static_cast<sf::Uint32>(data.size());
+	for (auto & dat : data) {
+		*p << dat;
+	}
 	return p;
 }

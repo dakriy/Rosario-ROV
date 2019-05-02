@@ -7,6 +7,7 @@
 #include <memory>
 #include "Event.h"
 #include "../Sensors/Pressure.h"
+#include "../Sensors/Lux.h"
 
 namespace Core
 {
@@ -30,8 +31,9 @@ namespace Core
 		const unsigned defaultTimeout = 250;
 
 
-		std::array<std::unique_ptr<Sensor::Sensor>, 1> sensors = {
-				std::make_unique<Sensor::Pressure>()
+		std::array<std::unique_ptr<Sensor::Sensor>, 2> sensors = {
+				std::make_unique<Sensor::Pressure>(),
+				std::make_unique<Sensor::Lux>()
 		};
 
 

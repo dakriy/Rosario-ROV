@@ -81,14 +81,13 @@ namespace Sensor {
 		TSL2591_INTEGRATIONTIME_400MS     = 0x03,  // 400 millis
 		TSL2591_INTEGRATIONTIME_500MS     = 0x04,  // 500 millis
 		TSL2591_INTEGRATIONTIME_600MS     = 0x05,  // 600 millis
-	}
-			tsl2591IntegrationTime_t;
+	} tsl2591IntegrationTime_t;
 
 	/// Enumeration for the persistance filter (for interrupts)
 	typedef enum
 	{
 		//  bit 7:4: 0
-				TSL2591_PERSIST_EVERY             = 0x00, // Every ALS cycle generates an interrupt
+		TSL2591_PERSIST_EVERY             = 0x00, // Every ALS cycle generates an interrupt
 		TSL2591_PERSIST_ANY               = 0x01, // Any value outside of threshold range
 		TSL2591_PERSIST_2                 = 0x02, // 2 consecutive values out of range
 		TSL2591_PERSIST_3                 = 0x03, // 3 consecutive values out of range
@@ -104,8 +103,7 @@ namespace Sensor {
 		TSL2591_PERSIST_50                = 0x0D, // 50 consecutive values out of range
 		TSL2591_PERSIST_55                = 0x0E, // 55 consecutive values out of range
 		TSL2591_PERSIST_60                = 0x0F, // 60 consecutive values out of range
-	}
-			tsl2591Persist_t;
+	} tsl2591Persist_t;
 
 	/// Enumeration for the sensor gain
 	typedef enum
@@ -114,25 +112,35 @@ namespace Sensor {
 		TSL2591_GAIN_MED                  = 0x10,    /// medium gain (25x)
 		TSL2591_GAIN_HIGH                 = 0x20,    /// medium gain (428x)
 		TSL2591_GAIN_MAX                  = 0x30,    /// max gain (9876x)
-	}
-			tsl2591Gain_t;
+	} tsl2591Gain_t;
+
 	class TSL2591 {
+	private:
+		void write8(uint8_t r);
+		void write8(uint8_t r, uint8_t v);
+		uint16_t read16(uint8_t reg);
+		uint8_t read8(uint8_t reg);
 	protected:
 		tsl2591IntegrationTime_t _integration;
 		tsl2591Gain_t _gain;
-		int32_t _sensorID;
-
+		int deviceHandle = 0;
 		bool _initialized;
+
+		uint16_t spectrum;
+		uint16_t IR;
 	public:
+		const float maxValue = 88000.0f;
+		const float minValue = 0.0f;
+		const float resolution = 0.001;
+
 		TSL2591();
-		/* Unified Sensor API Functions */
-		bool getEvent(sensors_event_t*);
-		void getSensor(sensor_t*);
 
-		bool begin(void);
-		void enable(void);
-		void disable(void);
+		bool begin();
+		void enable();
+		void disable();
 
+		void startConversion();
+		float getLight();
 		float calculateLux( uint16_t ch0, uint16_t ch1);
 		void setGain(tsl2591Gain_t gain );
 		void setTiming(tsl2591IntegrationTime_t integration);
