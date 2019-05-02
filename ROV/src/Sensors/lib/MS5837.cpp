@@ -30,34 +30,16 @@ bool Sensor::MS5837::init() {
 	// Wait for reset to complete
 	delay(10);
 
-//	Wire.beginTransmission(MS5837_ADDR);
-//	Wire.write(MS5837_RESET);
-//	Wire.endTransmission();
-
-
 	// Read calibration values and CRC
 	for ( uint8_t i = 0 ; i < 7 ; i++ ) {
-//		wiringPiI2CWrite(deviceHandle, MS5837_PROM_READ+i*2);
 		auto result = wiringPiI2CReadReg16(deviceHandle, MS5837_PROM_READ+i*2);
-//		Wire.beginTransmission(MS5837_ADDR);
-//		Wire.write(MS5837_PROM_READ+i*2);
-//		Wire.endTransmission();
 
-//		Wire.requestFrom(MS5837_ADDR,2);
-//		C[i] = (Wire.read() << 8) | Wire.read();
-
-//		uint8_t data[2];
-
-//		if (I2CReadReg24(deviceHandle, data, 2) < 0) {
-//			return false;
-//		}
 		if (result < 0) {
 			return false;
 		}
-//		C[i] = (data[0] << 8) | data[1];
 		// SMBus is little-endian and I guess it sent it big endian, so need to swap it...
-		C[i] = static_cast<uint16_t>(((result & 0xFF) << 8) | (result >> 8));
-//		C[i] = static_cast<uint16_t>(result);
+		C[i] = __builtin_bswap16(static_cast<uint16_t>(result));
+//		C[i] = static_cast<uint16_t>(((result & 0xFF) << 8) | (result >> 8));
 	}
 
 	// Verify that data is correct with CRC

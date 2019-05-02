@@ -8,6 +8,7 @@
 #include "Event.h"
 #include "../Sensors/Pressure.h"
 #include "../Sensors/Lux.h"
+#include "../Sensors/Temperature.h"
 
 namespace Core
 {
@@ -32,7 +33,7 @@ namespace Core
 
 
 		std::array<std::unique_ptr<Sensor::Sensor>, 2> sensors = {
-				std::make_unique<Sensor::Pressure>(),
+				std::make_unique<Sensor::Temperature>(),
 				std::make_unique<Sensor::Lux>()
 		};
 

@@ -1,19 +1,19 @@
 #pragma once
 
 #include "Sensor.h"
-#include "lib/TSL2591.h"
+#include "lib/TSYS01.h"
 
 namespace Sensor {
-	class Lux : public Sensor {
+	class Temperature : public Sensor {
 	protected:
 		const SensorInfo info{
-			.id = static_cast<sf::Uint8 >(SensorId::Lux),
-			.maxFrequency = 10.f,
-			.name = "Light/Lux Sensor",
-			.units = "Lux"
+				.id = static_cast<sf::Uint8>(SensorId::Temperature),
+				.maxFrequency = 100.f,
+				.name = "External Temperature",
+				.units = "Celsius"
 		};
 
-		TSL2591 lightSensor;
+		TSYS01 temp;
 	public:
 		const SensorInfo& getSensorInfo() override;
 		bool setup() override;
@@ -21,4 +21,3 @@ namespace Sensor {
 		float queryDevice() override;
 	};
 }
-

@@ -5,7 +5,7 @@ const Sensor::SensorInfo &Sensor::Lux::getSensorInfo() {
 }
 
 bool Sensor::Lux::setup() {
-	lightSensor.begin();
+	return lightSensor.begin();
 }
 
 void Sensor::Lux::initiateConversion() {
