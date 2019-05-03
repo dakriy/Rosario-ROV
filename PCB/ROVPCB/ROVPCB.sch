@@ -291,7 +291,7 @@ P 4750 1500
 F 0 "J1" H 4856 1778 50  0000 C CNN
 F 1 "Conn_01x04_Male" H 4856 1687 50  0000 C CNN
 F 2 "Connector_Hirose:Hirose_DF13-04P-1.25DSA_1x04_P1.25mm_Vertical" H 4750 1500 50  0001 C CNN
-F 3 "~" H 4750 1500 50  0001 C CNN
+F 3 "${KIPRJMOD}\\Datasheets\\BlueRobotics_TSYS01.pdf" H 4750 1500 50  0001 C CNN
 F 4 "DF13-04P-1.25DSA" H 4750 1500 50  0001 C CNN "manf#"
 	1    4750 1500
 	1    0    0    -1  
@@ -303,7 +303,7 @@ P 4750 2000
 F 0 "J2" H 4856 2278 50  0000 C CNN
 F 1 "Conn_01x04_Male" H 4856 2187 50  0000 C CNN
 F 2 "Connector_Hirose:Hirose_DF13-04P-1.25DSA_1x04_P1.25mm_Vertical" H 4750 2000 50  0001 C CNN
-F 3 "~" H 4750 2000 50  0001 C CNN
+F 3 "${KIPRJMOD}\\Datasheets\\BlueRobotics_MS5837.pdf" H 4750 2000 50  0001 C CNN
 F 4 "DF13-04P-1.25DSA" H 4750 2000 50  0001 C CNN "manf#"
 	1    4750 2000
 	1    0    0    -1  
@@ -599,7 +599,7 @@ Wire Wire Line
 Text Notes 4000 6500 0    138  ~ 28
 Lux
 $Comp
-L Adafruit_TSL2591-eagle-import:LIGHT_TSL2591 U3
+L ROVPCB-rescue:LIGHT_TSL2591-Adafruit_TSL2591-eagle-import U3
 U 1 1 5CB6F38A
 P 5150 7050
 F 0 "U3" H 5377 7040 42  0000 L CNN
@@ -705,7 +705,7 @@ Wire Wire Line
 Text Notes 7300 4500 0    138  ~ 28
 I2C Address Translator
 $Comp
-L LTC4316IDDPBF:LTC4316IDDPBF U4
+L ROVPCB-rescue:LTC4316IDDPBF-LTC4316IDDPBF U4
 U 1 1 5CBEE417
 P 9900 5650
 F 0 "U4" H 11525 6015 50  0000 C CNN
@@ -821,7 +821,7 @@ F 3 "" H 6200 4900 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Adafruit_TSL2591-eagle-import:AtlasOEM U5
+L ROVPCB-rescue:AtlasOEM-Adafruit_TSL2591-eagle-import U5
 U 1 1 5CBE687D
 P 8650 1400
 F 0 "U5" H 8650 1775 50  0000 C CNN
@@ -956,7 +956,7 @@ Connection ~ 6800 5350
 Wire Wire Line
 	6800 5350 6300 5350
 $Comp
-L Adafruit_TSL2591-eagle-import:LTC2451CTS8-TRMPBF U6
+L ROVPCB-rescue:LTC2451CTS8-TRMPBF-Adafruit_TSL2591-eagle-import U6
 U 1 1 5CC0994E
 P 7600 2850
 F 0 "U6" H 8825 3237 60  0000 C CNN
@@ -1128,4 +1128,8 @@ Wire Wire Line
 	2300 3000 2300 3150
 Text Notes 8325 2425 0    50   ~ 0
 Default I2C address: 0x14
+Text Notes 4375 1575 0    79   ~ 16
+Temp
+Text Notes 4375 2075 0    79   ~ 16
+Press
 $EndSCHEMATC
