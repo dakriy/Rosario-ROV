@@ -28,5 +28,7 @@ namespace Factory {
 		static std::unique_ptr<sf::Packet> create_sensor_request_packet();
 		static std::unique_ptr<sf::Packet> create_start_mission_packet();
 		static std::unique_ptr<sf::Packet> create_stop_mission_packet();
+		static std::unique_ptr<sf::Packet> create_start_video_stream_packet();
+		static std::unique_ptr<sf::Packet> create_stop_video_stream_packet();
 	};
 }

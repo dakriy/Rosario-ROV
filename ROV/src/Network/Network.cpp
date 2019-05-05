@@ -32,7 +32,7 @@ Network::Network::~Network() {
 void Network::Network::watch() {
 	sf::Clock lastBroadcastTime;
 
-	while (!done.load())
+	while (!done)
 	{
 		// No connection yet, broadcast ourselves.
 		//////////////////////////////////////////
@@ -109,11 +109,11 @@ void Network::Network::watch() {
 					sendQueueGuard.lock();
 					auto p = std::move(sendQueue.front());
 					sendQueue.pop();
+					sendQueueGuard.unlock();
 					auto status = connection.send(*p);
 					if (status == sf::Socket::Disconnected) {
 						closeConnection = true;
 					}
-					sendQueueGuard.unlock();
 				}
 			}
 
@@ -188,6 +188,12 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			break;
 		case PacketTypes::RequestSensors:
 			pEvent = std::make_unique<Core::Event>(Core::Event::SensorRequest);
+			break;
+		case PacketTypes::StartVideoStream:
+			pEvent = std::make_unique<Core::Event>(Core::Event::StartCamera);
+			break;
+		case PacketTypes::StopVideoStream:
+			pEvent = std::make_unique<Core::Event>(Core::Event::StopCamera);
 			break;
 		default: //unknown packet type
 			pEvent.reset();

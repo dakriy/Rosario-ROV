@@ -256,38 +256,39 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			}
 			break;
 		}
-//		case PacketTypes::Video:
-//		{
-//			packet->type = Core::Event::VideoFrameReceived;
-//			sf::Uint32 size;
-//
-//			if (!(p >> size)) {
-//				delete packet;
-//				return nullptr;
-//			}
-//
-//			packet->f.len = size;
-//
-//			// We'll let the event handler clean up the memory for us
-//			auto pixels = new sf::Uint8[size];
-//
-//			bool read = true;
-//
-//			// Fill out the pixel array assuming we just send straight pixels
-//			for (unsigned i = 0; i < size && read; ++i) {
-//				read = (p >> pixels[i]);
-//			}
-//
-//			// Something went wrong during read. Abort.
-//			if (!read) {
-//				delete [] pixels;
-//				delete packet;
-//				return nullptr;
-//			}
-//
-//			packet->f.data = pixels;
-//			break;
-//		}
+		case PacketTypes::Video:
+		{
+			event = std::make_unique<Core::Event>(Core::Event::VideoFrameReceived);
+			sf::Uint32 width, height;
+			sf::Int32 matType;
+
+			if (!(p >> width >> height >> matType)) {
+				return nullptr;
+			}
+
+//			GlobalContext::get_engine()->log.AddLog(
+//					"[%.1f] [%s] New Image Frame\n",
+//					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+
+			{
+				cv::Mat imgData(height, width, matType);
+				for (unsigned i = 0; i < width*height*3; ++i) {
+					if (!(p >> imgData.data[i])) {
+						return nullptr;
+					}
+				}
+
+//				if (!p.endOfPacket()) {
+//					GlobalContext::get_engine()->log.AddLog(
+//							"[%.1f] [%s] Extra information?\n",
+//							GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+//				}
+
+				// Do a move instead of an expensive copy
+				event->imgData = std::move(imgData);
+			}
+			break;
+		}
         default: //unknown packet type
         	event = nullptr;
         	break;

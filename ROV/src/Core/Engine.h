@@ -9,6 +9,7 @@
 #include "../Sensors/Pressure.h"
 #include "../Sensors/Lux.h"
 #include "../Sensors/Temperature.h"
+#include "../Camera/Camera.h"
 
 namespace Core
 {
@@ -37,6 +38,8 @@ namespace Core
 				std::make_unique<Sensor::Lux>()
 		};
 
+		Camera::Camera camera;
+
 
 		// Requested sensor vars
 		sf::Clock dataTimer;
@@ -49,6 +52,7 @@ namespace Core
 		EVENT_FUNC_INDEX_CORE watchForRequest;
 		EVENT_FUNC_INDEX_CORE watchForRequestStop;
 		EVENT_FUNC_INDEX_CORE sensorRequest;
+		EVENT_FUNC_INDEX_CORE camStarStopRequest;
 
 	public:
 		/**

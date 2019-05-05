@@ -18,7 +18,10 @@ namespace Network {
 		RequestSensors,
 		Sensors,
 		Data,
-		Move,
+		StartVideoStream,
+		StopVideoStream,
+		CameraMove,
+		Video,
 		Shutdown = 254,
 		Count
 	};

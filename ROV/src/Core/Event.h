@@ -19,6 +19,8 @@ namespace Core {
 			MissionStop,
 			SensorRequest,
 			Disconnected,
+			StartCamera,
+			StopCamera,
 			Shutdown,
 
 			Count
