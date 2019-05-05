@@ -3,19 +3,22 @@
 #include "../Factories/PacketFactory.h"
 #include <iostream>
 #include <imgui.h>
-#include <opencv2/opencv.hpp>
 
 Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		cv::Mat frameRGBA;
-		cv::cvtColor(e->imgData, frameRGBA, cv::COLOR_BGR2RGBA, 4);
 
-		image.create(static_cast<unsigned>(frameRGBA.cols), static_cast<unsigned>(frameRGBA.rows), frameRGBA.data);
+		if (!image.loadFromMemory(e->imgData.data(), e->imgData.size())) {
+			GlobalContext::get_engine()->log.AddLog(
+					"[%.1f] [%s] Corrupted JPG was sent from ROV\n",
+					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+			return false;
+		}
+
 		if (!tex.loadFromImage(image))
 		{
 			GlobalContext::get_engine()->log.AddLog(
-					"[%.1f] [%s] Well, fuck...\n",
+					"[%.1f] [%s] Could not load the jpg into a texture.\n",
 					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			return false;
 		}
@@ -24,8 +27,6 @@ Frames::ViewFrame::ViewFrame()
 
 		// Set scale only once
 		if (!frame) {
-			sprite.setOrigin(0, 0);
-			sprite.setPosition(0, 0);
 			sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
 		}
 

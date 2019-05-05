@@ -9,8 +9,8 @@ bool Camera::Camera::init() {
 		return false;
 
 	// TODO: Make these dynamic
-	capture.set(cv::CAP_PROP_FRAME_WIDTH, 800);
-	capture.set(cv::CAP_PROP_FRAME_HEIGHT, 600);
+	capture.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
+	capture.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
 	capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('H', '2', '6', '4'));
 //	capture.set(cv::CAP_PROP_FPS, 30);
 
@@ -36,7 +36,6 @@ void Camera::Camera::cam() {
 				initialized = init();
 			} else {
 				// Get the next frame
-				c.restart();
 				cv::Mat frame;
 				// End of stream... uhhh
 				if (!capture.read(frame)) {
@@ -49,7 +48,16 @@ void Camera::Camera::cam() {
 				// For now just send it to the boat
 				if (sendVideo) {
 					if (GlobalContext::get_network()->isConnected()) {
-						GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_video_packet(frame));
+						// Too much data for network stream, so we have to compress to jpg
+						std::vector<uint8_t> jpg;
+
+						if (cv::imencode(".jpg", frame, jpg, std::vector<int> {
+									cv::IMWRITE_JPEG_QUALITY,
+									80
+							})) {
+							// Compression successful
+							GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_video_packet(jpg));
+						}
 					} else {
 						sendVideo = false;
 					}
@@ -62,8 +70,10 @@ void Camera::Camera::cam() {
 				}
 			}
 			auto t = c.getElapsedTime().asMilliseconds();
-			if (t < 1.f / props.framerate * 1000)
+			if (t < 1.f / props.framerate * 1000) {
 				std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<unsigned>(1.f / props.framerate * 1000 - t)));
+			}
+			c.restart();
 		}
 	}
 }
@@ -98,7 +108,7 @@ bool Camera::Camera::getCameraProperties() {
 	// With webcams get(CV_CAP_PROP_FPS) does not work.
 	// We did set it up above, but now we need to actually see how fast we can get.
 	// So we have to test the limit ourselves
-	constexpr unsigned testFramerateWindow = 50;
+	constexpr unsigned testFramerateWindow = 120;
 	sf::Clock c;
 	// Grab the number of frames.
 	for(int i = 0; i < testFramerateWindow; i++)
@@ -108,7 +118,7 @@ bool Camera::Camera::getCameraProperties() {
 			return false;
 	}
 	auto time = c.getElapsedTime().asSeconds();
-	props.framerate = static_cast<unsigned>(testFramerateWindow / time);
+	props.framerate = static_cast<float>(testFramerateWindow) / time;
 	props.width = static_cast<unsigned>(capture.get(cv::CAP_PROP_FRAME_WIDTH));
 	props.height = static_cast<unsigned>(capture.get(cv::CAP_PROP_FRAME_HEIGHT));
 	return true;

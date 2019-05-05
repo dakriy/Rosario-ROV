@@ -42,7 +42,7 @@ namespace Core {
 
 		std::vector<SensorInfo> sInfo;
 		std::vector<float> data;
-		cv::Mat imgData;
+		std::vector<uint8_t> imgData;
 		explicit Event(EventType t) : type(t){}
 	};
 

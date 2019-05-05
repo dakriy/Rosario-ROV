@@ -5,7 +5,7 @@
 
 namespace Camera {
 	struct Properties {
-		unsigned framerate = 0;
+		float framerate = 0.f;
 		unsigned width = 0;
 		unsigned height = 0;
 	};
