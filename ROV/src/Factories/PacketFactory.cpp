@@ -4,9 +4,13 @@ void Factory::PacketFactory::add_type_to_packet(std::unique_ptr<sf::Packet> &p, 
 	*p << static_cast<sf::Uint8>(type);
 }
 
-std::unique_ptr<sf::Packet> Factory::PacketFactory::createVideoPacket() {
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_video_packet(std::vector<uint8_t>& buffer) {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
-	add_type_to_packet(p, Network::PacketTypes::Count);
+	add_type_to_packet(p, Network::PacketTypes::Video);
+	// Add width, height, and type
+	*p << static_cast<sf::Uint32>(buffer.size());
+	// Add pixel data
+	p->append(buffer.data(), static_cast<size_t>(buffer.size()));
 	return p;
 }
 

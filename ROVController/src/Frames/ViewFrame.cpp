@@ -7,7 +7,33 @@
 Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		//image.create(e->f.w, e->f.h, e->f.data);
+
+		if (!image.loadFromMemory(e->imgData.data(), e->imgData.size())) {
+			GlobalContext::get_engine()->log.AddLog(
+					"[%.1f] [%s] Corrupted JPG was sent from ROV\n",
+					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+			return false;
+		}
+
+		if (!tex.loadFromImage(image))
+		{
+			GlobalContext::get_engine()->log.AddLog(
+					"[%.1f] [%s] Could not load the jpg into a texture.\n",
+					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+			return false;
+		}
+
+		sprite.setTexture(tex);
+
+		// Set scale only once
+		if (!frame) {
+			sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
+		}
+
+		frame = true;
+		return false;
+	}, Core::Event::EventType::VideoFrameReceived);
+
 //		if (e->sInfo.hasDataForSensor(Core::SensorInfo::Video)) {
 //		    auto newImg = e->sInfo.getSensorData(Core::SensorInfo::Video);
 //            if(!image.loadFromMemory(newImg->f.data, newImg->f.len))
@@ -31,8 +57,6 @@ Frames::ViewFrame::ViewFrame()
 //            frame = true;
 //            return true;
 //		}
-		return false;
-	}, Core::Event::EventType::SensorInfoReceived);
 
 //	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 //	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Pressure)) {
@@ -48,7 +72,7 @@ Frames::ViewFrame::ViewFrame()
 //		return false;
 //	}, Core::Event::EventType::SensorInfoReceived);
 
-	// TODO: Request data somehow
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_start_video_stream_packet());
 }
 
 void Frames::ViewFrame::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -104,7 +128,7 @@ Frames::FrameType Frames::ViewFrame::get_type() const
 
 Frames::ViewFrame::~ViewFrame()
 {
-	// TODO: Stop data send somehow
+	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_stop_video_stream_packet());
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(pressureHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(temperatureHook);

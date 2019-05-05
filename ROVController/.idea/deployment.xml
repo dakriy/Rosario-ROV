@@ -2,11 +2,19 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
-      <paths name="Pi (6d2e5bdc-f116-4ff3-ad6a-cd368bbb64ad)">
+      <paths name="Pi (d57bc534-4811-4ad3-a59d-359bb26e1829)">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/tmp/tmp.D3AIiKc8uT" local="$PROJECT_DIR$" />
           </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-minsizerel" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-relwithdebinfo" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-release" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

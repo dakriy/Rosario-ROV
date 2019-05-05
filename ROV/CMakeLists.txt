@@ -18,6 +18,7 @@ set(CPP_DIR_4 src/Factories)
 set(CPP_DIR_5 src/Sensors)
 set(CPP_DIR_6 src/Utilities)
 set(CPP_DIR_7 src/Sensors/lib)
+set(CPP_DIR_8 src/Camera)
 set(HEADER_DIR_1 src)
 set(HEADER_DIR_2 src/Network)
 set(HEADER_DIR_3 src/Core)
@@ -25,12 +26,17 @@ set(HEADER_DIR_4 src/Factories)
 set(HEADER_DIR_5 src/Sensors)
 set(HEADER_DIR_6 src/Utilities)
 set(HEADER_DIR_7 src/Sensors/lib)
+set(HEADER_DIR_8 src/Camera)
 set(wiringPi_INCLUDE wiringPi/wiringPi)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 ############## CMake Project ################
 #        The main options of project        #
 #############################################
+
+if(WIN32)
+    message(ERROR "Cannot build on windows targets")
+endif()
 
 project(${PROJECT_NAME} CXX)
 
@@ -48,18 +54,11 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_DEBUG}")
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_DEBUG}")
   set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_DEBUG}")
-    if(WIN32)
-        set(SFML_LIBS "sfml-network-d.lib sfml-system-d.lib")
-    endif()
 else()
   set(CMAKE_BUILDTYPE "Release")
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
   set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
-  if(WIN32)
-      set(SFML_LIBS "sfml-network.lib sfml-system.lib")
-      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-  endif()
 endif()
 
 message(STATUS "Building ${CMAKE_BUILD_TYPE} ")
@@ -67,41 +66,21 @@ message(STATUS "Building ${CMAKE_BUILD_TYPE} ")
 ################# Flags ################
 # Defines Flags for Windows and Linux. #
 ########################################
-
-if(WIN32)
-    set(SFML_INCLUDE "$ENV{SFML_INCLUDE}")
-    set(SFML_LIB "$ENV{SFML_LIB}")
-
-    if (SFML_INCLUDE STREQUAL "")
-        message(FATAL_ERROR "Please define the SFML_INCLUDE environment variable to the sfml include path")
-    endif()
-    if (SFML_LIB STREQUAL "")
-        message(FATAL_ERROR "Please define the SFML_LIB environment variable to the sfml lib path")
-    endif()
-
-    link_directories(${SFML_LIB})
-    include_directories(${SFML_INCLUDE})
-else()
-		find_package(SFML 2.5.1 COMPONENTS system network REQUIRED)
-endif()
-
-include_directories(${wiringPi_INCLUDE})
-
 find_library(wiringPi_LIB wiringPi)
 find_library(sfml_system_LIB sfml-system)
+find_library(sfml_graphics_LIB sfml-graphics)
 find_library(sfml_network_LIB sfml-network)
 find_package(Threads REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(SFML 2.5.1 COMPONENTS system network graphics REQUIRED)
 
-if(MSVC)
-   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3 /MDd /Od /EHsc")
-   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /W3 /GL /Od /Oi /Gy /EHsc /MD")
-endif(MSVC)
-if(NOT MSVC)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-       set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-   endif()
-endif(NOT MSVC)
+include_directories(${wiringPi_INCLUDE})
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
 
 ################ Files ################
 #   --   Add files to project.   --   #
@@ -115,6 +94,7 @@ file(GLOB SRC_FILES
     ${CPP_DIR_5}/*.cpp
     ${CPP_DIR_6}/*.cpp
     ${CPP_DIR_7}/*.cpp
+    ${CPP_DIR_8}/*.cpp
     ${HEADER_DIR_1}/*.h
     ${HEADER_DIR_2}/*.h
     ${HEADER_DIR_3}/*.h
@@ -122,6 +102,7 @@ file(GLOB SRC_FILES
     ${HEADER_DIR_5}/*.h
     ${HEADER_DIR_6}/*.h
     ${HEADER_DIR_7}/*.h
+    ${HEADER_DIR_8}/*.h
 )
 
 # Add executable to build.
@@ -129,8 +110,4 @@ add_executable(${PROJECT_NAME}
    ${SRC_FILES}
 )
 
-if(MSVC)
-    target_link_libraries(${PROJECT_NAME} ${SFML_LIBS} freetype.lib gdi32.lib openal32.lib flac.lib vorbisenc.lib vorbisfile.lib vorbis.lib ogg.lib ws2_32.lib winmm.lib)
-else()
-    target_link_libraries(${PROJECT_NAME} ${wiringPi_LIB} ${sfml_network_LIB} ${sfml_system_LIB} Threads::Threads)
-endif()
+target_link_libraries(${PROJECT_NAME} ${wiringPi_LIB} ${sfml_network_LIB} ${sfml_system_LIB} Threads::Threads ${OpenCV_LIBS})

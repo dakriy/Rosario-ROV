@@ -256,38 +256,47 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			}
 			break;
 		}
-//		case PacketTypes::Video:
-//		{
-//			packet->type = Core::Event::VideoFrameReceived;
-//			sf::Uint32 size;
-//
-//			if (!(p >> size)) {
-//				delete packet;
-//				return nullptr;
+		case PacketTypes::Video:
+		{
+			event = std::make_unique<Core::Event>(Core::Event::VideoFrameReceived);
+			sf::Uint32 size;
+
+			if (!(p >> size)) {
+				return nullptr;
+			}
+
+//			GlobalContext::get_engine()->log.AddLog(
+//					"[%.1f] [%s] New Image Frame\n",
+//					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+
+			// 5 because 1 byte for type, and 4 bytes for the size byte
+			if (p.getDataSize() == size + 5) {
+				event->imgData = std::vector<uint8_t>(
+						// Start at where the image starts
+						static_cast<const uint8_t*>(p.getData()) + 5,
+						// go to the end of the image
+						static_cast<const uint8_t*>(p.getData()) + 5 + size
+				);
+			} else {
+				// Invalid packet, ignore
+				return nullptr;
+			}
+//			for (unsigned i = 0; i < size; ++i) {
+//				if ()
 //			}
+//			for (unsigned i = 0; i < width*height*3; ++i) {
+//				if (!(p >> imgData.data[i])) {
+//					return nullptr;
+//				}
+//			}[]
 //
-//			packet->f.len = size;
-//
-//			// We'll let the event handler clean up the memory for us
-//			auto pixels = new sf::Uint8[size];
-//
-//			bool read = true;
-//
-//			// Fill out the pixel array assuming we just send straight pixels
-//			for (unsigned i = 0; i < size && read; ++i) {
-//				read = (p >> pixels[i]);
+//			if (!p.endOfPacket()) {
+//				GlobalContext::get_engine()->log.AddLog(
+//						"[%.1f] [%s] Extra information?\n",
+//						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 //			}
-//
-//			// Something went wrong during read. Abort.
-//			if (!read) {
-//				delete [] pixels;
-//				delete packet;
-//				return nullptr;
-//			}
-//
-//			packet->f.data = pixels;
-//			break;
-//		}
+			break;
+		}
         default: //unknown packet type
         	event = nullptr;
         	break;

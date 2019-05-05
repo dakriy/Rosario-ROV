@@ -9,7 +9,7 @@
       ],
       "buildRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\build\\${name}",
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
-      "cmakeCommandArgs": "",
+      "cmakeCommandArgs": "-DOpenCV_DIR=E:/Programming/LIBS/OpenCV/opencv-4.1.0/build",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": ""
     },
@@ -22,7 +22,7 @@
       ],
       "buildRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\build\\${name}",
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
-      "cmakeCommandArgs": "-DCMAKE_BUILD_TYPE=Debug",
+      "cmakeCommandArgs": "-DCMAKE_BUILD_TYPE=Debug -DOpenCV_DIR=E:/Programming/LIBS/OpenCV/opencv-4.1.0/build",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": ""
     }

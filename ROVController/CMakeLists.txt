@@ -40,7 +40,7 @@ project(${PROJECT_NAME} CXX)
 # Define Release by default.
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
-  message(STATUS "Build type not specified: Use Release by default.")
+  message(STATUS "Build type not specified: Using Release by default.")
 endif(NOT CMAKE_BUILD_TYPE)
 
 ############## Artefacts Output #################
@@ -51,16 +51,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_DEBUG}")
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_DEBUG}")
   set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_DEBUG}")
-    if(WIN32)
-        set(SFML_LIBS "sfml-graphics-d.lib sfml-window-d.lib sfml-audio-d.lib sfml-network-d.lib sfml-system-d.lib")
-    endif()
 else()
   set(CMAKE_BUILDTYPE "Release")
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
   set(CMAKE_EXECUTABLE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${OUTPUT_REL}")
   if(WIN32)
-      set(SFML_LIBS "sfml-graphics.lib sfml-window.lib sfml-audio.lib sfml-network.lib sfml-system.lib")
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
   endif()
 endif()
@@ -71,25 +67,18 @@ message(STATUS "Building ${CMAKE_BUILD_TYPE} ")
 # Defines Flags for Windows and Linux. #
 ########################################
 
-if(WIN32)
-    set(SFML_INCLUDE "$ENV{SFML_INCLUDE}")
-    set(SFML_LIB "$ENV{SFML_LIB}")
+# LINK SFML
+find_package(SFML 2.5 COMPONENTS system network graphics window audio main REQUIRED)
 
-    if (SFML_INCLUDE STREQUAL "")
-        message(FATAL_ERROR "Please define the SFML_INCLUDE environment variable to the sfml include path")
-    endif()
-    if (SFML_LIB STREQUAL "")
-        message(FATAL_ERROR "Please define the SFML_LIB environment variable to the sfml lib path")
-    endif()
-
-    link_directories(${SFML_LIB})
-    include_directories(${SFML_INCLUDE})
-else()
-		find_package(SFML 2.5.1 COMPONENTS system network graphics window audio REQUIRED)
-        find_library(FOO_LIB foo)
-endif()
-
+# Manual include paths
 include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH})
+
+# LINK OPENCV
+find_package(OpenCV REQUIRED)
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+
+# LINK LIBCONFIG
+#find_package(libconfig++)
 
 
 if(MSVC)
@@ -149,7 +138,7 @@ if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
 endif()
 
 if(MSVC)
-    target_link_libraries(${PROJECT_NAME} ${SFML_LIBS} opengl32.lib freetype.lib gdi32.lib openal32.lib flac.lib vorbisenc.lib vorbisfile.lib vorbis.lib ogg.lib ws2_32.lib winmm.lib)
+    target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} opengl32.lib sfml-graphics sfml-window sfml-system sfml-audio sfml-network sfml-main)
 else()
-    target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-audio sfml-network GL)
+    target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} sfml-graphics sfml-window sfml-system sfml-audio sfml-network sfml-main GL)
 endif()

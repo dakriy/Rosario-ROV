@@ -4,6 +4,7 @@
 #include <SFML/System.hpp>
 #include <vector>
 #include <unordered_map>
+#include <opencv2/opencv.hpp>
 
 namespace Core {
 	struct SensorInfo {
@@ -27,6 +28,7 @@ namespace Core {
 			PingReceived,
 			SensorInfoReceived,
 			DataReceived,
+			VideoFrameReceived,
 			Count
 		};
 
@@ -40,6 +42,7 @@ namespace Core {
 
 		std::vector<SensorInfo> sInfo;
 		std::vector<float> data;
+		std::vector<uint8_t> imgData;
 		explicit Event(EventType t) : type(t){}
 	};
 

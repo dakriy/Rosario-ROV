@@ -12,7 +12,7 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_shutdown_packet() {
 
 std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(float amount) {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
-	add_type_to_packet(Core::PacketTypes::Move, p);
+	add_type_to_packet(Core::PacketTypes::CameraMove, p);
 	*p << amount;
 	return p;
 }
@@ -48,5 +48,17 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_start_mission_packet(
 std::unique_ptr<sf::Packet> Factory::PacketFactory::create_stop_mission_packet() {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::MissionStop, p);
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_start_video_stream_packet() {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::StartVideoStream, p);
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_stop_video_stream_packet() {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::StopVideoStream, p);
 	return p;
 }
