@@ -41,7 +41,7 @@ void Core::Engine::Update()
 		std::string title = "Connected to ";
 		title += std::get<std::string>(network->getConnectedHost());
 		ImGui::Begin(title.c_str());
-		ImGui::Text("Round Trip Ping: = %f ms", network->get_ping_time().asMicroseconds() / 1000);
+		ImGui::Text("Round Trip Ping: = %f ms", static_cast<float>(network->get_ping_time().asMicroseconds()) / 1000.f);
 		if (ImGui::Button("Disconnect"))
 		{
 			network->disconnect();
@@ -49,18 +49,6 @@ void Core::Engine::Update()
 		if (ImGui::Button("Shutdown ROV"))
 		{
 			network->send_packet(Factory::PacketFactory::create_shutdown_packet());
-		}
-		if (ImGui::Button("Get Sensor List"))
-		{
-			network->send_packet(Factory::PacketFactory::create_sensor_request_packet());
-		}
-		if (ImGui::Button("Start Pressure"))
-		{
-			network->send_packet(Factory::PacketFactory::create_start_mission_packet());
-		}
-		if (ImGui::Button("Stop Pressure"))
-		{
-			network->send_packet(Factory::PacketFactory::create_stop_mission_packet());
 		}
 		ImGui::End();
 	}
