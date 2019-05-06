@@ -1,6 +1,7 @@
 #include "Device.h"
 #include "../Core/GlobalContext.h"
 #include "../Factories/PacketFactory.h"
+#include "Utilities.h"
 
 
 Device::Device() {
@@ -76,6 +77,7 @@ void Device::update(const sf::Time &) {
 		ImGui::Begin(title.c_str());
 		ImGui::Text("Round Trip Ping: = %f ms", static_cast<float>(network->get_ping_time().asMicroseconds()) / 1000.f);
 		ImGui::Checkbox("Mission Window", &m.showMissionWindow);
+		ImGui::SameLine(); HelpMarker("Toggles the mission window");
 
 		if (ImGui::Button("Disconnect"))
 		{

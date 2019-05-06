@@ -218,3 +218,7 @@ template<typename T> map_init_helper<T> map_init(T& item)
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
+
+// Helper to display a little (?) mark which shows a tooltip when hovered.
+// In your own code you may want to display an actual icon if you are using a merged icon fonts (see misc/fonts/README.txt)
+void HelpMarker(const char* desc);

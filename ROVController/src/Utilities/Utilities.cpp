@@ -1,5 +1,6 @@
 #include "Utilities.h"
 #include "../Core/GlobalContext.h"
+#include <imgui.h>
 
 unsigned GetSeed(const std::string& seed) {
     return static_cast<unsigned>(std::hash<std::string>{}(seed));
@@ -93,4 +94,19 @@ sf::Vector2<double> convertToLocalCoords(sf::Rect<double> bounds, sf::Vector2<do
     auto scaleX = bounds.width / windowSize.x;
     auto scaleY = bounds.height / windowSize.y;
     return sf::Vector2<double>(static_cast<double>(screenCoords.x * scaleX), static_cast<double>(screenCoords.y * scaleY));
+}
+
+// Helper to display a little (?) mark which shows a tooltip when hovered.
+// In your own code you may want to display an actual icon if you are using a merged icon fonts (see misc/fonts/README.txt)
+void HelpMarker(const char* desc)
+{
+	ImGui::TextDisabled("(?)");
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
 }

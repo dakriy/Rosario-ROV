@@ -112,7 +112,15 @@ void Core::Network::run()
                                 if (strcmp(broadcastBuffer.data(), "magic") == 0 && strcmp(broadcastBuffer.data() + pos[1], "end") == 0)
                                 {
                                 	devicesLock.lock();
-                                    found_devices.emplace_back(std::make_pair(broadcastBuffer.data() + pos[0], rip));
+                                	bool found = false;
+                                	for (auto & d : found_devices) {
+                                		if (std::get<sf::IpAddress>(d) == rip) {
+                                			found = true;
+                                			break;
+                                		}
+                                	}
+                                	if (!found)
+                                    	found_devices.emplace_back(std::make_pair(broadcastBuffer.data() + pos[0], rip));
                                     devicesLock.unlock();
                                 }
                             }
