@@ -283,7 +283,7 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 
 			// Pull number of measurements from packet
 			sf::Uint32 sensorsNumber = 0;
-			sf::Uint64 us = 0;
+			sf::Int64 us = 0;
 			if (!(p >> us >> sensorsNumber)) {
 				return nullptr;
 			}
