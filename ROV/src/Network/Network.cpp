@@ -109,11 +109,11 @@ void Network::Network::watch() {
 					sendQueueGuard.lock();
 					auto p = std::move(sendQueue.front());
 					sendQueue.pop();
+					sendQueueGuard.unlock();
 					if (*reinterpret_cast<const sf::Uint8*>(p->getData()) == static_cast<sf::Uint8>(PacketTypes::Video) && sendQueue.size() > 10) {
 						// Drop video packet cause we getting way behind
 						continue;
 					}
-					sendQueueGuard.unlock();
 					auto status = connection.send(*p);
 					if (status == sf::Socket::Disconnected) {
 						closeConnection = true;

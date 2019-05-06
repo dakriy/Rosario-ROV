@@ -2,17 +2,13 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
-      <paths name="Pi (d57bc534-4811-4ad3-a59d-359bb26e1829)">
+      <paths name="Pi (af9cfb8a-b052-4766-b24a-4d248fad530c)">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/pi/clion" local="$PROJECT_DIR$" />
+            <mapping deploy="/tmp/tmp.VN6VK1kXkx" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-remote" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-remote" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-remote" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
           </excludedPaths>
         </serverdata>
       </paths>
