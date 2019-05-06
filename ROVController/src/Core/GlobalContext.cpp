@@ -7,6 +7,7 @@ Core::EventHandler<sf::Event, sf::Event::EventType::Count> * GlobalContext::even
 Core::EventHandler<Core::Event, Core::Event::EventType::Count> * GlobalContext::internal_event_handler_ = nullptr;
 Core::Network * GlobalContext::network_ = nullptr;
 Device * GlobalContext::device_ = nullptr;
+AppLog * GlobalContext::log_ = nullptr;
 
 sf::Clock * GlobalContext::get_clock()
 {
@@ -115,4 +116,17 @@ void GlobalContext::set_device(Device *dev) {
 
 void GlobalContext::clear_device() {
 	device_ = nullptr;
+}
+
+AppLog *GlobalContext::get_log() {
+	return log_;
+}
+
+void GlobalContext::set_log(AppLog *log) {
+	if (log_ == nullptr && log)
+		log_ = log;
+}
+
+void GlobalContext::clear_log() {
+	log_ = nullptr;
 }

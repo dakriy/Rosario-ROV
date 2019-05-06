@@ -11,7 +11,9 @@
 
 void Core::Engine::Events()
 {
-	sf::Event event;
+	sf::Event event {
+		sf::Event::EventType::Count
+	};
 	while (window_->pollEvent(event)) {
 		// Let ImGUI have a round at the event
 		ImGui::SFML::ProcessEvent(event);
@@ -34,33 +36,16 @@ void Core::Engine::Update()
 	// Update ImGUI
 	ImGui::SFML::Update(*window_, dt += rate_clock_.restart());
 
-	// Connected window
-	auto network = GlobalContext::get_network();
-	if (network->isConnected())
-	{
-		std::string title = "Connected to ";
-		title += std::get<std::string>(network->getConnectedHost());
-		ImGui::Begin(title.c_str());
-		ImGui::Text("Round Trip Ping: = %f ms", static_cast<float>(network->get_ping_time().asMicroseconds()) / 1000.f);
-		if (ImGui::Button("Disconnect"))
-		{
-			network->disconnect();
-		}
-		if (ImGui::Button("Shutdown ROV"))
-		{
-			network->send_packet(Factory::PacketFactory::create_shutdown_packet());
-		}
-		ImGui::End();
-	}
 
 	ImGui::ShowDemoWindow();
-
-	updateAppLog();
 	
 	// Update all frames except paused ones.
 	for (auto &f : frame_stack_)
 		if(!f->isPaused())
 			f->update(dt += rate_clock_.restart());
+
+	for (auto u : update_stack_)
+		u->update(dt += rate_clock_.restart());
 }
 
 void Core::Engine::Render()
@@ -184,8 +169,11 @@ Core::Engine::~Engine()
 	GlobalContext::clear_engine();
 }
 
-void Core::Engine::updateAppLog() {
-	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-	if (showAppLog)
-		log.Draw("App Log:", &showAppLog);
+void Core::Engine::addUpdateableEntitiy(Interfaces::IUpdateable * updateable) {
+	update_stack_.push_back(updateable);
 }
+
+void Core::Engine::removeUpdateableEntity(Interfaces::IUpdateable *updateable) {
+	update_stack_.erase(std::remove(update_stack_.begin(), update_stack_.end(), updateable), update_stack_.end());
+}
+

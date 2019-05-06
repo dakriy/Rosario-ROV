@@ -14,6 +14,7 @@
 #include "Engine.h"
 #include "Network.h"
 #include "../Utilities/Device.h"
+#include "../UI/AppLog.h"
 
 class GlobalContext
 {
@@ -36,6 +37,8 @@ private:
 	static Core::Network * network_;
 
 	static Device * device_;
+
+	static AppLog * log_;
 
 public:
 	/**
@@ -67,6 +70,7 @@ public:
 
 	static Device * get_device();
 
+	static AppLog * get_log();
 
 	/**
 	 * Sets the global clock
@@ -108,6 +112,8 @@ public:
 
 	static void set_device(Device * dev);
 
+	static void set_log(AppLog * log);
+
 
 	/**
 	 * Clears the global clock
@@ -138,4 +144,6 @@ public:
 	static void clear_network();
 
 	static void clear_device();
+
+	static void clear_log();
 };

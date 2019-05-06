@@ -71,6 +71,8 @@ int main(int argc, char* argv[])
 
 	Core::Engine engine(&Window, &eventHandler, &coreEventHandler, &elapsedTime);
 
+	AppLog log;
+
 	const auto ev1handle = eventHandler.add_event_callback([&](const sf::Event* e) -> bool {
 		Window.close();
 		return true;

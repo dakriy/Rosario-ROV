@@ -9,7 +9,7 @@ Frames::ViewFrame::ViewFrame()
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		auto& jpg = std::get<std::vector<uint8_t>>(e->data);
 		if (!image.loadFromMemory(jpg.data(), jpg.size())) {
-			GlobalContext::get_engine()->log.AddLog(
+			GlobalContext::get_log()->AddLog(
 					"[%.1f] [%s] Corrupted JPG was sent from ROV\n",
 					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			return false;
@@ -17,7 +17,7 @@ Frames::ViewFrame::ViewFrame()
 
 		if (!tex.loadFromImage(image))
 		{
-			GlobalContext::get_engine()->log.AddLog(
+			GlobalContext::get_log()->AddLog(
 					"[%.1f] [%s] Could not load the jpg into a texture.\n",
 					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			return false;

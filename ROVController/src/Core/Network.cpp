@@ -235,7 +235,7 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 				++syncState;
 				timeOffset = syncStart - sf::microseconds(us) - get_ping_time();
 				pingTime = 5.f;
-				GlobalContext::get_engine()->log.AddLog(
+				GlobalContext::get_log()->AddLog(
 						"[%.1f] [%s] Time synced, dt: %f seconds\n",
 						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", timeOffset.asSeconds());
 			}
@@ -244,9 +244,9 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 		}
         case PacketTypes::Ping:
             event = std::make_unique<Core::Event>(Core::Event::PingReceived);
-            GlobalContext::get_engine()->log.AddLog(
-            		"[%.1f] [%s] Ping packet received\n",
-            		GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+//            GlobalContext::get_engine()->log.AddLog(
+//            		"[%.1f] [%s] Ping packet received\n",
+//            		GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
             ++syncState;
 			break;
     	case PacketTypes::Sensors:
@@ -278,9 +278,6 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 		{
 			event = std::make_unique<Core::Event>(Core::Event::DataReceived);
 
-
-
-
 			// Pull number of measurements from packet
 			sf::Uint32 sensorsNumber = 0;
 			sf::Int64 us = 0;
@@ -300,9 +297,6 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 					return nullptr;
 				}
 				data.emplace_back(val);
-//				GlobalContext::get_engine()->log.AddLog(
-//						"[%.1f] [%s] New Sensor Data %u:\ndata: %f\n",
-//						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", i, val);
 			}
 			event->data = std::make_pair(convertRemoteTime(sf::microseconds(us)), std::move(data));
 			break;
