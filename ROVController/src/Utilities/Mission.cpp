@@ -11,13 +11,11 @@ Mission::~Mission() {
 }
 
 void Mission::update(const sf::Time &) {
+	if (showMissionWindow) {
+		ImGui::Begin("Mission");
 
-}
+		ImGui::Button("lol hi");
 
-void Mission::showWindow() {
-	showMissionWindow = true;
-}
-
-void Mission::hideWindow() {
-	showMissionWindow = false;
+		ImGui::End();
+	}
 }

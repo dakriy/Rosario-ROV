@@ -75,6 +75,8 @@ void Device::update(const sf::Time &) {
 		title += std::get<std::string>(network->getConnectedHost());
 		ImGui::Begin(title.c_str());
 		ImGui::Text("Round Trip Ping: = %f ms", static_cast<float>(network->get_ping_time().asMicroseconds()) / 1000.f);
+		ImGui::Checkbox("Mission Window", &m.showMissionWindow);
+
 		if (ImGui::Button("Disconnect"))
 		{
 			network->disconnect();

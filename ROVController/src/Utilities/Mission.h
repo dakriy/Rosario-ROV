@@ -5,12 +5,12 @@
 
 class Mission : public Interfaces::IUpdateable {
 protected:
-	bool showMissionWindow = false;
+
 public:
+	bool showMissionWindow = false;
+
 	Mission();
 	void update(const sf::Time&) override;
-	void showWindow();
-	void hideWindow();
 	~Mission() override;
 };
 
