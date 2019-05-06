@@ -4,6 +4,10 @@
 
 void Frames::ConnectFrame::create_options()
 {
+	options_.add_option(new Controls::Button("Try default IP", []() {
+		const char * ip = "172.20.0.5";
+		GlobalContext::get_network()->connect_to_host(ip, sf::IpAddress(ip));
+	}));
 	options_.add_option(new Controls::Button("Back", []()
 	{
 		GlobalContext::get_engine()->frame_action(Core::PopFrame);

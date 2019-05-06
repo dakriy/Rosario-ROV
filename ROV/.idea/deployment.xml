@@ -5,7 +5,7 @@
       <paths name="Pi (af9cfb8a-b052-4766-b24a-4d248fad530c)">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/tmp.VN6VK1kXkx" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/pi/clion" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />

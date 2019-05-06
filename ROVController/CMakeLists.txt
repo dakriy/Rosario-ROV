@@ -75,8 +75,8 @@ find_package(SFML 2.5 COMPONENTS system network graphics window audio main REQUI
 include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH} ${CSV_PATH})
 
 # LINK OPENCV
-find_package(OpenCV REQUIRED)
-include_directories( ${OpenCV_INCLUDE_DIRS} )
+#find_package(OpenCV REQUIRED)
+#include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # LINK LIBCONFIG
 #find_package(libconfig++)
