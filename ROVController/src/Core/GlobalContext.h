@@ -13,6 +13,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Engine.h"
 #include "Network.h"
+#include "../Utilities/Device.h"
 
 class GlobalContext
 {
@@ -33,6 +34,8 @@ private:
 
 	// Networkmodule
 	static Core::Network * network_;
+
+	static Device * device_;
 
 public:
 	/**
@@ -61,6 +64,8 @@ public:
 	 * Returns the network module
 	 */
 	static Core::Network * get_network();
+
+	static Device * get_device();
 
 
 	/**
@@ -101,6 +106,8 @@ public:
 	 */
 	static void set_network(Core::Network * ptr);
 
+	static void set_device(Device * dev);
+
 
 	/**
 	 * Clears the global clock
@@ -129,4 +136,6 @@ public:
 	 * Clears the global network object
 	 */
 	static void clear_network();
+
+	static void clear_device();
 };

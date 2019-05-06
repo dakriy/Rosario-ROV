@@ -39,9 +39,9 @@ void Core::Engine::Update()
 	if (network->isConnected())
 	{
 		std::string title = "Connected to ";
-		title += network->getConnectedHost().toString();
+		title += std::get<std::string>(network->getConnectedHost());
 		ImGui::Begin(title.c_str());
-		ImGui::Text("Round Trip Ping: = %f ms", network->get_ping_time());
+		ImGui::Text("Round Trip Ping: = %f ms", network->get_ping_time().asMicroseconds() / 1000);
 		if (ImGui::Button("Disconnect"))
 		{
 			network->disconnect();

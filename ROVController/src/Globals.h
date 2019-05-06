@@ -9,6 +9,7 @@
 
 #define EVENT_FUNC_TYPE(T) std::function<bool(const T*)>
 #define EVENT_FUNC_INDEX(T, S) const Core::EventHook<T, S>*
+#define CORE_EVENT_FUNC_INDEX EVENT_FUNC_INDEX(Core::Event, Core::Event::EventType::Count)
 #define let const auto
 #define var auto
 

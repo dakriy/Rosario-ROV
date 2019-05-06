@@ -21,7 +21,7 @@ Core::Network::Network() : runner(&Network::run, this)
 	broadcastBuffer.fill(0);
 }
 
-std::vector<std::pair<sf::IpAddress, std::string>> Core::Network::get_devices()
+std::vector<std::pair<std::string, sf::IpAddress>> Core::Network::get_devices()
 {
 	devicesLock.lock();
 	auto s = found_devices;
@@ -42,10 +42,14 @@ void Core::Network::stop_search_for_devices()
 void Core::Network::run()
 {
     while (!done) {
+
     	if (!search && !connected) {
     		std::this_thread::sleep_for(std::chrono::milliseconds(30));
     	}
 
+    	///////////////////////////////////////////////////////////
+    	/////////////// PROCESS SEARCHING /////////////////////////
+		///////////////////////////////////////////////////////////
 		if (stopSearch) {
 			search = false;
 			stopSearch = false;
@@ -108,7 +112,7 @@ void Core::Network::run()
                                 if (strcmp(broadcastBuffer.data(), "magic") == 0 && strcmp(broadcastBuffer.data() + pos[1], "end") == 0)
                                 {
                                 	devicesLock.lock();
-                                    found_devices.emplace_back(std::make_pair(rip, broadcastBuffer.data() + pos[0]));
+                                    found_devices.emplace_back(std::make_pair(broadcastBuffer.data() + pos[0], rip));
                                     devicesLock.unlock();
                                 }
                             }
@@ -119,25 +123,46 @@ void Core::Network::run()
             // TODO: Remove things from the found devices if they've been there for too long
         }
 
+		///////////////////////////////////////////////////////////
+		/////////////// PROCESS CONNECTIONS ///////////////////////
+		///////////////////////////////////////////////////////////
+
         if (closeConnection) {
+        	syncState = 0;
+        	pingTime = .5f;
         	closeConnection = false;
         	connected = false;
         	selector.remove(connection);
         	connection.disconnect();
+			GlobalContext::get_engine()->add_event(std::make_unique<Core::Event>(Core::Event::Disconnected));
         }
 
         if (startConnect) {
         	startConnect = false;
-        	if (connection.connect(ROV, connectionPort) == sf::TcpSocket::Status::Error) {
+        	if (connection.connect(std::get<sf::IpAddress>(ROV), connectionPort) == sf::TcpSocket::Status::Error) {
         		// Error
 				connected = false;
         	} else {
 				connected = true;
 				selector.add(connection);
+				auto e = std::make_unique<Core::Event>(Core::Event::NewConnection);
+				e->data = std::get<std::string>(ROV);
+				GlobalContext::get_engine()->add_event(std::move(e));
         	}
 		}
 
         if (connected) {
+        	// 3 pings is probably good for doing time syncing
+        	if (!timesync && syncState == 3) {
+				sf::Packet p;
+				p << static_cast<sf::Uint8>(PacketTypes::TimeSync);
+				syncStart = GlobalContext::get_clock()->getElapsedTime();
+				if (connection.send(p) == sf::Socket::Status::Disconnected) {
+					closeConnection = true;
+				}
+				timesync = true;
+        	}
+
             // Receive
             if (selector.wait(sf::milliseconds(packetWaitTimeout))) {
                 if (selector.isReady(connection)) {
@@ -158,7 +183,8 @@ void Core::Network::run()
             }
 
             // Sending things
-            while(!packetQueue.empty()) {
+            // If syncing time don't bother sending, just go back to receiving.
+            while(!packetQueue.empty() && !timesync) {
                 packetQueueLock.lock();
                 // Get packet pointer
                 auto p = std::move(packetQueue.front());
@@ -173,8 +199,8 @@ void Core::Network::run()
                 // TODO: Don't drop packet if error in socket maybe? At least look into it
             }
 
-            // Send ping packet every 5 seconds
-            if (pingClock.getElapsedTime().asSeconds() > 5) {
+            // Send ping packet every so often
+            if (pingClock.getElapsedTime().asSeconds() > pingTime) {
             	sf::Packet p;
 				p << static_cast<sf::Uint8>(PacketTypes::Ping);
 				pingClock.restart();
@@ -199,11 +225,29 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 
     // Decode all of the packets here
     switch (type) {
+    	case PacketTypes::TimeSync:
+		{
+			sf::Uint64 us;
+			if (!(p >> us)) {
+				// setup to try again cause bad packet
+				syncState = 2;
+			} else {
+				++syncState;
+				timeOffset = syncStart - sf::microseconds(us) - get_ping_time();
+				pingTime = 5.f;
+				GlobalContext::get_engine()->log.AddLog(
+						"[%.1f] [%s] Time synced, dt: %f seconds\n",
+						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", timeOffset.asSeconds());
+			}
+			timesync = false;
+			break;
+		}
         case PacketTypes::Ping:
             event = std::make_unique<Core::Event>(Core::Event::PingReceived);
             GlobalContext::get_engine()->log.AddLog(
             		"[%.1f] [%s] Ping packet received\n",
             		GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
+            ++syncState;
 			break;
     	case PacketTypes::Sensors:
 		{
@@ -214,8 +258,9 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			if (!(p >> sensorsNumber)) {
 				return nullptr;
 			}
+			auto sInfo =  std::vector<SensorInfo>();
 
-			event->sInfo.reserve(sensorsNumber);
+			sInfo.reserve(sensorsNumber);
 
 			// Retrieve sensor information from each sensor.
 			for (unsigned i = 0; i < sensorsNumber; ++i) {
@@ -224,24 +269,29 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 				std::string name;
 				std::string units;
 				if (!(p >> id >> maxFrequency >> name >> units)) return nullptr;
-				event->sInfo.emplace_back(id, maxFrequency, name, units);
-				GlobalContext::get_engine()->log.AddLog(
-						"[%.1f] [%s] New Sensor Info:\nId: %u \nFreq: %f\nName: %s\nUnits: %s\n",
-						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", id, maxFrequency, name.c_str(), units.c_str());
+				sInfo.emplace_back(id, maxFrequency, name, units);
 			}
+			event->data = std::move(sInfo);
 			break;
 		}
     	case PacketTypes::Data:
 		{
 			event = std::make_unique<Core::Event>(Core::Event::DataReceived);
 
+
+
+
 			// Pull number of measurements from packet
 			sf::Uint32 sensorsNumber = 0;
-			if (!(p >> sensorsNumber)) {
+			sf::Uint64 us = 0;
+			if (!(p >> us >> sensorsNumber)) {
 				return nullptr;
 			}
 
-			event->data.reserve(sensorsNumber);
+
+			auto data = std::vector<float>();
+
+			data.reserve(sensorsNumber);
 
 			// Get each piece of data.
 			for (unsigned i = 0; i < sensorsNumber; ++i) {
@@ -249,11 +299,12 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 				if (!(p >> val)) {
 					return nullptr;
 				}
-				event->data.emplace_back(val);
-				GlobalContext::get_engine()->log.AddLog(
-						"[%.1f] [%s] New Sensor Data %u:\ndata: %f\n",
-						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", i, val);
+				data.emplace_back(val);
+//				GlobalContext::get_engine()->log.AddLog(
+//						"[%.1f] [%s] New Sensor Data %u:\ndata: %f\n",
+//						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log", i, val);
 			}
+			event->data = std::make_pair(convertRemoteTime(sf::microseconds(us)), std::move(data));
 			break;
 		}
 		case PacketTypes::Video:
@@ -265,36 +316,18 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 				return nullptr;
 			}
 
-//			GlobalContext::get_engine()->log.AddLog(
-//					"[%.1f] [%s] New Image Frame\n",
-//					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
-
 			// 5 because 1 byte for type, and 4 bytes for the size byte
 			if (p.getDataSize() == size + 5) {
-				event->imgData = std::vector<uint8_t>(
+				event->data = std::vector<uint8_t>(
 						// Start at where the image starts
 						static_cast<const uint8_t*>(p.getData()) + 5,
 						// go to the end of the image
 						static_cast<const uint8_t*>(p.getData()) + 5 + size
 				);
 			} else {
-				// Invalid packet, ignore
+				// Invalid format, drop it
 				return nullptr;
 			}
-//			for (unsigned i = 0; i < size; ++i) {
-//				if ()
-//			}
-//			for (unsigned i = 0; i < width*height*3; ++i) {
-//				if (!(p >> imgData.data[i])) {
-//					return nullptr;
-//				}
-//			}[]
-//
-//			if (!p.endOfPacket()) {
-//				GlobalContext::get_engine()->log.AddLog(
-//						"[%.1f] [%s] Extra information?\n",
-//						GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
-//			}
 			break;
 		}
         default: //unknown packet type
@@ -326,8 +359,7 @@ void Core::Network::preProcess(std::unique_ptr<Event> &ev) {
 	}
 }
 
-float Core::Network::get_ping_time() const
-{
+sf::Time Core::Network::get_ping_time() const {
 	auto total = sf::Time::Zero;
 	unsigned n = 0;
 	for (auto t : pingVals)
@@ -340,23 +372,24 @@ float Core::Network::get_ping_time() const
 	}
 	if (n == 0)
 	{
-		return 9999999999999.f;
+		return sf::milliseconds(999999999);
 	}
-	return static_cast<float>(total.asMilliseconds()) / static_cast<float>(n);
+	return total / static_cast<float>(n);
 }
+
 
 bool Core::Network::isConnected() const {
 	return connected;
 }
 
-void Core::Network::connect_to_host(sf::IpAddress addr)
+void Core::Network::connect_to_host(std::string name, sf::IpAddress addr)
 {
 	closeConnection = true;
-	ROV = addr;
+	ROV = std::make_pair(name, addr);
 	startConnect = true;
 }
 
-sf::IpAddress Core::Network::getConnectedHost() const {
+std::pair<std::string, sf::IpAddress> Core::Network::getConnectedHost() const {
 	return ROV;
 }
 
@@ -371,4 +404,10 @@ void Core::Network::send_packet(std::unique_ptr<sf::Packet> p) {
 
 void Core::Network::disconnect() {
 	closeConnection = true;
+}
+
+sf::Time Core::Network::convertRemoteTime(sf::Time t) {
+	if (isConnected())
+		return t + timeOffset - get_ping_time() / 2.f;
+	return t;
 }

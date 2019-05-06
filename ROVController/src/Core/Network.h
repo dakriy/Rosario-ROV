@@ -25,6 +25,7 @@ namespace Core
 		StopVideoStream,
 		CameraMove,
 		Video,
+		TimeSync,
 		Shutdown = 254,
 		Count
 	};
@@ -41,6 +42,8 @@ namespace Core
 		// Global Instance
         static Network * instance;
 
+        float pingTime = .5f;
+
 		// Flags
 		bool connected = false;
 		bool search = false;
@@ -54,8 +57,8 @@ namespace Core
 		sf::SocketSelector selector;
 
 		// Buffers and caches
-		sf::IpAddress ROV;
-		std::vector<std::pair<sf::IpAddress, std::string>> found_devices;
+		std::pair<std::string, sf::IpAddress> ROV;
+		std::vector<std::pair<std::string, sf::IpAddress>> found_devices;
 		std::array<char, broadcastBufferLen> broadcastBuffer;
 
 		// Ping information
@@ -76,6 +79,11 @@ namespace Core
 
         std::mutex devicesLock;
 
+        uint32_t syncState = 0;
+        bool timesync = false;
+        sf::Time syncStart = sf::Time::Zero;
+        sf::Time timeOffset = sf::Time::Zero;
+
 	public:
 		static const unsigned short connectionPort = 42069;
 
@@ -83,19 +91,21 @@ namespace Core
 
 		Network();
 
-		std::vector<std::pair<sf::IpAddress, std::string>> get_devices();
+		std::vector<std::pair<std::string, sf::IpAddress>> get_devices();
 
 		void search_for_devices();
 
 		void stop_search_for_devices();
 
-		float get_ping_time() const;
+		sf::Time get_ping_time() const;
 
 		bool isConnected() const;
 
-		sf::IpAddress getConnectedHost() const;
+		sf::Time convertRemoteTime(sf::Time t);
 
-		void connect_to_host(sf::IpAddress addr);
+		std::pair<std::string, sf::IpAddress> getConnectedHost() const;
+
+		void connect_to_host(std::string name, sf::IpAddress addr);
 
 		void send_packet(std::unique_ptr<sf::Packet> p);
 

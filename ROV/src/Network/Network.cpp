@@ -158,6 +158,16 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 
 	// Decode all of the packets here
 	switch (type) {
+		case PacketTypes::TimeSync:
+		{
+			sf::Packet s;
+			s << static_cast<sf::Uint8>(PacketTypes::TimeSync);
+			s << GlobalContext::get_clock()->getElapsedTime().asMicroseconds();
+			if (connection.send(s) == sf::Socket::Status::Disconnected) {
+				closeConnection = true;
+			}
+			break;
+		}
 		case PacketTypes::Ping:
 			pEvent = std::make_unique<Core::Event>(Core::Event::PingReceived);
 			break;
