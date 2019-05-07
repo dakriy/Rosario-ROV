@@ -30,8 +30,9 @@ int main(int argc, char* argv[])
 	sf::Clock elapsedTime;
 	GlobalContext::set_clock(&elapsedTime);
 
-	auto vidmode = sf::VideoMode::getFullscreenModes()[0];
-	auto vidstyle = sf::Style::Fullscreen;
+//	auto vidmode = sf::VideoMode::getFullscreenModes()[0];
+	auto vidmode = sf::VideoMode::getDesktopMode();
+	auto vidstyle = sf::Style::Default;
 
 	if (!vidmode.isValid())
 	{
