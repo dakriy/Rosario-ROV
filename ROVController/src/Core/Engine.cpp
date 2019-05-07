@@ -18,7 +18,7 @@ void Core::Engine::Events()
 		// Let ImGUI have a round at the event
 		ImGui::SFML::ProcessEvent(event);
 
-		if (ImGui::IsAnyItemFocused()) {
+		if (ImGui::IsAnyItemFocused() || ImGui::IsAnyItemActive()) {
 			// Don't process it on our end as it is ImGui's to handle...
 			continue;
 		}

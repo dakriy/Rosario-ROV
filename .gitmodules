@@ -9,4 +9,4 @@
 	url = git://git.drogon.net/wiringPi
 [submodule "csv"]
 	path = csv
-	url = https://github.com/p-ranav/csv.git
+	url = https://github.com/dakriy/csv.git

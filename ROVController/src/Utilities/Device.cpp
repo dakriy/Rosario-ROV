@@ -39,6 +39,8 @@ void Device::setHooks() {
 
 	hooks.push_back(GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		connected = false;
+		m.showMissionWindow = false;
+		m.stopMission();
 		return false;
 	}, Core::Event::Disconnected));
 }

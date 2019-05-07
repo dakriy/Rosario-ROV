@@ -9,10 +9,10 @@ bool Camera::Camera::init() {
 		return false;
 
 	// TODO: Make these dynamic
-	capture.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
-	capture.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
-	capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('H', '2', '6', '4'));
-//	capture.set(cv::CAP_PROP_FPS, 30);
+	capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+	capture.set(cv::CAP_PROP_FRAME_WIDTH, 800);
+	capture.set(cv::CAP_PROP_FRAME_HEIGHT, 600);
+	capture.set(cv::CAP_PROP_FPS, 30);
 
 	// Default resolution of the frame is obtained.The default resolution is system dependent.
 //	int frame_width = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_WIDTH));
