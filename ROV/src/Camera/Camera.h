@@ -2,6 +2,9 @@
 
 #include <opencv2/opencv.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include "../Core/Event.h"
+#include "../Core/EventHandler.h"
+
 
 namespace Camera {
 	struct Properties {
@@ -23,6 +26,8 @@ namespace Camera {
 
 		void cam();
 		bool getCameraProperties();
+
+		EVENT_FUNC_INDEX_CORE cameraMoveHook;
 
 		bool init();
 	public:

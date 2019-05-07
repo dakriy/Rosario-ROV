@@ -209,6 +209,17 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 		case PacketTypes::StopVideoStream:
 			pEvent = std::make_unique<Core::Event>(Core::Event::StopCamera);
 			break;
+		case PacketTypes::CameraMove:
+		{
+			pEvent = std::make_unique<Core::Event>(Core::Event::CameraMove);
+			float x, y;
+			if (!(p >> x >> y)) {
+				return nullptr;
+			}
+			pEvent->c.s1 = x;
+			pEvent->c.s2 = y;
+			break;
+		}
 		default: //unknown packet type
 			pEvent.reset();
 			break;

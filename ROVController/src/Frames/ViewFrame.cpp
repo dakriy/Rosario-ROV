@@ -81,14 +81,15 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 		frame = false;
 	}
 
-	if (sf::Joystick::isConnected(0) && sf::Joystick::hasAxis(0, sf::Joystick::Y) && updateFrequency == updateCounter)
+	if (sf::Joystick::isConnected(0) &&
+		sf::Joystick::hasAxis(0, sf::Joystick::Z) &&
+		sf::Joystick::hasAxis(0, sf::Joystick::R) &&
+		updateFrequency == updateCounter)
 	{
-		auto pos = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
-		let up = 10.f;
-		let down = 3.4f;
-		let range = up - down;
-		var amount = (pos + 100.f) / 200.f * range + down;
-		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_camera_move_packet(amount));
+		auto posY = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
+		auto posX = sf::Joystick::getAxisPosition(0, sf::Joystick::R);
+//		GlobalContext::get_log()->AddLog("PosZ %f PosR %f\n", posX, posY);
+		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_camera_move_packet(posX, posY));
 		updateCounter = 0;
 	} else
 	{

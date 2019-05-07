@@ -8,6 +8,7 @@
             <mapping deploy="/home/pi/clion" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-release" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
           </excludedPaths>

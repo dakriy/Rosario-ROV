@@ -10,10 +10,10 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_shutdown_packet() {
 	return p;
 }
 
-std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(float amount) {
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(float amountx, float amounty) {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::CameraMove, p);
-	*p << amount;
+	*p << amountx << amounty;
 	return p;
 }
 

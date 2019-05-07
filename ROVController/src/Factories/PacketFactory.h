@@ -10,7 +10,7 @@ namespace Factory {
 		static void add_type_to_packet(Core::PacketTypes type, std::unique_ptr<sf::Packet> &p);
 	public:
 		static std::unique_ptr<sf::Packet> create_shutdown_packet();
-		static std::unique_ptr<sf::Packet> create_camera_move_packet(float amount);
+		static std::unique_ptr<sf::Packet> create_camera_move_packet(float amountx, float amounty);
 
 		/**
 		 * Heres how the packet layout is gonna look...
