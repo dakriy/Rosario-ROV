@@ -22,6 +22,7 @@ namespace Network {
 		StopVideoStream,
 		CameraMove,
 		Video,
+		TimeSync,
 		Shutdown = 254,
 		Count
 	};

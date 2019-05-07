@@ -22,17 +22,19 @@ void Core::Engine::Events()
 void Core::Engine::Update()
 {
 	// Update here.
-	std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout - 150));
 	if (missionInProgress) {
 		for (auto & sensor : sensors) {
 			sensor->initiateConversion();
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(150));
+		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1.f / sensorFrequency * 1000 - dataTimer.getElapsedTime().asMilliseconds())));
+		dataTimer.restart();
 		std::vector<float> data;
 		for (auto & sensor : sensors) {
 			data.push_back(sensor->queryDevice());
 		}
 		GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
+	} else {
+		std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
 	}
 }
 
@@ -44,9 +46,8 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 	GlobalContext::set_engine(this);
 
 	watchForRequest = cev_->add_event_callback([&](const Event * e) -> bool {
-		missionInProgress = true;
-
 		sensorFrequency = e->r.frequency;
+		missionInProgress = true;
 		for(auto requestedSensorId : e->r.sensors) {
 			for (auto [sensorIndex, actualSensor] : enumerate(sensors)) {
 				if (actualSensor->getSensorInfo().id == requestedSensorId) {

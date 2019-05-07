@@ -4,6 +4,10 @@
 
 void Frames::ConnectFrame::create_options()
 {
+	options_.add_option(new Controls::Button("Try default IP", []() {
+		const char * ip = "172.20.0.5";
+		GlobalContext::get_network()->connect_to_host(ip, sf::IpAddress(ip));
+	}));
 	options_.add_option(new Controls::Button("Back", []()
 	{
 		GlobalContext::get_engine()->frame_action(Core::PopFrame);
@@ -32,9 +36,9 @@ void Frames::ConnectFrame::update(const sf::Time& dt)
 
 	for (auto& p : t)
 	{
-		options_.add_option(new Controls::Button(p.second, [p]()
+		options_.add_option(new Controls::Button(std::get<std::string>(p), [p]()
 		{
-			GlobalContext::get_network()->connect_to_host(p.first);
+			GlobalContext::get_network()->connect_to_host(std::get<std::string>(p), std::get<sf::IpAddress>(p));
 		}));
 	}
 	create_options();

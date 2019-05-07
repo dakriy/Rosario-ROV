@@ -8,6 +8,7 @@
 #include "Factories/TextFactory.h"
 #include "Utilities/Utilities.h"
 #include "Core/GlobalContext.h"
+#include "Utilities/Device.h"
 
 bool LoadResources()
 {
@@ -70,6 +71,8 @@ int main(int argc, char* argv[])
 
 	Core::Engine engine(&Window, &eventHandler, &coreEventHandler, &elapsedTime);
 
+	AppLog log;
+
 	const auto ev1handle = eventHandler.add_event_callback([&](const sf::Event* e) -> bool {
 		Window.close();
 		return true;
@@ -78,6 +81,9 @@ int main(int argc, char* argv[])
 	Core::Network net;
 
 	GlobalContext::set_network(&net);
+
+	// This just needs to exist, also it needs the network so it gets setup after network.
+	Device d;
 
 	while (Window.isOpen())
 	{

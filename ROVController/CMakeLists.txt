@@ -30,6 +30,7 @@ set(HEADER_DIR_8 src/Computation)
 set(HEADER_DIR_9 src/Utilities)
 set(IMGUI_PATH imgui)
 set(IMGUI_SFML_PATH imgui-sfml)
+set(CSV_PATH ../csv/include)
 
 ############## CMake Project ################
 #        The main options of project        #
@@ -71,11 +72,11 @@ message(STATUS "Building ${CMAKE_BUILD_TYPE} ")
 find_package(SFML 2.5 COMPONENTS system network graphics window audio main REQUIRED)
 
 # Manual include paths
-include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH})
+include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH} ${CSV_PATH})
 
 # LINK OPENCV
-find_package(OpenCV REQUIRED)
-include_directories( ${OpenCV_INCLUDE_DIRS} )
+#find_package(OpenCV REQUIRED)
+#include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # LINK LIBCONFIG
 #find_package(libconfig++)

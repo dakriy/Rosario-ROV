@@ -7,9 +7,9 @@
 Frames::ViewFrame::ViewFrame()
 {
 	frameHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-
-		if (!image.loadFromMemory(e->imgData.data(), e->imgData.size())) {
-			GlobalContext::get_engine()->log.AddLog(
+		auto& jpg = std::get<std::vector<uint8_t>>(e->data);
+		if (!image.loadFromMemory(jpg.data(), jpg.size())) {
+			GlobalContext::get_log()->AddLog(
 					"[%.1f] [%s] Corrupted JPG was sent from ROV\n",
 					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			return false;
@@ -17,7 +17,7 @@ Frames::ViewFrame::ViewFrame()
 
 		if (!tex.loadFromImage(image))
 		{
-			GlobalContext::get_engine()->log.AddLog(
+			GlobalContext::get_log()->AddLog(
 					"[%.1f] [%s] Could not load the jpg into a texture.\n",
 					GlobalContext::get_clock()->getElapsedTime().asSeconds(), "log");
 			return false;
@@ -33,31 +33,6 @@ Frames::ViewFrame::ViewFrame()
 		frame = true;
 		return false;
 	}, Core::Event::EventType::VideoFrameReceived);
-
-//		if (e->sInfo.hasDataForSensor(Core::SensorInfo::Video)) {
-//		    auto newImg = e->sInfo.getSensorData(Core::SensorInfo::Video);
-//            if(!image.loadFromMemory(newImg->f.data, newImg->f.len))
-//            {
-//                std::cout << "NOOO but here" << std::endl;
-//                return false;
-//            }
-//
-//            if (!tex.loadFromImage(image))
-//            {
-//                std::cout << "NOOOOO" << std::endl;
-//                return false;
-//            }
-//            std::cout << "New Image" << std::endl;
-//            sprite.setTexture(tex);
-//
-//            // Set scale only once
-//            if (!frame)
-//                sprite.scale(window_->getSize().x / (sprite.getLocalBounds().width), window_->getSize().y / sprite.getLocalBounds().height);
-//
-//            frame = true;
-//            return true;
-//		}
-
 //	pressureHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 //	    if (e->sInfo.hasDataForSensor(Core::SensorInfo::Pressure)) {
 //	        pressure = e->sInfo.getSensorData(Core::SensorInfo::Pressure)->p.pressure;

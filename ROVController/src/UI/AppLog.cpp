@@ -1,12 +1,12 @@
-//
-// Created by Yid on 4/27/2019.
-//
-
 #include "AppLog.h"
+#include "../Core/GlobalContext.h"
 
 AppLog::AppLog() {
 	AutoScroll = true;
 	ScrollToBottom = false;
+	showAppLog = true;
+	GlobalContext::set_log(this);
+	GlobalContext::get_engine()->addUpdateableEntitiy(this);
 	Clear();
 }
 
@@ -122,4 +122,15 @@ void AppLog::Draw(const char *title, bool* p_open) {
 	ScrollToBottom = false;
 	ImGui::EndChild();
 	ImGui::End();
+}
+
+void AppLog::update(const sf::Time &) {
+	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+	if (showAppLog)
+		Draw("App Log:", &showAppLog);
+}
+
+AppLog::~AppLog() {
+	GlobalContext::clear_log();
+	GlobalContext::get_engine()->removeUpdateableEntity(this);
 }

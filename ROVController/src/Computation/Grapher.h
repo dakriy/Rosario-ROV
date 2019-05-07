@@ -13,6 +13,7 @@ namespace Computation{
 
 		sf::VertexArray points;
 		sf::VertexArray debug;
+		sf::VertexArray dataPoints;
 		bool flag = false;
 		int iterationSquares = 3;
 
@@ -22,7 +23,11 @@ namespace Computation{
 
 		void marchingSquares(sf::Rect<double> area, int squaresX, int max, unsigned current = 1);
 
-		void applyLut(sf::Rect<double> square, int type);
+		void applyLut(sf::Rect<double> square, int squareType);
+
+		int xAxis = 0, yAxis = 0;
+
+		bool graphingData = false;
 
 	public:
 		Grapher();
@@ -33,6 +38,9 @@ namespace Computation{
 		void setExpression(Expression * expression);
 
 		void updateBounds(sf::Rect<double> bounds);
+
+		void move(double dx, double dy);
+		void move(sf::Vector2<double> d);
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 

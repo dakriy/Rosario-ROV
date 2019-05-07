@@ -1,4 +1,5 @@
 #include "PacketFactory.h"
+#include "../Core/GlobalContext.h"
 
 void Factory::PacketFactory::add_type_to_packet(std::unique_ptr<sf::Packet> &p, Network::PacketTypes type) {
 	*p << static_cast<sf::Uint8>(type);
@@ -28,6 +29,7 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_sensor_list_packet(st
 std::unique_ptr<sf::Packet> Factory::PacketFactory::create_data_packet(std::vector<float>& data) {
 	auto p = std::make_unique<sf::Packet>();
 	add_type_to_packet(p, Network::PacketTypes::Data);
+	*p << GlobalContext::get_clock()->getElapsedTime().asMicroseconds();
 	*p << static_cast<sf::Uint32>(data.size());
 	for (auto & dat : data) {
 		*p << dat;

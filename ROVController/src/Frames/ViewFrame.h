@@ -20,9 +20,9 @@ namespace Frames
 		sf::Sprite sprite;
 		bool frame = false;
 
-		EVENT_FUNC_INDEX(Core::Event, Core::Event::EventType::Count) frameHook = nullptr;
-		EVENT_FUNC_INDEX(Core::Event, Core::Event::EventType::Count) pressureHook = nullptr;
-		EVENT_FUNC_INDEX(Core::Event, Core::Event::EventType::Count) temperatureHook = nullptr;
+		CORE_EVENT_FUNC_INDEX frameHook = nullptr;
+		CORE_EVENT_FUNC_INDEX pressureHook = nullptr;
+		CORE_EVENT_FUNC_INDEX temperatureHook = nullptr;
 
 		double pressure = 0;
 		double temp = 0;
@@ -65,6 +65,6 @@ namespace Frames
 		/**
 		 * Default constructor because we don't need to do anything special
 		 */
-		~ViewFrame();
+		~ViewFrame() override;
 	};
 }

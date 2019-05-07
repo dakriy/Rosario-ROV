@@ -18,15 +18,14 @@ namespace Factory {
 		 * Type 					| Core::PacketTypes
 		 * frequency (Hz)			| float
 		 * Number of Sensors		| size_t prolly
-		 * list of sensors			| Core::SensorInfo::Sensor[]
+		 * list of sensors			| Core::SensorInfo::SensorID[]
 		 *
 		 * @param frequency
 		 * @param sensors
 		 * @return
 		 */
-		static std::unique_ptr<sf::Packet> create_request_data_packet(float frequency, std::vector<sf::Uint8> sensors);
+		static std::unique_ptr<sf::Packet> create_start_mission_packet(float frequency,const std::vector<sf::Uint8> &sensors);
 		static std::unique_ptr<sf::Packet> create_sensor_request_packet();
-		static std::unique_ptr<sf::Packet> create_start_mission_packet();
 		static std::unique_ptr<sf::Packet> create_stop_mission_packet();
 		static std::unique_ptr<sf::Packet> create_start_video_stream_packet();
 		static std::unique_ptr<sf::Packet> create_stop_video_stream_packet();

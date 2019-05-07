@@ -3,8 +3,8 @@
 #include <SFML/Config.hpp>
 #include <SFML/System.hpp>
 #include <vector>
+#include <variant>
 #include <unordered_map>
-#include <opencv2/opencv.hpp>
 
 namespace Core {
 	struct SensorInfo {
@@ -25,24 +25,22 @@ namespace Core {
 	public:
 		enum EventType
 		{
-			PingReceived,
-			SensorInfoReceived,
-			DataReceived,
-			VideoFrameReceived,
-			Count
+			NewConnection, 				// data::std::string, name of device
+			PingReceived, 				// No info
+			SensorInfoReceived,			// data::std::vector<SensorInfo>
+			DataReceived,				// data::std::pair<sf::Time, std::vector<float>>, contains all measurements
+			VideoFrameReceived,			// data::std::vector<uint8_t>, contains jpeg data
+			Disconnected,				// No info
+			Count						// don't use, placeholder for things.
 		};
 
 		EventType type = Count;
 
-		// Turn this into union when we get more things.
-//		union {
-//			std::vector<SensorInfo> sInfo;
-//			std::vector<float> data;
-//		};
-
-		std::vector<SensorInfo> sInfo;
-		std::vector<float> data;
-		std::vector<uint8_t> imgData;
+		std::variant<
+		        std::vector<SensorInfo>,
+		        std::pair<sf::Time, std::vector<float>>,
+		        std::vector<uint8_t>,
+		        std::string> data;
 		explicit Event(EventType t) : type(t){}
 	};
 

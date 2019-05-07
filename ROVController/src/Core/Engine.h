@@ -48,6 +48,8 @@ namespace Core
 		// Frames currently on the stack
 		std::vector<std::unique_ptr<Frames::IFrame>> frame_stack_;
 
+		std::vector<Interfaces::IUpdateable*> update_stack_;
+
 		std::queue<std::unique_ptr<Core::Event>> core_events_;
 
 		// Event processor
@@ -85,12 +87,7 @@ namespace Core
 
 		std::mutex coreEventHandlerLock;
 
-		bool showAppLog = true;
-
-		void updateAppLog();
-
 	public:
-		AppLog log;
 
 		/**
 		 * Engine Constructor
@@ -129,6 +126,10 @@ namespace Core
 		 * @param frame The frame to act upon
 		 */
 		void frame_action(FrameAction action, Frames::IFrame* frame = nullptr);
+
+		void addUpdateableEntitiy(Interfaces::IUpdateable * updateable);
+
+		void removeUpdateableEntity(Interfaces::IUpdateable * updateable);
 
 		/**
 		 * Engine destructor.
