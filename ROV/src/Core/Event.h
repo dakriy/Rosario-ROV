@@ -9,7 +9,7 @@ namespace Core {
 		struct SensorsRequested
 		{
 			float frequency = 0.f;
-			std::vector<sf::Uint8> sensors = {};
+			std::vector<sf::Uint8> sensors;
 		};
 
 		enum EventType

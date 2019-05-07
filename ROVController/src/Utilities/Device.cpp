@@ -41,6 +41,8 @@ void Device::setHooks() {
 		connected = false;
 		m.showMissionWindow = false;
 		m.stopMission();
+		sensors.clear();
+		m.clearSensors();
 		return false;
 	}, Core::Event::Disconnected));
 }

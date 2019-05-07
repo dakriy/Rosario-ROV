@@ -9,6 +9,7 @@
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
           </excludedPaths>
         </serverdata>
       </paths>

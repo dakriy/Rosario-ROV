@@ -179,14 +179,14 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
 
 			float frequency = 0.f;
-			size_t sensorNum = 0;
+			sf::Uint32 sensorNum = 0;
 
 			if (!(p >> frequency >> sensorNum)) {
 				return nullptr;
 			}
 
 			pEvent->r.frequency = frequency;
-			pEvent->r.sensors.resize(sensorNum);
+			pEvent->r.sensors.reserve(sensorNum);
 
 			for (auto i = 0; i < sensorNum; ++i) {
 				auto sensorType = static_cast<sf::Uint8>(Sensor::SensorId::Count);

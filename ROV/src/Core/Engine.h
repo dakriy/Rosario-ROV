@@ -10,6 +10,9 @@
 #include "../Sensors/Lux.h"
 #include "../Sensors/Temperature.h"
 #include "../Camera/Camera.h"
+#include "../Sensors/InternalTemperature.h"
+#include "../Sensors/InternalPressure.h"
+#include "../Sensors/InternalHumidity.h"
 
 namespace Core
 {
@@ -33,9 +36,12 @@ namespace Core
 		const unsigned defaultTimeout = 250;
 
 
-		std::array<std::unique_ptr<Sensor::Sensor>, 2> sensors = {
+		std::array<std::unique_ptr<Sensor::Sensor>, 5> sensors = {
 				std::make_unique<Sensor::Temperature>(),
-				std::make_unique<Sensor::Lux>()
+				std::make_unique<Sensor::Lux>(),
+				std::make_unique<Sensor::InternalTemperature>(),
+				std::make_unique<Sensor::InternalPressure>(),
+				std::make_unique<Sensor::InternalHumidity>()
 		};
 
 		Camera::Camera camera;

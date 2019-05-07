@@ -4,14 +4,14 @@
     <option name="fileTypes" value="class;svn-base;svn-work;Extra;gif;png;jpg;jpeg;bmp;tga;tiff;ear;war;zip;jar;iml;iws;ipr;bz2;gz;gitignore;json;txt;user;" />
     <option name="excludedDirectories">
       <list>
+        <option value="$PROJECT_DIR$/cmake-build-release" />
+        <option value="$PROJECT_DIR$/x64" />
         <option value="$PROJECT_DIR$/.idea" />
         <option value="$PROJECT_DIR$/.vs" />
         <option value="$PROJECT_DIR$/cmake-build-debug" />
-        <option value="$PROJECT_DIR$/cmake-build-release" />
         <option value="$PROJECT_DIR$/imgui" />
         <option value="$PROJECT_DIR$/imgui-sfml" />
         <option value="$PROJECT_DIR$/Resources" />
-        <option value="$PROJECT_DIR$/x64" />
       </list>
     </option>
   </component>

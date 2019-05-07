@@ -100,6 +100,11 @@ void Mission::update(const sf::Time &) {
 	}
 }
 
+void Mission::clearSensors()
+{
+	sensorSelect.clear();
+}
+
 void Mission::startMission() {
 	std::vector<sf::Uint8> sens;
 
@@ -113,6 +118,7 @@ void Mission::startMission() {
 	if (localData) {
 		csv->configure_dialect().column_names("Time (s)");
 	}
+	recordedDataNames.clear();
 	recordedDataNames.emplace_back("Time (s)");
 
 	for (auto & s : sensorSelect) {
@@ -120,9 +126,9 @@ void Mission::startMission() {
 		if (std::get<bool>(s)) {
 			sens.emplace_back(std::get<Core::SensorInfo>(s).id);
 			recordedDataNames.emplace_back(str);
-		}
-		if (localData) {
-			csv->configure_dialect().column_names(str);
+			if (localData) {
+				csv->configure_dialect().column_names(str);
+			}
 		}
 	}
 

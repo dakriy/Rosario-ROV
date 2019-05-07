@@ -29,8 +29,8 @@ void Core::Engine::Update()
 		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1.f / sensorFrequency * 1000 - dataTimer.getElapsedTime().asMilliseconds())));
 		dataTimer.restart();
 		std::vector<float> data;
-		for (auto & sensor : sensors) {
-			data.push_back(sensor->queryDevice());
+		for (auto sensor : requestedSensors) {
+			data.push_back(sensors[sensor]->queryDevice());
 		}
 		GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
 	} else {

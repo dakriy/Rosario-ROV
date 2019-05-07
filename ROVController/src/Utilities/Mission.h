@@ -39,6 +39,7 @@ public:
 
 	Mission();
 	void update(const sf::Time&) override;
+	void clearSensors();
 	~Mission() override;
 };
 
