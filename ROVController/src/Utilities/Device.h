@@ -11,7 +11,7 @@ protected:
 
 	std::vector<Core::SensorInfo> sensors;
 
-	bool connected;
+	bool connected = false;
 
 	std::string name;
 
