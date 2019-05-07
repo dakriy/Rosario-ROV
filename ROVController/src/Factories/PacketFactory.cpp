@@ -21,7 +21,7 @@ std::unique_ptr<sf::Packet>
 Factory::PacketFactory::create_start_mission_packet(float frequency, const std::vector<sf::Uint8>& sensors) {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::MissionStart, p);
-	sf::Uint32 sensorNumber = sensors.size();
+	sf::Uint32 sensorNumber = static_cast<sf::Uint32>(sensors.size());
 	*p << frequency << sensorNumber;
 	for (auto sensor : sensors) {
 		*p << sensor;
