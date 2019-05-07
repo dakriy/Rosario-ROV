@@ -108,7 +108,7 @@ void Mission::startMission() {
 	}
 
 	if (localData) {
-		csv->configure_dialect().add_column("Time (s)");
+		csv->configure_dialect().column_names("Time (s)");
 	}
 
 	for (auto & s : sensorSelect) {
@@ -116,7 +116,7 @@ void Mission::startMission() {
 			sens.emplace_back(std::get<Core::SensorInfo>(s).id);
 		}
 		if (localData) {
-			csv->configure_dialect().add_column(std::get<Core::SensorInfo>(s).name + ' ' + '(' + std::get<Core::SensorInfo>(s).units + ')');
+			csv->configure_dialect().column_names(std::get<Core::SensorInfo>(s).name + ' ' + '(' + std::get<Core::SensorInfo>(s).units + ')');
 		}
 	}
 
