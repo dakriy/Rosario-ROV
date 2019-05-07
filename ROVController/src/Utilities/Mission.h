@@ -21,6 +21,7 @@ protected:
 
 	bool localVideo = false, localData = true, remoteVideo = false, remoteData = false, inProgress = false;
 
+	std::vector<std::string> recordedDataNames;
 	std::vector<std::vector<float>> recordedData;
 
 	std::unique_ptr<csv::Writer> csv;
@@ -32,6 +33,9 @@ public:
 	void startMission();
 
 	void stopMission();
+
+	std::vector<std::vector<float>>& getData();
+	std::vector<std::string>& getDataCols();
 
 	Mission();
 	void update(const sf::Time&) override;

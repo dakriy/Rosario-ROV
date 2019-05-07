@@ -1,11 +1,12 @@
 #include <imgui.h>
 #include "Grapher.h"
 #include "../Utilities/Utilities.h"
+#include "../Core/GlobalContext.h"
 
 // TODO: Combine points and lines so that I only need one vertex array...
-Computation::Grapher::Grapher() : points(sf::LineStrip, array_count), type(Computation::GraphingHint::Squares), debug(sf::Points) {}
+Computation::Grapher::Grapher() : points(sf::LineStrip, array_count), type(Computation::GraphingHint::Squares), debug(sf::Points), dataPoints(sf::Points) {}
 
-Computation::Grapher::Grapher(sf::Rect<double> bounds, Computation::Expression *expr) : expr(expr), points(sf::LineStrip, array_count), bounds(bounds), debug(sf::Points) {
+Computation::Grapher::Grapher(sf::Rect<double> bounds, Computation::Expression *expr) : expr(expr), points(sf::LineStrip, array_count), bounds(bounds), debug(sf::Points), dataPoints(sf::Points) {
 	type = expr->graphingSuggestion();
 }
 
@@ -29,9 +30,48 @@ void Computation::Grapher::draw(sf::RenderTarget &target, sf::RenderStates state
 			target.draw(debug);
 		}
 	}
+	if (graphingData) {
+		target.draw(dataPoints);
+	}
 }
 
 void Computation::Grapher::update() {
+	ImGui::Begin("Graph Data");
+
+	auto cols = GlobalContext::get_device()->getMission().getDataCols();
+
+	std::vector<const char *> separatedByZeroes;
+	separatedByZeroes.reserve(cols.size());
+
+	for (auto & str : cols) {
+		separatedByZeroes.push_back(str.c_str());
+	}
+
+	ImGui::Combo("Select X Axis", &xAxis, separatedByZeroes.data(), static_cast<int>(separatedByZeroes.size()));
+	ImGui::Combo("Select Y Axis", &yAxis, separatedByZeroes.data(), static_cast<int>(separatedByZeroes.size()));
+
+
+	if (ImGui::Button("Graph")) {
+		graphingData = true;
+	}
+
+	if (ImGui::Button("Stop Graph")) {
+		graphingData = false;
+	}
+
+	ImGui::End();
+
+	if (graphingData) {
+		auto data = GlobalContext::get_device()->getMission().getData();
+
+		dataPoints.resize(data.size());
+		dataPoints.clear();
+
+		for (auto & datum : data) {
+			dataPoints.append(sf::Vertex(convertToScreenCoords(bounds, sf::Vector2<double>(datum[xAxis], datum[yAxis])), sf::Color::Cyan));
+		}
+	}
+
 	if (expr)
 	{
 		// Set the type
@@ -95,6 +135,15 @@ void Computation::Grapher::updateBounds(sf::Rect<double> newBounds) {
 	bounds = newBounds;
 }
 
+void Computation::Grapher::move(double dx, double dy)
+{
+	updateBounds(sf::Rect<double>(bounds.left + dx, bounds.top + dy, bounds.width, bounds.height));
+}
+
+void Computation::Grapher::move(sf::Vector2<double> d) {
+	move(d.x, d.y);
+}
+
 void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, int max, unsigned current) {
 	auto squareSide = area.width / static_cast<double>(squaresX);
 
@@ -142,17 +191,17 @@ void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, 
 			 * 1----2
 			 */
 
-			//				1			2					4			8
-			auto type = bottomLeft + bottomRight * 2 + topRight * 4 + topLeft * 8;
+			//				       1			2					4			8
+			auto squareType = bottomLeft + bottomRight * 2 + topRight * 4 + topLeft * 8;
 
-			if (type != 0 && type != 15) {
+			if (squareType != 0 && squareType != 15) {
 				// Just doing squares for now, if that ever changes this needs to be generalized for not square
 				// TODO: Generalize for not being a square
 				// Very low importance
 				auto square = sf::Rect<double>(area.left + x * squareSide, area.top - y * squareSide, squareSide, squareSide);
 
 				if (current == max) {
-					applyLut(square, type);
+					applyLut(square, squareType);
 				} else {
 					marchingSquares(square, iterationSquares, max, current + 1);
 				}
@@ -161,9 +210,9 @@ void Computation::Grapher::marchingSquares(sf::Rect<double> area, int squaresX, 
 	}
 }
 
-void Computation::Grapher::applyLut(sf::Rect<double> square, int type) {
+void Computation::Grapher::applyLut(sf::Rect<double> square, int squareType) {
 	// The square variable in this function does not have to be a square.
-	assert(type < 16 && type > -1);
+	assert(squareType < 16 && squareType > -1);
 
 	sf::Vector2<double> p1;
 	sf::Vector2<double> p2;
@@ -176,7 +225,7 @@ void Computation::Grapher::applyLut(sf::Rect<double> square, int type) {
 
 	// TODO: Implement lerping to smooth out edges
 	// Priority: VERY LOW
-	switch(type) {
+	switch(squareType) {
 		case 14:
 			// Case 14 and 1 are identical
 		case 1:

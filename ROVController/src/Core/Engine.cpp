@@ -30,7 +30,7 @@ void Core::Engine::Events()
 }
 
 void Core::Engine::Update()
-{	
+{
 	auto dt = sf::Time::Zero;
 	
 	// Update ImGUI

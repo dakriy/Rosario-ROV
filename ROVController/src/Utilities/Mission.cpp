@@ -17,17 +17,21 @@ Mission::Mission() {
 		auto time = std::get<sf::Time>(vals);
 		auto vec = std::get<std::vector<float>>(vals);
 
+		std::vector<float> allVals;
+		allVals.reserve(vec.size() + 1);
+		allVals.emplace_back((time - startTime).asSeconds());
+		allVals.insert(std::end(allVals), std::begin(vec), std::end(vec));
+
 		if (localData && csv) {
 			std::vector<std::string> floatVals;
-			floatVals.reserve(vec.size());
-			floatVals.emplace_back(std::to_string((time - startTime).asSeconds()));
-			for (auto val : vec) {
+			floatVals.reserve(allVals.size());
+			for (auto val : allVals) {
 				floatVals.emplace_back(std::to_string(val));
 			}
 			csv->write_row(floatVals);
 		}
 
-
+		recordedData.emplace_back(allVals.begin(), allVals.end());
 
 		return false;
 	}, Core::Event::DataReceived);
@@ -80,11 +84,10 @@ void Mission::update(const sf::Time &) {
 		}
 		ImGui::Separator();
 
-		ImGui::InputText("Enter the file name for output data", fileName, nameBuffSize);
+		ImGui::InputText("Enter the file name for output csv", fileName, nameBuffSize);
 
 		if (!inProgress) {
 			if (ImGui::Button("Start Mission")) {
-
 				startMission();
 			}
 		} else {
@@ -110,13 +113,16 @@ void Mission::startMission() {
 	if (localData) {
 		csv->configure_dialect().column_names("Time (s)");
 	}
+	recordedDataNames.emplace_back("Time (s)");
 
 	for (auto & s : sensorSelect) {
+		auto str = std::get<Core::SensorInfo>(s).name + ' ' + '(' + std::get<Core::SensorInfo>(s).units + ')';
 		if (std::get<bool>(s)) {
 			sens.emplace_back(std::get<Core::SensorInfo>(s).id);
+			recordedDataNames.emplace_back(str);
 		}
 		if (localData) {
-			csv->configure_dialect().column_names(std::get<Core::SensorInfo>(s).name + ' ' + '(' + std::get<Core::SensorInfo>(s).units + ')');
+			csv->configure_dialect().column_names(str);
 		}
 	}
 
@@ -124,7 +130,7 @@ void Mission::startMission() {
 		csv->write_header();
 	}
 
-	if (sens.size() > 0) {
+	if (!sens.empty()) {
 		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_start_mission_packet(selectedFreq, sens));
 	}
 	startTime = GlobalContext::get_clock()->getElapsedTime();
@@ -132,11 +138,22 @@ void Mission::startMission() {
 }
 
 void Mission::stopMission() {
-	GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_stop_mission_packet());
+	if (inProgress)
+		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_stop_mission_packet());
+
 	if (csv) {
 		csv->close();
 		csv.reset();
 	}
 
 	inProgress = false;
+}
+
+std::vector<std::vector<float>> & Mission::getData()
+{
+	return recordedData;
+}
+
+std::vector<std::string> &Mission::getDataCols() {
+	return recordedDataNames;
 }

@@ -34,6 +34,13 @@ void Frames::GraphFrame::draw(sf::RenderTarget& target, sf::RenderStates states)
 
 void Frames::GraphFrame::update(const sf::Time& dt)
 {
+	ImGui::Begin("Access");
+	if (ImGui::Button("Main Menu"))
+	{
+		GlobalContext::get_engine()->frame_action(Core::FrameAction::PopFrame);
+	}
+	ImGui::End();
+
     ImGui::Begin("Math Module");
     ImGui::InputTextWithHint("Input Expression", "Enter math relation here", expression, IM_ARRAYSIZE(expression));
 
@@ -158,13 +165,13 @@ void Frames::GraphFrame::zoomRelative(int x, int y, float amount)
 {
 	assert(x >= 0 && static_cast<unsigned>(x) <= windowSize.x && "X is out of window range");
 	assert(y >= 0 && static_cast<unsigned>(y) <= windowSize.y && "Y is out of window range");
-	double percentLeftZoom = static_cast<double>(x) / static_cast<double>(windowSize.x);
-	double percentTopZoom = static_cast<double>(y) / static_cast<double>(windowSize.y);
+	double percentLeftZoom = static_cast<double>(x - static_cast<int>(windowSize.x) / 2.f) / static_cast<double>(windowSize.x);
+	double percentTopZoom = static_cast<double>(y - static_cast<int>(windowSize.y) / 2.f) / static_cast<double>(windowSize.y);
 
 	auto totalX = amount * graphBounds.width * zoomTickAmount;
 	auto totalY = amount * graphBounds.height * zoomTickAmount;
 
-	// Calcualte number of percents of screensize to grow or shink by
+	// Calculate number of percents of screensize to grow or shrink by
 	graphBounds.width -= totalX;
 	graphBounds.height -= totalY;
 	graphBounds.left -= percentLeftZoom * totalX;
