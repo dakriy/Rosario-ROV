@@ -13,7 +13,7 @@ namespace Camera {
 	 * Documentation found from experimenting with the bad boy
 	 *
 	 * Operating frequency: 50 Hz
-	 * Middle 		-> 6.3% duty cycle
+	 * Middle 		-> 6.5% duty cycle
 	 * Left 		-> 3.4% duty cycle
 	 * Right		->  10% duty cycle
 	 *
@@ -47,7 +47,7 @@ namespace Camera {
 		const char MIN_PULSES = 6;
 		const float LEFT = 3.4f;
 		const float RIGHT = 10.f;
-		const float MID = 6.3f;
+		const float MID = 6.5f;
 		// Make range positive to keep things simpler
 		const float LEFT_HALF_RANGE = MID - LEFT;
 		const float RIGHT_HALF_RANGE = RIGHT - MID;
