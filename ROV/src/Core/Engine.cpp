@@ -21,8 +21,6 @@ void Core::Engine::Events()
 
 void Core::Engine::Update()
 {
-
-
 	// Update here.
 	if (missionInProgress) {
 		if (readyForConversion) {

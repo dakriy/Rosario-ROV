@@ -80,21 +80,7 @@ void Camera::Camera::cam() {
 	}
 }
 
-Camera::Camera::Camera() : sendVideo(false), recordVideo(false), initialized(false), cameraCapture(&Camera::cam, this), running(true) {
-	//The the parameters of softPwmCreate function represent gpio pin number, initial value and range.
-	//The smallest period that we can achieve is 100μs (with a range of 1). In order to generate the
-	//needed 20ms period pulse we need to multiply 100μs by 200 so we set our range to 200.
-//	softPwmCreate(0,0,100);
-//	softPwmCreate(1,0,100);
-	cameraMoveHook = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) ->bool {
-//		// S1 limits, 1000 us to 2000 us
-		// softPwmWrite takes two parameters, the output pin and the value (which has to be in the range we //defined before
-//		// S2 limits, 1100 to 1900
-//		softPwmWrite(0, static_cast<int>(1.5*5 + e->c.s2 / 100.f * 2));
-//		softPwmWrite(1, static_cast<int>(1.5*5 + e->c.s1 / 100.f * 2));
-		return true;
-	}, Core::Event::CameraMove);
-}
+Camera::Camera::Camera() : sendVideo(false), recordVideo(false), initialized(false), cameraCapture(&Camera::cam, this), running(true) {}
 
 void Camera::Camera::startVideoStream() {
 	sendVideo = true;
@@ -105,7 +91,7 @@ void Camera::Camera::endVideoStream() {
 }
 
 void Camera::Camera::startVideoRecord() {
-	recordVideo = video.open("out.mp4", cv::VideoWriter::fourcc('H', '2', '6', '4'), props.framerate, cv::Size(props.width, props.height));
+	recordVideo = video.open("out.mp4", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), props.framerate, cv::Size(props.width, props.height));
 }
 
 void Camera::Camera::endVideoRecord() {
@@ -147,5 +133,4 @@ Camera::Camera::~Camera() {
 	if (cameraCapture.joinable()) cameraCapture.join();
 	capture.release();
 	video.release();
-	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(cameraMoveHook);
 }

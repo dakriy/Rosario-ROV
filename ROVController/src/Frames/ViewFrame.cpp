@@ -86,10 +86,10 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 		sf::Joystick::hasAxis(0, sf::Joystick::R) &&
 		updateFrequency == updateCounter)
 	{
-		auto posY = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
-		auto posX = sf::Joystick::getAxisPosition(0, sf::Joystick::R);
-//		GlobalContext::get_log()->AddLog("PosZ %f PosR %f\n", posX, posY);
-		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_camera_move_packet(posX, posY));
+		auto pos1 = sf::Joystick::getAxisPosition(0, sf::Joystick::Z);
+		auto pos2 = sf::Joystick::getAxisPosition(0, sf::Joystick::R);
+		GlobalContext::get_log()->AddLog("PosZ %f PosR %f\n", pos1, pos2);
+		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_camera_move_packet(pos1, pos2));
 		updateCounter = 0;
 	} else
 	{
