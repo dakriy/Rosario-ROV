@@ -23,16 +23,25 @@ void Core::Engine::Update()
 {
 	// Update here.
 	if (missionInProgress) {
-		for (auto & sensor : sensors) {
-			sensor->initiateConversion();
+		if (readyForConversion) {
+			// Don't want to immediately try to do another conversion on the sensors
+			readyForConversion = false;
+			for (auto sensor : requestedSensors) {
+				sensors[sensor]->initiateConversion();
+			}
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(1.f / sensorFrequency * 1000 - dataTimer.getElapsedTime().asMilliseconds())));
-		dataTimer.restart();
-		std::vector<float> data;
-		for (auto sensor : requestedSensors) {
-			data.push_back(sensors[sensor]->queryDevice());
+
+		if (1.f / sensorFrequency * 1000 < dataTimer.getElapsedTime().asMilliseconds()) {
+			dataTimer.restart();
+			std::vector<float> data;
+			for (auto sensor : requestedSensors) {
+				data.push_back(sensors[sensor]->queryDevice());
+			}
+			// Send sensor data
+			GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
+			// We are ready for another conversion
+			readyForConversion = true;
 		}
-		GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
 	} else {
 		std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
 	}

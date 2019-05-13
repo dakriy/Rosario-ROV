@@ -12,6 +12,12 @@ namespace Core {
 			std::vector<sf::Uint8> sensors;
 		};
 
+		struct CameraMovement
+		{
+			float s1 = 0.f;
+			float s2 = 0.f;
+		};
+
 		enum EventType
 		{
 			PingReceived,
@@ -21,6 +27,7 @@ namespace Core {
 			Disconnected,
 			StartCamera,
 			StopCamera,
+			CameraMove,
 			Shutdown,
 
 			Count
@@ -28,6 +35,8 @@ namespace Core {
 
 		EventType type = Count;
 
+
+		CameraMovement c;
 		SensorsRequested r;
 
 		explicit Event(EventType t) : type(t) {}

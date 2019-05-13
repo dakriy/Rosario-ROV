@@ -33,7 +33,7 @@ namespace Core
 		std::mutex coreEventHandlerLock;
 
 		// In milliseconds
-		const unsigned defaultTimeout = 250;
+		const unsigned defaultTimeout = 50;
 
 
 		std::array<std::unique_ptr<Sensor::Sensor>, 5> sensors = {
@@ -54,6 +54,7 @@ namespace Core
 		// "By default, use vector when you need a container" - Bjarne Stroustrup.
 		std::vector<size_t> requestedSensors;
 		bool missionInProgress = false;
+		bool readyForConversion = true;
 
 		EVENT_FUNC_INDEX_CORE watchForRequest;
 		EVENT_FUNC_INDEX_CORE watchForRequestStop;

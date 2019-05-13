@@ -2,6 +2,8 @@
 #include "../Factories/PacketFactory.h"
 #include "../Core/GlobalContext.h"
 #include <SFML/System.hpp>
+#include <wiringPi.h>
+#include <softPwm.h>
 
 bool Camera::Camera::init() {
 	auto capInit = capture.open(0);
@@ -89,7 +91,7 @@ void Camera::Camera::endVideoStream() {
 }
 
 void Camera::Camera::startVideoRecord() {
-	recordVideo = video.open("out.mp4", cv::VideoWriter::fourcc('H', '2', '6', '4'), props.framerate, cv::Size(props.width, props.height));
+	recordVideo = video.open("out.mp4", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), props.framerate, cv::Size(props.width, props.height));
 }
 
 void Camera::Camera::endVideoRecord() {
