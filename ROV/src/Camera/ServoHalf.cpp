@@ -1,5 +1,6 @@
 #include "ServoHalf.h"
 #include "../Core/GlobalContext.h"
+#include <wiringPi.h>
 
 Camera::ServoHalf::ServoHalf(): pulses(MIN_PULSES), percent(0), done(false), controller(&ServoHalf::control, this) {
 	digitalWrite(PIN, LOW);
