@@ -310,9 +310,9 @@ F 4 "DF13-04P-1.25DSA" H 4750 2000 50  0001 C CNN "manf#"
 $EndComp
 Text Notes 4400 800  0    157  ~ 31
 BlueRobotics Sensors
-Text Label 5900 1500 2    50   ~ 0
-GPIO2(SDA1)
 Text Label 5900 1600 2    50   ~ 0
+GPIO2(SDA1)
+Text Label 5900 1500 2    50   ~ 0
 GPIO3(SCL1)
 $Comp
 L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR06
@@ -352,18 +352,18 @@ Wire Wire Line
 Wire Wire Line
 	6000 1900 6000 1400
 Connection ~ 6000 1400
-Text Label 5900 2000 2    50   ~ 0
-GPIO2(SDA1)
 Text Label 5900 2100 2    50   ~ 0
+GPIO2(SDA1)
+Text Label 5900 2000 2    50   ~ 0
 GPIO3(SCL1)
 Wire Wire Line
-	5900 1500 4950 1500
+	5900 1600 4950 1600
 Wire Wire Line
-	4950 1600 5900 1600
+	4950 1500 5900 1500
 Wire Wire Line
-	5900 2000 4950 2000
+	5900 2100 4950 2100
 Wire Wire Line
-	4950 2100 5900 2100
+	4950 2000 5900 2000
 Text Notes 1600 3750 0    157  ~ 31
 Accelerometer
 $Comp
@@ -422,7 +422,7 @@ U 1 1 5CB598AD
 P 2450 5300
 F 0 "U1" H 2450 4314 50  0000 C CNN
 F 1 "MPU-9250" H 2450 4223 50  0000 C CNN
-F 2 "Sensor_Motion:InvenSense_QFN-24_3x3mm_P0.4mm" H 2450 4300 50  0001 C CNN
+F 2 "Sensor_Motion:InvenSense_QFN-24_4x4mm_P0.5mm" H 2450 4300 50  0001 C CNN
 F 3 "${KIPRJMOD}\\Datasheets\\MPU9250.pdf" H 2450 5150 50  0001 C CNN
 F 4 "MPU-9250" H 2450 5300 50  0001 C CNN "manf#"
 	1    2450 5300
@@ -704,22 +704,6 @@ Wire Wire Line
 	1000 5100 1750 5100
 Text Notes 7300 4500 0    138  ~ 28
 I2C Address Translator
-$Comp
-L ROVPCB-rescue:LTC4316IDDPBF-LTC4316IDDPBF U4
-U 1 1 5CBEE417
-P 9900 5650
-F 0 "U4" H 11525 6015 50  0000 C CNN
-F 1 "LTC4316IDDPBF" H 11525 5924 50  0000 C CNN
-F 2 "Package_SO:MSOP-10_3x3mm_P0.5mm" H 13450 5150 50  0001 L BNN
-F 3 "${KIPRJMOD}\\Datasheets\\LTC4316.pdf" H 13250 5650 50  0001 L BNN
-F 4 "Linear Technology/Analog" H 13100 5950 50  0001 L BNN "Field4"
-F 5 "LTC4316 - Single I2C/SMBus Address Translator" H 12700 5800 50  0001 L BNN "Field5"
-F 6 "LTC4316IDD#PBF" H 13350 5300 50  0001 L BNN "Field7"
-F 7 "DFN-10 Linear Technology" H 13150 5500 50  0001 L BNN "Field8"
-F 8 "LTC4316IDD" H 9900 5650 50  0001 C CNN "manf#"
-	1    9900 5650
-	-1   0    0    1   
-$EndComp
 Text Notes 7600 800  0    138  ~ 28
 Atlas Scientific board
 Text Label 7000 5250 0    50   ~ 0
@@ -730,19 +714,6 @@ Wire Wire Line
 	7000 5550 7500 5550
 Wire Wire Line
 	7000 5250 7500 5250
-$Comp
-L ROVPCB-rescue:GND-power-ROVPCB-rescue-ROVPCB-rescue-ROVPCB-rescue #PWR0111
-U 1 1 5CB8FA80
-P 7500 6000
-F 0 "#PWR0111" H 7500 5750 50  0001 C CNN
-F 1 "GND" H 7500 5850 50  0000 C CNN
-F 2 "" H 7500 6000 50  0000 C CNN
-F 3 "" H 7500 6000 50  0000 C CNN
-	1    7500 6000
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7500 5650 7500 6000
 Wire Wire Line
 	7500 5350 6800 5350
 Wire Wire Line
@@ -1132,4 +1103,20 @@ Text Notes 4375 1575 0    79   ~ 16
 Temp
 Text Notes 4375 2075 0    79   ~ 16
 Press
+$Comp
+L ROVPCB-rescue:LTC4316IDDPBF-LTC4316IDDPBF U4
+U 1 1 5CBEE417
+P 9900 5650
+F 0 "U4" H 11525 6015 50  0000 C CNN
+F 1 "LTC4316IDDPBF" H 11525 5924 50  0000 C CNN
+F 2 "Package_SO:MSOP-10_3x3mm_P0.5mm" H 13450 5150 50  0001 L BNN
+F 3 "${KIPRJMOD}\\Datasheets\\LTC4316.pdf" H 13250 5650 50  0001 L BNN
+F 4 "Linear Technology/Analog" H 13100 5950 50  0001 L BNN "Field4"
+F 5 "LTC4316 - Single I2C/SMBus Address Translator" H 12700 5800 50  0001 L BNN "Field5"
+F 6 "LTC4316IDD#PBF" H 13350 5300 50  0001 L BNN "Field7"
+F 7 "DFN-10 Linear Technology" H 13150 5500 50  0001 L BNN "Field8"
+F 8 "LTC4316IDD" H 9900 5650 50  0001 C CNN "manf#"
+	1    9900 5650
+	-1   0    0    1   
+$EndComp
 $EndSCHEMATC
