@@ -26,6 +26,8 @@ namespace Core
 		CameraMove,
 		Video,
 		TimeSync,
+		Message,
+		BatteryPercent,
 		Shutdown = 254,
 		Count
 	};

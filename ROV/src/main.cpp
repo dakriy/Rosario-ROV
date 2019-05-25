@@ -1,6 +1,8 @@
+#include <wiringPi.h>
 #include "Network/Network.h"
 #include "Core/GlobalContext.h"
-#include <wiringPi.h>
+#include "Existences/Camera.h"
+#include "Existences/Power.h"
 
 int main() {
 	/*
@@ -58,6 +60,9 @@ int main() {
 	Network::Network network;
 	GlobalContext::set_network(&network);
 	bool done = false;
+
+	engine.addExistence(std::make_unique<Camera::Camera>());
+	engine.addExistence(std::make_unique<Power::Power>());
 
 	const auto hook = coreEventHandler.add_event_callback([&](const Core::Event * p) -> bool {
 		done = true;

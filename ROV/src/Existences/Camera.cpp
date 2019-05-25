@@ -80,7 +80,18 @@ void Camera::Camera::cam() {
 	}
 }
 
-Camera::Camera::Camera() : sendVideo(false), recordVideo(false), initialized(false), cameraCapture(&Camera::cam, this), running(true) {}
+Camera::Camera::Camera() : sendVideo(false), recordVideo(false), initialized(false), cameraCapture(&Camera::cam, this), running(true) {
+	camStartStopRequest = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) -> bool {
+		if (e->type == Core::Event::StartCamera) {
+			startVideoStream();
+			return true;
+		} else if (e->type == Core::Event::StopCamera) {
+			endVideoStream();
+			return true;
+		}
+		return false;
+	}, Core::Event::StartCamera, Core::Event::StopCamera);
+}
 
 void Camera::Camera::startVideoStream() {
 	sendVideo = true;
@@ -130,6 +141,7 @@ Camera::Camera::~Camera() {
 	running = false;
 	recordVideo = false;
 	sendVideo = false;
+	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(camStartStopRequest);
 	if (cameraCapture.joinable()) cameraCapture.join();
 	capture.release();
 	video.release();

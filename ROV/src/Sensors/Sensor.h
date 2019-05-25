@@ -15,6 +15,7 @@ namespace Sensor {
 		InternalTemperature,
 		InternalPressure,
 		InternalHumidity,
+		Battery,
 		Count
 	};
 

@@ -36,3 +36,17 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_data_packet(std::vect
 	}
 	return p;
 }
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_log_packet(const std::string& message) {
+	auto p = std::make_unique<sf::Packet>();
+	add_type_to_packet(p, Network::PacketTypes::Message);
+	*p << message;
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_battery_percentage_packet(float percent) {
+	auto p = std::make_unique<sf::Packet>();
+	add_type_to_packet(p, Network::PacketTypes::BatteryPercent);
+	*p << percent;
+	return p;
+}

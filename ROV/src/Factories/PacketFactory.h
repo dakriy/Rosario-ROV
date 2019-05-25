@@ -4,6 +4,7 @@
 #include "../Network/Network.h"
 #include <memory>
 #include <opencv2/opencv.hpp>
+#include <string>
 
 namespace Factory {
 	class PacketFactory {
@@ -13,5 +14,7 @@ namespace Factory {
 		static std::unique_ptr<sf::Packet> create_video_packet(std::vector<uint8_t>& buffer);
 		static std::unique_ptr<sf::Packet> create_sensor_list_packet(std::vector<Sensor::SensorInfo>& sensors);
 		static std::unique_ptr<sf::Packet> create_data_packet(std::vector<float>& data);
+		static std::unique_ptr<sf::Packet> create_log_packet(const std::string& message);
+		static std::unique_ptr<sf::Packet> create_battery_percentage_packet(float percent);
 	};
 }
