@@ -127,7 +127,7 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::Eve
 
 	batteryLog = cev_->add_event_callback([&](const Core::Event * e) -> bool {
 		auto percent = std::get<float>(e->data);
-		GlobalContext::get_log()->AddLog("Battery is at %f percent", percent);
+		GlobalContext::get_log()->AddLog("Battery is at %f percent\n", percent);
 		return false;
 	}, Core::Event::BatteryUpdate);
 

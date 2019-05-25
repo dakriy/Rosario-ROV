@@ -20,7 +20,8 @@ void Power::Power::monitor() {
 
 		// Convert to a current via datasheet
 		// V * A/V = A
-		auto current = battery.queryDevice() * conversionFactor;
+		// It likes to read zero up to lik .5-1 A and it's always at least 1 A lagging on current I guess?
+		auto current = battery.queryDevice() * conversionFactor + 1.06f;
 
 		// Integrate from one point to the next.
 		asUsed += (current + last) * pollTimer.restart().asSeconds() / 2.f;

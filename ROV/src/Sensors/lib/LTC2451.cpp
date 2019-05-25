@@ -29,7 +29,7 @@ bool Sensor::LTC2451::init() {
 float Sensor::LTC2451::getConversion() {
 	uint16_t data;
 	if (read(deviceHandle, &data, 2) != 2)
-		return 3.3f;
+		return 0.f;
 	data = __builtin_bswap16(data);
 	return 3.3f / 65535.f * static_cast<float>(data);
 }

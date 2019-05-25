@@ -2,5 +2,5 @@
 
 class Existence {
 public:
-	virtual ~Existence() = 0;
+	virtual ~Existence() {};
 };

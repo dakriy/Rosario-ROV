@@ -14,7 +14,7 @@ namespace Power {
 		// In milliseconds
 		const int batteryPollTime = 50;
 
-		const float batteryCuttof = 8.f;
+		const float batteryCuttof = 10.f;
 
 		// A/V
 		const float conversionFactor = 55.7575757576;
