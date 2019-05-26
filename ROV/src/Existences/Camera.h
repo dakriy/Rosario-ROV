@@ -5,6 +5,7 @@
 #include "../Core/Event.h"
 #include "../Core/EventHandler.h"
 #include "ServoHalf.h"
+#include "../Utilities/Existence.h"
 
 namespace Camera {
 	struct Properties {
@@ -13,7 +14,7 @@ namespace Camera {
 		unsigned height = 0;
 	};
 
-	class Camera {
+	class Camera : public Existence {
 
 		Properties props;
 
@@ -23,6 +24,9 @@ namespace Camera {
 
 		cv::VideoCapture capture;
 		cv::VideoWriter video;
+
+		EVENT_FUNC_INDEX_CORE camStartStopRequest;
+		EVENT_FUNC_INDEX_CORE camRecordRequest;
 
 		void cam();
 		bool getCameraProperties();
@@ -34,13 +38,12 @@ namespace Camera {
 		 * I'm putting it here in camera because it's related to the camera in that it moves it around
 		 */
 	public:
-		ServoHalf s1;
 		Camera();
 		void startVideoStream();
 		void endVideoStream();
 		void startVideoRecord();
 		void endVideoRecord();
 		Properties & getProps();
-		~Camera();
+		~Camera() override;
 	};
 }

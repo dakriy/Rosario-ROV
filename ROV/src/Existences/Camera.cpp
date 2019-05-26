@@ -3,7 +3,8 @@
 #include "../Core/GlobalContext.h"
 #include <SFML/System.hpp>
 #include <wiringPi.h>
-#include <softPwm.h>
+#include <chrono>
+#include <ctime>
 
 bool Camera::Camera::init() {
 	auto capInit = capture.open(0);
@@ -61,7 +62,10 @@ void Camera::Camera::cam() {
 							GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_video_packet(jpg));
 						}
 					} else {
-						sendVideo = false;
+						endVideoStream();
+						if (recordVideo) {
+							endVideoRecord();
+						}
 					}
 				}
 
@@ -80,7 +84,27 @@ void Camera::Camera::cam() {
 	}
 }
 
-Camera::Camera::Camera() : sendVideo(false), recordVideo(false), initialized(false), cameraCapture(&Camera::cam, this), running(true) {}
+Camera::Camera::Camera() : sendVideo(false), recordVideo(false), initialized(false), cameraCapture(&Camera::cam, this), running(true) {
+	camStartStopRequest = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) -> bool {
+		if (e->type == Core::Event::StartCamera) {
+			startVideoStream();
+			return true;
+		} else if (e->type == Core::Event::StopCamera) {
+			endVideoStream();
+			return true;
+		}
+		return false;
+	}, Core::Event::StartCamera, Core::Event::StopCamera);
+
+	camRecordRequest = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e)->bool{
+		if (std::get<bool>(e->data)) {
+			startVideoRecord();
+		} else {
+			endVideoRecord();
+		}
+		return true;
+	}, Core::Event::VideoRecord);
+}
 
 void Camera::Camera::startVideoStream() {
 	sendVideo = true;
@@ -91,11 +115,21 @@ void Camera::Camera::endVideoStream() {
 }
 
 void Camera::Camera::startVideoRecord() {
-	recordVideo = video.open("out.mp4", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), props.framerate, cv::Size(props.width, props.height));
+	auto t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	auto ltm = localtime(&t);
+	std::string name;
+	name += std::to_string(ltm->tm_hour) + '.' + std::to_string(ltm->tm_min) + '.' + std::to_string(ltm->tm_sec);
+	name += ".avi";
+	recordVideo = video.open(name, cv::VideoWriter::fourcc('H', '2', '6', '4'), props.framerate, cv::Size(props.width, props.height));
+	if (recordVideo) {
+		GlobalContext::get_engine()->log("Starting Video Record");
+	}
 }
 
 void Camera::Camera::endVideoRecord() {
 	recordVideo = false;
+	GlobalContext::get_engine()->log("Stopping Video Record");
+	video.release();
 }
 
 Camera::Properties &Camera::Camera::getProps() {
@@ -130,6 +164,7 @@ Camera::Camera::~Camera() {
 	running = false;
 	recordVideo = false;
 	sendVideo = false;
+	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(camStartStopRequest);
 	if (cameraCapture.joinable()) cameraCapture.join();
 	capture.release();
 	video.release();

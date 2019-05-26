@@ -176,8 +176,6 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			break;
 		case PacketTypes::MissionStart:
 		{
-			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
-
 			float frequency = 0.f;
 			sf::Uint32 sensorNum = 0;
 
@@ -185,16 +183,22 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 				return nullptr;
 			}
 
-			pEvent->r.frequency = frequency;
-			pEvent->r.sensors.reserve(sensorNum);
+			std::vector<sf::Uint8> sensors(sensorNum);
 
 			for (auto i = 0; i < sensorNum; ++i) {
 				auto sensorType = static_cast<sf::Uint8>(Sensor::SensorId::Count);
 				if (!(p >> sensorType)) {
 					return nullptr;
 				}
-				pEvent->r.sensors.push_back(sensorType);
+				sensors.push_back(sensorType);
 			}
+
+			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
+			pEvent->data = Core::Event::SensorsRequested {
+					.frequency = frequency,
+					.sensors = std::move(sensors)
+			};
+
 			break;
 		}
 		case PacketTypes::MissionStop:
@@ -211,13 +215,40 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			break;
 		case PacketTypes::CameraMove:
 		{
-			pEvent = std::make_unique<Core::Event>(Core::Event::CameraMove);
-			float x, y;
-			if (!(p >> x >> y)) {
+			float theta, r;
+			if (!(p >> theta >> r)) {
 				return nullptr;
 			}
-			pEvent->c.s1 = x;
-			pEvent->c.s2 = y;
+			pEvent = std::make_unique<Core::Event>(Core::Event::CameraMove);
+			pEvent->data = Core::Event::CameraMovement {
+				.theta = theta,
+				.radius = r
+			};
+			break;
+		}
+		case PacketTypes::LightUpdate:
+		{
+			bool state;
+			float percent;
+			if (!(p >> state >> percent)) {
+				return nullptr;
+			}
+
+			pEvent = std::make_unique<Core::Event>(Core::Event::LightChange);
+			pEvent->data = Core::Event::LightChangeDetails {
+				.percent = percent,
+				.on = state,
+			};
+			break;
+		}
+		case PacketTypes::VideoRecord:
+		{
+			bool record;
+			if (!(p >> record)) {
+				return nullptr;
+			}
+			pEvent = std::make_unique<Core::Event>(Core::Event::VideoRecord);
+			pEvent->data = record;
 			break;
 		}
 		default: //unknown packet type

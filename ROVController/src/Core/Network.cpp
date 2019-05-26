@@ -259,8 +259,6 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			break;
     	case PacketTypes::Sensors:
 		{
-			event = std::make_unique<Core::Event>(Core::Event::SensorInfoReceived);
-
 			// Get number of sensors returned
 			sf::Uint32 sensorsNumber = 0;
 			if (!(p >> sensorsNumber)) {
@@ -279,13 +277,12 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 				if (!(p >> id >> maxFrequency >> name >> units)) return nullptr;
 				sInfo.emplace_back(id, maxFrequency, name, units);
 			}
+			event = std::make_unique<Core::Event>(Core::Event::SensorInfoReceived);
 			event->data = std::move(sInfo);
 			break;
 		}
     	case PacketTypes::Data:
 		{
-			event = std::make_unique<Core::Event>(Core::Event::DataReceived);
-
 			// Pull number of measurements from packet
 			sf::Uint32 sensorsNumber = 0;
 			sf::Int64 us = 0;
@@ -306,12 +303,12 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 				}
 				data.emplace_back(val);
 			}
+			event = std::make_unique<Core::Event>(Core::Event::DataReceived);
 			event->data = std::make_pair(convertRemoteTime(sf::microseconds(us)), std::move(data));
 			break;
 		}
 		case PacketTypes::Video:
 		{
-			event = std::make_unique<Core::Event>(Core::Event::VideoFrameReceived);
 			sf::Uint32 size;
 
 			if (!(p >> size)) {
@@ -320,6 +317,7 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 
 			// 5 because 1 byte for type, and 4 bytes for the size byte
 			if (p.getDataSize() == size + 5) {
+				event = std::make_unique<Core::Event>(Core::Event::VideoFrameReceived);
 				event->data = std::vector<uint8_t>(
 						// Start at where the image starts
 						static_cast<const uint8_t*>(p.getData()) + 5,
@@ -330,6 +328,26 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 				// Invalid format, drop it
 				return nullptr;
 			}
+			break;
+		}
+    	case PacketTypes::Message:
+		{
+			std::string message;
+			if (!(p >> message)) {
+				return nullptr;
+			}
+			event = std::make_unique<Core::Event>(Core::Event::NewMessage);
+			event->data = message;
+			break;
+		}
+    	case PacketTypes::BatteryPercent:
+		{
+			float percent;
+			if (!(p >> percent)) {
+				return nullptr;
+			}
+			event = std::make_unique<Core::Event>(Core::Event::BatteryUpdate);
+			event->data = percent;
 			break;
 		}
         default: //unknown packet type

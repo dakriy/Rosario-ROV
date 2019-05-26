@@ -9,10 +9,9 @@
 #include "../Sensors/Pressure.h"
 #include "../Sensors/Lux.h"
 #include "../Sensors/Temperature.h"
-#include "../Camera/Camera.h"
-#include "../Sensors/InternalTemperature.h"
-#include "../Sensors/InternalPressure.h"
-#include "../Sensors/InternalHumidity.h"
+#include "../Sensors/Battery.h"
+#include "../Utilities/Existence.h"
+#include "../Sensors/Conductivity.h"
 
 namespace Core
 {
@@ -36,16 +35,17 @@ namespace Core
 		const unsigned defaultTimeout = 50;
 
 
-		std::array<std::unique_ptr<Sensor::Sensor>, 5> sensors = {
+		std::array<std::unique_ptr<Sensor::Sensor>, 4> sensors = {
 				std::make_unique<Sensor::Temperature>(),
 				std::make_unique<Sensor::Lux>(),
-				std::make_unique<Sensor::InternalTemperature>(),
-				std::make_unique<Sensor::InternalPressure>(),
-				std::make_unique<Sensor::InternalHumidity>()
+				std::make_unique<Sensor::Pressure>(),
+				std::make_unique<Sensor::Conductivity>(),
+//				std::make_unique<Sensor::InternalTemperature>(),
+//				std::make_unique<Sensor::InternalPressure>(),
+//				std::make_unique<Sensor::InternalHumidity>()
 		};
 
-		Camera::Camera camera;
-
+		std::vector<std::unique_ptr<Existence>> existences;
 
 		// Requested sensor vars
 		sf::Clock dataTimer;
@@ -59,7 +59,6 @@ namespace Core
 		EVENT_FUNC_INDEX_CORE watchForRequest;
 		EVENT_FUNC_INDEX_CORE watchForRequestStop;
 		EVENT_FUNC_INDEX_CORE sensorRequest;
-		EVENT_FUNC_INDEX_CORE camStarStopRequest;
 
 	public:
 		/**
@@ -75,6 +74,10 @@ namespace Core
 		void add_event(std::unique_ptr<Event> e);
 
 		void Loop();
+
+		void addExistence(std::unique_ptr<Existence> ex);
+
+		void log(const std::string& message);
 
 		/**
 		 * Engine destructor.

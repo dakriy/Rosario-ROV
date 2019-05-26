@@ -85,6 +85,9 @@ namespace Core
 		EventHandler<sf::Event, sf::Event::EventType::Count>* ev_;
 		EventHandler<Core::Event, Core::Event::EventType::Count>* cev_;
 
+		CORE_EVENT_FUNC_INDEX messageLog;
+		CORE_EVENT_FUNC_INDEX batteryLog;
+
 		std::mutex coreEventHandlerLock;
 
 	public:

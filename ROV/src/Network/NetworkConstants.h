@@ -23,6 +23,10 @@ namespace Network {
 		CameraMove,
 		Video,
 		TimeSync,
+		Message,
+		BatteryPercent,
+		LightUpdate,
+		VideoRecord,
 		Shutdown = 254,
 		Count
 	};

@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" autoUpload="On explicit save action" autoUploadExternalChanges="true">
     <serverData>
-      <paths name="Pi (d57bc534-4811-4ad3-a59d-359bb26e1829)">
+      <paths name="Pi (af9cfb8a-b052-4766-b24a-4d248fad530c)">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/tmp.GE8Gink1g2" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/pi/clion" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-remote" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-remote" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-remote" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-pi" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-pi" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-release" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-pi" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-pi" />
           </excludedPaths>
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ON_EXPLICIT_SAVE" />
   </component>
 </project>

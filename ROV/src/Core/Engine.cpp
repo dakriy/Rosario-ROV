@@ -55,9 +55,9 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 	GlobalContext::set_engine(this);
 
 	watchForRequest = cev_->add_event_callback([&](const Event * e) -> bool {
-		sensorFrequency = e->r.frequency;
+		sensorFrequency = std::get<Core::Event::SensorsRequested>(e->data).frequency;
 		missionInProgress = true;
-		for(auto requestedSensorId : e->r.sensors) {
+		for(auto requestedSensorId : std::get<Core::Event::SensorsRequested>(e->data).sensors) {
 			for (auto [sensorIndex, actualSensor] : enumerate(sensors)) {
 				if (actualSensor->getSensorInfo().id == requestedSensorId) {
 					requestedSensors.push_back(sensorIndex);
@@ -73,6 +73,9 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 
 	watchForRequestStop = cev_->add_event_callback([&](const Event * e) -> bool {
 		missionInProgress = false;
+		for (auto sensor : requestedSensors) {
+			sensors[sensor]->queryDevice();
+		}
 		requestedSensors.clear();
 		return true;
 	}, Core::Event::MissionStop);
@@ -89,17 +92,6 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 		GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_sensor_list_packet(sensorInformation));
 		return true;
 	}, Core::Event::SensorRequest);
-
-	camStarStopRequest = cev_->add_event_callback([&](const Event * e) -> bool {
-		if (e->type == Core::Event::StartCamera) {
-			camera.startVideoStream();
-			return true;
-		} else if (e->type == Core::Event::StopCamera) {
-			camera.endVideoStream();
-			return true;
-		}
-		return false;
-	}, Core::Event::StartCamera, Core::Event::StopCamera);
 }
 
 void Core::Engine::add_event(std::unique_ptr<Event> e)
@@ -121,12 +113,17 @@ void Core::Engine::Loop()
 
 Core::Engine::~Engine()
 {
-	camera.endVideoStream();
-	camera.endVideoRecord();
 	cev_->unhook_event_callback_for_all_events(sensorRequest);
 	cev_->unhook_event_callback_for_all_events(watchForRequest);
 	cev_->unhook_event_callback_for_all_events(watchForRequestStop);
-	cev_->unhook_event_callback_for_all_events(camStarStopRequest);
 	missionInProgress = false;
 	GlobalContext::clear_engine();
+}
+
+void Core::Engine::addExistence(std::unique_ptr <Existence> ex) {
+	existences.push_back(std::move(ex));
+}
+
+void Core::Engine::log(const std::string &message) {
+	GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_log_packet(message));
 }

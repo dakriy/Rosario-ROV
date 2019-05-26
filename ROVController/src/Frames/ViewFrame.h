@@ -23,16 +23,27 @@ namespace Frames
 		CORE_EVENT_FUNC_INDEX frameHook = nullptr;
 		CORE_EVENT_FUNC_INDEX pressureHook = nullptr;
 		CORE_EVENT_FUNC_INDEX temperatureHook = nullptr;
+		SF_EVENT_FUNC_INDEX recordButton = nullptr;
 
 		double pressure = 0;
 		double temp = 0;
 
-		bool movingUp = false;
-		bool movingDown = false;
+		const float virtualCircleRadius = 100;
+		const float maxVelocity = 5.f;
+		sf::Vector2f pos;
+		// Z, R
+		sf::Vector2f offsets;
 
-		const unsigned updateFrequency = 10;
+		const unsigned updateFrequency = 5;
 		unsigned updateCounter = 0;
 
+		// 100 percent / 5 seconds = 20 %/s
+		float lightSpeed = 20.f;
+		float lightPercent = 0.f;
+		bool lightsOn = false;
+		bool lightChange = false;
+
+		bool record = false;
 	public:
 		/**
 		 * View Frame Constructor

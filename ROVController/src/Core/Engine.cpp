@@ -119,6 +119,18 @@ Core::Engine::Engine(sf::RenderWindow* w, EventHandler<sf::Event, sf::Event::Eve
 	// Initialize it to the first main menu frame.
 	frame_stack_.emplace_back(std::make_unique<Frames::TitleFrame>());
 
+	messageLog = cev_->add_event_callback([&](const Core::Event * e) -> bool {
+		auto message = std::get<std::string>(e->data);
+		GlobalContext::get_log()->AddLog("ROV says: %s\n", message.c_str());
+		return false;
+	}, Core::Event::NewMessage);
+
+	batteryLog = cev_->add_event_callback([&](const Core::Event * e) -> bool {
+		auto percent = std::get<float>(e->data);
+		GlobalContext::get_log()->AddLog("Battery is at %f percent\n", percent);
+		return false;
+	}, Core::Event::BatteryUpdate);
+
 	GlobalContext::set_engine(this);
 }
 
@@ -165,6 +177,8 @@ void Core::Engine::frame_action(FrameAction action, Frames::IFrame* frame)
 
 Core::Engine::~Engine()
 {
+	cev_->unhook_event_callback_for_all_events(batteryLog);
+	cev_->unhook_event_callback_for_all_events(messageLog);
 	GlobalContext::clear_engine();
 }
 

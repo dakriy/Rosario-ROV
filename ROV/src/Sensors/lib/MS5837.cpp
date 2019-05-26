@@ -25,6 +25,11 @@ Sensor::MS5837::MS5837() {
 
 bool Sensor::MS5837::init() {
 	deviceHandle = wiringPiI2CSetup(MS5837_ADDR);
+
+	if (deviceHandle < 0) {
+		return false;
+	}
+
 	// Reset the MS5837, per datasheet
 	if (wiringPiI2CWrite(deviceHandle, MS5837_RESET) < 0) return false;
 	// Wait for reset to complete

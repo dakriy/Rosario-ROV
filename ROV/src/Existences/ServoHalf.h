@@ -4,6 +4,7 @@
 #include <thread>
 #include "../Core/EventHandler.h"
 #include "../Core/Event.h"
+#include "Servo.h"
 
 namespace Camera {
 
@@ -37,40 +38,33 @@ namespace Camera {
 	 *
 	 * Ok I like this plan, lets do it gang
 	 */
-	class ServoHalf {
+	class ServoHalf : public Servo {
 	protected:
-		// Standard servo pwm frequency
-		const float FREQ = 50;
-		const float T = 1.f / FREQ;
-		const float T_MICRO = T * 1000000;
+		const float MID = 6.5f;
+
 		// This is 6 just in case it gets decremented right after a load, and we only get 4 pulses off as a result
 		const char MIN_PULSES = 6;
 		const float LEFT = 3.4f;
-		const float RIGHT = 10.f;
-		const float MID = 6.5f;
+		const float RIGHT = 10.9f;
+
+		// Refresh rate, in ms
+		const int SLEEP_TIME = 10;
+
 		// Make range positive to keep things simpler
 		const float LEFT_HALF_RANGE = MID - LEFT;
 		const float RIGHT_HALF_RANGE = RIGHT - MID;
-		// Refresh rate, in ms
-		const int SLEEP_TIME = 10;
-		const int PIN = 0;
 
+		// WIRING PI PIN
+		const int PIN = 25;
 
 		// With floating point only the basic operations are supported
 		std::atomic<float> percent;
 		std::atomic_int_fast8_t pulses;
-		std::atomic_bool done;
-
-		std::thread controller;
-
-		EVENT_FUNC_INDEX_CORE cameraMoveHook;
 	public:
 		ServoHalf();
 
-		void control();
+		void control() override;
 
 		void setPercent(float p);
-
-		~ServoHalf();
 	};
 }

@@ -31,6 +31,8 @@ namespace Core {
 			DataReceived,				// data::std::pair<sf::Time, std::vector<float>>, contains all measurements
 			VideoFrameReceived,			// data::std::vector<uint8_t>, contains jpeg data
 			Disconnected,				// No info
+			NewMessage,					// data::std::string, the message
+			BatteryUpdate,				// data::float, the battery percentage
 			Count						// don't use, placeholder for things.
 		};
 
@@ -40,7 +42,8 @@ namespace Core {
 		        std::vector<SensorInfo>,
 		        std::pair<sf::Time, std::vector<float>>,
 		        std::vector<uint8_t>,
-		        std::string> data;
+		        std::string,
+		        float> data;
 		explicit Event(EventType t) : type(t){}
 	};
 
