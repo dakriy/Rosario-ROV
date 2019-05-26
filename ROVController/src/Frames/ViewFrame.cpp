@@ -83,17 +83,7 @@ void Frames::ViewFrame::update(const sf::Time& dt)
 	}
 	ImGui::End();
 
-	if (network->isConnected())
-	{
-		ImGui::Begin("Pressure");
-		ImGui::Text("Pressure: = %f mbar", pressure);
-		ImGui::End();
-
-
-		ImGui::Begin("Temperature");
-		ImGui::Text("Temperature: = %f degrees F", temp);
-		ImGui::End();
-	} else
+	if (!network->isConnected())
 	{
 		frame = false;
 	}
@@ -190,4 +180,5 @@ Frames::ViewFrame::~ViewFrame()
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(frameHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(pressureHook);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(temperatureHook);
+	GlobalContext::get_event_handler()->unhook_event_callback_for_all_events(recordButton);
 }

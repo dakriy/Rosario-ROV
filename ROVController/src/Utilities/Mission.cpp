@@ -22,6 +22,14 @@ Mission::Mission() {
 		allVals.emplace_back((time - startTime).asSeconds());
 		allVals.insert(std::end(allVals), std::begin(vec), std::end(vec));
 
+		lastVals.clear();
+		lastVals.reserve(vec.size());
+		for (auto [i, thing] : enumerate(vec)) {
+			if (i < sens.size()) {
+				lastVals.emplace_back(std::make_pair(sens[i], thing));
+			}
+		}
+
 		if (localData && csv) {
 			std::vector<std::string> floatVals;
 			floatVals.reserve(allVals.size());
@@ -40,6 +48,7 @@ Mission::Mission() {
 Mission::~Mission() {
 	GlobalContext::get_engine()->removeUpdateableEntity(this);
 	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(sensorHook);
+	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(dataHook);
 }
 
 void Mission::update(const sf::Time &) {
@@ -106,8 +115,6 @@ void Mission::clearSensors()
 }
 
 void Mission::startMission() {
-	std::vector<sf::Uint8> sens;
-
 	if (localData) {
 		if (strcmp(fileName, "") == 0) {
 			strcpy(fileName, "default.csv");
@@ -152,6 +159,9 @@ void Mission::stopMission() {
 		csv.reset();
 	}
 
+	sens.clear();
+	lastVals.clear();
+
 	inProgress = false;
 }
 
@@ -162,4 +172,22 @@ std::vector<std::vector<float>> & Mission::getData()
 
 std::vector<std::string> &Mission::getDataCols() {
 	return recordedDataNames;
+}
+
+float Mission::getLastValForSens(sf::Uint8 id) {
+	for (auto & pair : lastVals) {
+		if (std::get<sf::Uint8>(pair) == id) {
+			return std::get<float>(pair);
+		}
+	}
+	return 0.f;
+}
+
+std::string Mission::getUnitsForSens(sf::Uint8 id) {
+	for (auto & s : sensorSelect) {
+		if (std::get<Core::SensorInfo>(s).id == id) {
+			return std::get<Core::SensorInfo>(s).units;
+		}
+	}
+	return "";
 }

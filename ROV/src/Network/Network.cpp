@@ -183,10 +183,11 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 				return nullptr;
 			}
 
-			std::vector<sf::Uint8> sensors(sensorNum);
+			std::vector<sf::Uint8> sensors;
+			sensors.reserve(sensorNum);
 
 			for (auto i = 0; i < sensorNum; ++i) {
-				auto sensorType = static_cast<sf::Uint8>(Sensor::SensorId::Count);
+				sf::Uint8 sensorType = static_cast<sf::Uint8>(Sensor::SensorId::Count);
 				if (!(p >> sensorType)) {
 					return nullptr;
 				}

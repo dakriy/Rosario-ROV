@@ -5,6 +5,19 @@
 #include "../Globals.h"
 #include "../Core/Engine.h"
 #include "../Core/Event.h"
+#include <string>
+
+enum class SensorId {
+	Temperature,
+	Pressure,
+	Lux,
+	InternalTemperature,
+	InternalPressure,
+	InternalHumidity,
+	Battery,
+	Conductivity,
+	Count
+};
 
 class Mission : public Interfaces::IUpdateable {
 protected:
@@ -23,6 +36,8 @@ protected:
 
 	std::vector<std::string> recordedDataNames;
 	std::vector<std::vector<float>> recordedData;
+	std::vector<sf::Uint8> sens;
+	std::vector<std::pair<sf::Uint8, float>> lastVals;
 
 	std::unique_ptr<csv::Writer> csv;
 
@@ -36,6 +51,10 @@ public:
 
 	std::vector<std::vector<float>>& getData();
 	std::vector<std::string>& getDataCols();
+
+	float getLastValForSens(sf::Uint8 id);
+
+	std::string getUnitsForSens(sf::Uint8 id);
 
 	Mission();
 	void update(const sf::Time&) override;

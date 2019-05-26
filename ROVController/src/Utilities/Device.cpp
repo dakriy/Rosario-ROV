@@ -92,5 +92,12 @@ void Device::update(const sf::Time &) {
 			network->send_packet(Factory::PacketFactory::create_shutdown_packet());
 		}
 		ImGui::End();
+
+
+		ImGui::Begin("Live Sensor Data");
+		ImGui::Text("Pressure: = %f (%s)", m.getLastValForSens(static_cast<sf::Uint8>(SensorId::Pressure)), m.getUnitsForSens(static_cast<sf::Uint8>(SensorId::Pressure)).c_str());
+		ImGui::Text("Temperature: = %f (%s)", m.getLastValForSens(static_cast<sf::Uint8>(SensorId::Temperature)), m.getUnitsForSens(static_cast<sf::Uint8>(SensorId::Temperature)).c_str());
+		ImGui::Text("Conductivity: = %f (%s)", m.getLastValForSens(static_cast<sf::Uint8>(SensorId::Conductivity)), m.getUnitsForSens(static_cast<sf::Uint8>(SensorId::Conductivity)).c_str());
+		ImGui::End();
 	}
 }
