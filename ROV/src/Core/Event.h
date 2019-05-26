@@ -14,8 +14,13 @@ namespace Core {
 
 		struct CameraMovement
 		{
-			float s1 = 0.f;
-			float s2 = 0.f;
+			float theta = 0.f;
+			float radius = 0.f;
+		};
+
+		struct LightChangeDetails {
+			float percent = 0.f;
+			bool on = false;
 		};
 
 		enum EventType
@@ -28,6 +33,7 @@ namespace Core {
 			StartCamera,
 			StopCamera,
 			CameraMove,
+			LightChange,
 			Shutdown,
 
 			Count
@@ -38,6 +44,7 @@ namespace Core {
 
 		CameraMovement c;
 		SensorsRequested r;
+		LightChangeDetails l;
 
 		explicit Event(EventType t) : type(t) {}
 	};

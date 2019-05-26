@@ -10,10 +10,10 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_shutdown_packet() {
 	return p;
 }
 
-std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(float amountx, float amounty) {
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(float theta, float r) {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::CameraMove, p);
-	*p << amountx << amounty;
+	*p << theta << r;
 	return p;
 }
 
@@ -50,5 +50,12 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_start_video_stream_pa
 std::unique_ptr<sf::Packet> Factory::PacketFactory::create_stop_video_stream_packet() {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::StopVideoStream, p);
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_light_packet(bool state, float percent) {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::LightUpdate, p);
+	*p << state << percent;
 	return p;
 }

@@ -3,6 +3,8 @@
 #include "Core/GlobalContext.h"
 #include "Existences/Camera.h"
 #include "Existences/Power.h"
+#include "Existences/ServoTray.h"
+#include "Existences/Light.h"
 
 int main() {
 	/*
@@ -63,6 +65,9 @@ int main() {
 
 	engine.addExistence(std::make_unique<Camera::Camera>());
 	engine.addExistence(std::make_unique<Power::Power>());
+	engine.addExistence(std::make_unique<Camera::ServoHalf>());
+	engine.addExistence(std::make_unique<Camera::ServoTray>());
+	engine.addExistence(std::make_unique<External::Light>());
 
 	const auto hook = coreEventHandler.add_event_callback([&](const Core::Event * p) -> bool {
 		done = true;

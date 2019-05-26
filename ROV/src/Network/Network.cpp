@@ -176,15 +176,13 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			break;
 		case PacketTypes::MissionStart:
 		{
-			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
-
 			float frequency = 0.f;
 			sf::Uint32 sensorNum = 0;
 
 			if (!(p >> frequency >> sensorNum)) {
 				return nullptr;
 			}
-
+			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
 			pEvent->r.frequency = frequency;
 			pEvent->r.sensors.reserve(sensorNum);
 
@@ -211,13 +209,26 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			break;
 		case PacketTypes::CameraMove:
 		{
-			pEvent = std::make_unique<Core::Event>(Core::Event::CameraMove);
-			float x, y;
-			if (!(p >> x >> y)) {
+			float theta, r;
+			if (!(p >> theta >> r)) {
 				return nullptr;
 			}
-			pEvent->c.s1 = x;
-			pEvent->c.s2 = y;
+			pEvent = std::make_unique<Core::Event>(Core::Event::CameraMove);
+			pEvent->c.theta = theta;
+			pEvent->c.radius = r;
+			break;
+		}
+		case PacketTypes::LightUpdate:
+		{
+			bool state;
+			float percent;
+			if (!(p >> state >> percent)) {
+				return nullptr;
+			}
+
+			pEvent = std::make_unique<Core::Event>(Core::Event::LightChange);
+			pEvent->l.on = state;
+			pEvent->l.percent = percent;
 			break;
 		}
 		default: //unknown packet type

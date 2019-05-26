@@ -28,6 +28,7 @@ namespace Core
 		TimeSync,
 		Message,
 		BatteryPercent,
+		LightUpdate,
 		Shutdown = 254,
 		Count
 	};

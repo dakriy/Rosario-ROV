@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" autoUpload="On explicit save action" autoUploadExternalChanges="true">
     <serverData>
       <paths name="Pi (af9cfb8a-b052-4766-b24a-4d248fad530c)">
         <serverdata>
@@ -8,13 +8,16 @@
             <mapping deploy="/tmp/tmp.VjudKH2cA2" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-release" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-pi" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-pi" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-release" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-remote-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-pi" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-pi" />
           </excludedPaths>
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ON_EXPLICIT_SAVE" />
   </component>
 </project>

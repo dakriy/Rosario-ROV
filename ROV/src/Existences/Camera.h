@@ -37,7 +37,6 @@ namespace Camera {
 		 * I'm putting it here in camera because it's related to the camera in that it moves it around
 		 */
 	public:
-		ServoHalf s1;
 		Camera();
 		void startVideoStream();
 		void endVideoStream();

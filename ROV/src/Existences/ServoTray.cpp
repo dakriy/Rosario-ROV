@@ -1,22 +1,27 @@
-#include "ServoHalf.h"
+#include "ServoTray.h"
 #include "../Core/GlobalContext.h"
 #include <wiringPi.h>
 
-Camera::ServoHalf::ServoHalf(): pulses(MIN_PULSES), percent(0) {
+Camera::ServoTray::ServoTray() {
 	digitalWrite(PIN, LOW);
 	pinMode(PIN, OUTPUT);
 
 	updateHook = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) ->bool {
 		// radius is the radius
-		auto angle = e->c.theta;
-		while (angle < 0) {
-			angle += 360.f;
+		auto theta = e->c.theta;
+		while (theta < 0.f) {
+			theta += 360.f;
 		}
-		if (angle > 185 && angle < 350) {
-			setPercent(-e->c.radius);
-		} else {
-			setPercent(e->c.radius);
+
+		if (theta > 350.f) {
+			theta = 0.f;
 		}
+
+		if (theta > 185.f) {
+			theta -= 180.f;
+		}
+
+		setAngle(theta);
 		return false;
 	}, Core::Event::CameraMove);
 }
@@ -61,24 +66,13 @@ Camera::ServoHalf::ServoHalf(): pulses(MIN_PULSES), percent(0) {
  *
  *
  */
-void Camera::ServoHalf::control() {
+void Camera::ServoTray::control() {
 	if (pulses > 0) {
 		--pulses;
 		float p = percent.load() / 100.f;
 
-
-		float cyclePercent;
-		if (p > 0) {
-			// Move left
-
-			// For left + percent but - off mid
-			cyclePercent = MID - LEFT_HALF_RANGE * p;
-		} else {
-			// Move right
-
-			// For right - percent but + off mid
-			cyclePercent = MID - RIGHT_HALF_RANGE * p;
-		}
+		// Rotate based on the angle
+		float cyclePercent = MIN - RANGE * p;
 
 		digitalWrite(PIN, HIGH);
 		std::this_thread::sleep_for(std::chrono::microseconds(static_cast<int>(cyclePercent / 100.f * T_MICRO)));
@@ -89,13 +83,16 @@ void Camera::ServoHalf::control() {
 	}
 }
 
-void Camera::ServoHalf::setPercent(float p) {
-	// Cap it to +/- 100%
-	if (p > 100.f) p = 100.f;
-	if (p < -100.f) p = -100.f;
+void Camera::ServoTray::setAngle(float a) {
+	if (a > 180.f) a = 180.f;
+	if (a < 0.f) a = 0.f;
 
-	float old = percent.exchange(p, std::memory_order_release);
-	if (old != p) {
+	// Rescale to 0 - 100 as a percent
+	a = a * 5.f / 9.f;
+
+	float old = percent.exchange(a, std::memory_order_release);
+	if (old != a) {
 		pulses.store(MIN_PULSES, std::memory_order_release);
 	}
+
 }
