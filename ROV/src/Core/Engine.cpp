@@ -55,9 +55,9 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 	GlobalContext::set_engine(this);
 
 	watchForRequest = cev_->add_event_callback([&](const Event * e) -> bool {
-		sensorFrequency = e->r.frequency;
+		sensorFrequency = std::get<Core::Event::SensorsRequested>(e->data).frequency;
 		missionInProgress = true;
-		for(auto requestedSensorId : e->r.sensors) {
+		for(auto requestedSensorId : std::get<Core::Event::SensorsRequested>(e->data).sensors) {
 			for (auto [sensorIndex, actualSensor] : enumerate(sensors)) {
 				if (actualSensor->getSensorInfo().id == requestedSensorId) {
 					requestedSensors.push_back(sensorIndex);
@@ -73,6 +73,9 @@ Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* c
 
 	watchForRequestStop = cev_->add_event_callback([&](const Event * e) -> bool {
 		missionInProgress = false;
+		for (auto sensor : requestedSensors) {
+			sensors[sensor]->queryDevice();
+		}
 		requestedSensors.clear();
 		return true;
 	}, Core::Event::MissionStop);

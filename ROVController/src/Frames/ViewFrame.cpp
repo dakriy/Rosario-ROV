@@ -48,6 +48,14 @@ Frames::ViewFrame::ViewFrame() : offsets(0.f, 0.f), pos(0.f, 0.f)
 //		return false;
 //	}, Core::Event::EventType::SensorInfoReceived);
 
+	recordButton = GlobalContext::get_event_handler()->add_event_callback([&](const sf::Event * e)-> bool {
+		if (e->joystickButton.joystickId == 0 && e->joystickButton.button == 1) {
+			record = !record;
+			GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_video_record_packet(record));
+		}
+		return true;
+	}, sf::Event::EventType::JoystickButtonPressed);
+
 	if (sf::Joystick::isConnected(0) &&
 		sf::Joystick::hasAxis(0, sf::Joystick::Z) &&
 		sf::Joystick::hasAxis(0, sf::Joystick::R))

@@ -5,6 +5,7 @@
 #include "Existences/Power.h"
 #include "Existences/ServoTray.h"
 #include "Existences/Light.h"
+#include <stdio.h>
 
 int main() {
 	/*
@@ -71,6 +72,7 @@ int main() {
 
 	const auto hook = coreEventHandler.add_event_callback([&](const Core::Event * p) -> bool {
 		done = true;
+		system("/sbin/shutdown -P now");
 		return false;
 	}, Core::Event::EventType::Shutdown);
 

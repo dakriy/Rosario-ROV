@@ -59,3 +59,10 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_light_packet(bool sta
 	*p << state << percent;
 	return p;
 }
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_video_record_packet(bool record) {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::VideoRecord, p);
+	*p << record;
+	return p;
+}

@@ -5,6 +5,8 @@
 #include <thread>
 #include <atomic>
 #include "../Sensors/Battery.h"
+#include "../Core/EventHandler.h"
+#include "../Core/Event.h"
 
 namespace Power {
 	class Power : public Existence {
@@ -33,6 +35,10 @@ namespace Power {
 		float last = 0.f;
 
 		float asUsed = 0.f;
+
+		bool lightsOn = false;
+
+		EVENT_FUNC_INDEX_CORE lightHook = nullptr;
 
 		void monitor();
 	public:

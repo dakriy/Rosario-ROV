@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Sensors/Sensor.h"
+#include <variant>
 
 namespace Core {
 	class Event
@@ -25,16 +26,17 @@ namespace Core {
 
 		enum EventType
 		{
-			PingReceived,
-			MissionStart,
-			MissionStop,
-			SensorRequest,
-			Disconnected,
-			StartCamera,
-			StopCamera,
-			CameraMove,
-			LightChange,
-			Shutdown,
+			PingReceived,			// No info
+			MissionStart,			// Data in SensorsRequested
+			MissionStop,			// No extra data
+			SensorRequest,			// No extra data
+			Disconnected,			// No extra data
+			StartCamera,			// No extra data
+			StopCamera,				// No extra data
+			CameraMove,				// Data in CameraMovement
+			LightChange,			// Data in LightChangeDetails
+			VideoRecord,			// Data in bool
+			Shutdown,				// No extra data
 
 			Count
 		};
@@ -42,9 +44,7 @@ namespace Core {
 		EventType type = Count;
 
 
-		CameraMovement c;
-		SensorsRequested r;
-		LightChangeDetails l;
+		std::variant<CameraMovement, SensorsRequested, LightChangeDetails, bool> data;
 
 		explicit Event(EventType t) : type(t) {}
 	};

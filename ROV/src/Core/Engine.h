@@ -11,6 +11,7 @@
 #include "../Sensors/Temperature.h"
 #include "../Sensors/Battery.h"
 #include "../Utilities/Existence.h"
+#include "../Sensors/Conductivity.h"
 
 namespace Core
 {
@@ -34,10 +35,11 @@ namespace Core
 		const unsigned defaultTimeout = 50;
 
 
-		std::array<std::unique_ptr<Sensor::Sensor>, 3> sensors = {
+		std::array<std::unique_ptr<Sensor::Sensor>, 4> sensors = {
 				std::make_unique<Sensor::Temperature>(),
 				std::make_unique<Sensor::Lux>(),
-				std::make_unique<Sensor::Pressure>()
+				std::make_unique<Sensor::Pressure>(),
+				std::make_unique<Sensor::Conductivity>(),
 //				std::make_unique<Sensor::InternalTemperature>(),
 //				std::make_unique<Sensor::InternalPressure>(),
 //				std::make_unique<Sensor::InternalHumidity>()

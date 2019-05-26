@@ -8,14 +8,14 @@ Camera::ServoHalf::ServoHalf(): pulses(MIN_PULSES), percent(0) {
 
 	updateHook = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) ->bool {
 		// radius is the radius
-		auto angle = e->c.theta;
+		auto angle = std::get<Core::Event::CameraMovement>(e->data).theta;
 		while (angle < 0) {
 			angle += 360.f;
 		}
 		if (angle > 185 && angle < 350) {
-			setPercent(-e->c.radius);
+			setPercent(-std::get<Core::Event::CameraMovement>(e->data).radius);
 		} else {
-			setPercent(e->c.radius);
+			setPercent(std::get<Core::Event::CameraMovement>(e->data).radius);
 		}
 		return false;
 	}, Core::Event::CameraMove);

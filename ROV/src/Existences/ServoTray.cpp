@@ -8,7 +8,7 @@ Camera::ServoTray::ServoTray() {
 
 	updateHook = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) ->bool {
 		// radius is the radius
-		auto theta = e->c.theta;
+		auto theta = std::get<Core::Event::CameraMovement>(e->data).theta;
 		while (theta < 0.f) {
 			theta += 360.f;
 		}

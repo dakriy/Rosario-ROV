@@ -32,9 +32,9 @@ External::Light::Light() : on(false), percent(0.f) {
 	digitalWrite(PIN, LOW);
 	pinMode(PIN, OUTPUT);
 	updateHook = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) ->bool {
-		setState(e->l.on);
-		setPercent(e->l.percent);
-		return true;
+		setState(std::get<Core::Event::LightChangeDetails>(e->data).on);
+		setPercent(std::get<Core::Event::LightChangeDetails>(e->data).percent);
+		return false;
 	}, Core::Event::LightChange);
 }
 

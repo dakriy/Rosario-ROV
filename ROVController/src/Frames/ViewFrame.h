@@ -23,6 +23,7 @@ namespace Frames
 		CORE_EVENT_FUNC_INDEX frameHook = nullptr;
 		CORE_EVENT_FUNC_INDEX pressureHook = nullptr;
 		CORE_EVENT_FUNC_INDEX temperatureHook = nullptr;
+		SF_EVENT_FUNC_INDEX recordButton = nullptr;
 
 		double pressure = 0;
 		double temp = 0;
@@ -42,6 +43,7 @@ namespace Frames
 		bool lightsOn = false;
 		bool lightChange = false;
 
+		bool record = false;
 	public:
 		/**
 		 * View Frame Constructor

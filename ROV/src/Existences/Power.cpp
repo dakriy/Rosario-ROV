@@ -4,6 +4,12 @@
 
 Power::Power::Power() : monitorThread(&Power::monitor, this), done(false)  {
 	initialized = battery.setup();
+
+	lightHook = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event * e) ->bool {
+		lightsOn = std::get<Core::Event::LightChangeDetails>(e->data).on;
+		return false;
+	}, Core::Event::LightChange);
+
 	if (!initialized) {
 		GlobalContext::get_engine()->log("Battery not initialized! Cannot monitor battery! Be careful!");
 	}
@@ -22,7 +28,12 @@ void Power::Power::monitor() {
 		// V * A/V = A
 		// It likes to read zero up to lik .5-1 A and it's always at least 1 A lagging on current I guess?
 		// 1.06 but .5 for now
-		auto current = battery.queryDevice() * conversionFactor + 0.5f;
+		float current;
+		if (lightsOn) {
+			current = battery.queryDevice() * conversionFactor + 1.f;
+		} else {
+			current = battery.queryDevice() * conversionFactor + 0.5f;
+		}
 
 		// Integrate from one point to the next.
 		asUsed += (current + last) * pollTimer.restart().asSeconds() / 2.f;
@@ -47,4 +58,5 @@ void Power::Power::monitor() {
 Power::Power::~Power() {
 	done = true;
 	if (monitorThread.joinable()) monitorThread.join();
+	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(lightHook);
 }

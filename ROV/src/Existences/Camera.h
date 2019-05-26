@@ -26,6 +26,7 @@ namespace Camera {
 		cv::VideoWriter video;
 
 		EVENT_FUNC_INDEX_CORE camStartStopRequest;
+		EVENT_FUNC_INDEX_CORE camRecordRequest;
 
 		void cam();
 		bool getCameraProperties();
