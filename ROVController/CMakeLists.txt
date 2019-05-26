@@ -69,7 +69,7 @@ message(STATUS "Building ${CMAKE_BUILD_TYPE} ")
 ########################################
 
 # LINK SFML
-find_package(SFML 2.5 COMPONENTS system network graphics window audio main REQUIRED)
+find_package(SFML 2.5 COMPONENTS system network graphics window audio REQUIRED)
 
 # Manual include paths
 include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH} ${CSV_PATH})
@@ -80,6 +80,8 @@ include_directories(${IMGUI_PATH} ${IMGUI_SFML_PATH} ${CSV_PATH})
 
 # LINK LIBCONFIG
 #find_package(libconfig++)
+
+find_package(Threads)
 
 
 if(MSVC)
@@ -141,5 +143,5 @@ endif()
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} opengl32.lib sfml-graphics sfml-window sfml-system sfml-audio sfml-network sfml-main)
 else()
-    target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} sfml-graphics sfml-window sfml-system sfml-audio sfml-network sfml-main GL)
+	target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${CMAKE_THREAD_LIBS_INIT} sfml-graphics sfml-window sfml-system sfml-audio sfml-network GL)
 endif()

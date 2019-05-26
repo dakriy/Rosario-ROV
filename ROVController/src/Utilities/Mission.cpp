@@ -110,7 +110,7 @@ void Mission::startMission() {
 
 	if (localData) {
 		if (strcmp(fileName, "") == 0) {
-			strcpy_s(fileName, nameBuffSize, "default.csv");
+			strcpy(fileName, "default.csv");
 		}
 		csv = std::make_unique<csv::Writer>(fileName);
 	}
