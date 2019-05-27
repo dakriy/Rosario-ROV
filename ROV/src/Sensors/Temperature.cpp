@@ -1,4 +1,5 @@
 #include "Temperature.h"
+#include "../Core/GlobalContext.h"
 
 const Sensor::SensorInfo &Sensor::Temperature::getSensorInfo() {
 	return info;
@@ -13,5 +14,9 @@ void Sensor::Temperature::initiateConversion() {
 }
 
 float Sensor::Temperature::queryDevice() {
-	return temp.temperature();
+	float t = temp.temperature();
+	auto ev = std::make_unique<Core::Event>(Core::Event::TemperatureTaken);
+	ev->data = t;
+	GlobalContext::get_engine()->add_event(std::move(ev));
+	return t;
 }

@@ -33,5 +33,6 @@ namespace Sensor {
 		virtual const SensorInfo& getSensorInfo() = 0;
 		virtual void initiateConversion() = 0;
 		virtual float queryDevice() = 0;
+		virtual ~Sensor() = default;
 	};
 }

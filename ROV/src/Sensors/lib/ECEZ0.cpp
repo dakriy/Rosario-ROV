@@ -16,6 +16,7 @@
  * @param uS
  */
 void Sensor::ECEZ0::calibrate(float lowuS, float highuS) {
+	activate();
 	// Clear calibrations
 	writeReg(CALIBRATION_REQUEST_REGISTER, 0x01);
 	delay(2000);
@@ -55,6 +56,9 @@ void Sensor::ECEZ0::calibrate(float lowuS, float highuS) {
 	writeReg(CALIBRATION_REQUEST_REGISTER, 0x05);
 	delay(1000);
 
+	writeReg(MODE_REGISTER, 0x00);
+	delay(1000);
+
 	// Confirm
 	auto v = readReg(CALIBRATION_CONFIRMATION_REGISTER);
 	return;
@@ -91,6 +95,7 @@ float Sensor::ECEZ0::getEC() {
 }
 
 void Sensor::ECEZ0::singleCalibrate(float uS) {
+	activate();
 	// Clear calibrations
 	writeReg(CALIBRATION_REQUEST_REGISTER, 0x01);
 	delay(2000);
@@ -116,6 +121,10 @@ void Sensor::ECEZ0::singleCalibrate(float uS) {
 
 	delay(1000);
 
+	writeReg(MODE_REGISTER, 0x00);
+
+	delay(1000);
+
 	// Confirm
 	auto v = readReg(CALIBRATION_CONFIRMATION_REGISTER);
 	return;
@@ -138,9 +147,28 @@ void Sensor::ECEZ0::activate() {
 
 }
 
-float Sensor::ECEZ0::getTDM() {
+float Sensor::ECEZ0::getTDS() {
 	// Put into hibernate mode
 	writeReg(MODE_REGISTER, 0x00);
 
 	return read4Reg(TDS_REGISTER_START);
+}
+
+void Sensor::ECEZ0::setTemperature(float temp) {
+	auto tempToSend = static_cast<unsigned>(temp * 100);
+	std::vector<unsigned char> bytes(4);
+	for (unsigned i = 0; i < 4; ++i) {
+		bytes[3-i] = (tempToSend >> (i * 8));
+	}
+
+	for (unsigned i = 0; i < 4; ++i) {
+		writeReg(TEMP_REGISTER_START + i, bytes[i]);
+	}
+}
+
+float Sensor::ECEZ0::getPSS() {
+	// Hibernate
+	writeReg(MODE_REGISTER, 0x00);
+
+	return read4Reg(PSS_REGISTER_START);
 }

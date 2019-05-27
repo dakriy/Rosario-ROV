@@ -38,6 +38,7 @@ namespace Core {
 			LightChange,			// Data in LightChangeDetails
 			VideoRecord,			// Data in bool
 			Shutdown,				// No extra data
+			TemperatureTaken,		// Data in float
 
 			Count
 		};
@@ -45,7 +46,7 @@ namespace Core {
 		EventType type = Count;
 
 
-		std::variant<CameraMovement, SensorsRequested, LightChangeDetails, bool> data;
+		std::variant<CameraMovement, SensorsRequested, LightChangeDetails, bool, float> data;
 
 		explicit Event(EventType t) : type(t) {}
 	};
