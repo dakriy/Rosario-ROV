@@ -26,6 +26,7 @@ namespace Core {
 
 		enum EventType
 		{
+			NewConnection,			// No info
 			PingReceived,			// No info
 			MissionStart,			// Data in SensorsRequested
 			MissionStop,			// No extra data

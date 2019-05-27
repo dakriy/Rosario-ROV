@@ -1,13 +1,12 @@
 #include <wiringPi.h>
 #include "Network/Network.h"
 #include "Core/GlobalContext.h"
-#include "Existences/Camera.h"
-#include "Existences/Power.h"
-#include "Existences/ServoTray.h"
-#include "Existences/Light.h"
 #include <stdio.h>
+#include "Utilities/InputParser.h"
+#include <string>
+#include <stdlib.h>
 
-int main() {
+int main(int argc, char **argv) {
 	/*
 	 * Plan:
 	 * Two threads
@@ -48,6 +47,15 @@ int main() {
 	 * E. On stop request go back to waiting for connection
 	 */
 
+	InputParser input(argc, argv);
+
+	bool localRecord = input.cmdOptionExists("-l") || input.cmdOptionExists("--local");
+
+	if (!input.cmdOptionExists("-f") && localRecord) {
+		printf("Please specify an output file when wanting to do a local record");
+		exit(0);
+	}
+
 	// Main Thread
 	wiringPiSetup();
 
@@ -58,17 +66,19 @@ int main() {
 	Core::EventHandler<Core::Event, Core::Event::EventType::Count> coreEventHandler;
 	GlobalContext::set_core_event_handler(&coreEventHandler);
 
-	Core::Engine engine(&coreEventHandler);
+	const std::string &fileName = input.getCmdOption("-f");
+
+	Core::Engine engine(&coreEventHandler, localRecord, fileName);
 
 	Network::Network network;
 	GlobalContext::set_network(&network);
 	bool done = false;
 
-	engine.addExistence(std::make_unique<Camera::Camera>());
-	engine.addExistence(std::make_unique<Power::Power>());
-	engine.addExistence(std::make_unique<Camera::ServoHalf>());
-	engine.addExistence(std::make_unique<Camera::ServoTray>());
-	engine.addExistence(std::make_unique<External::Light>());
+//	engine.addExistence(std::make_unique<Camera::Camera>());
+//	engine.addExistence(std::make_unique<Power::Power>());
+//	engine.addExistence(std::make_unique<Camera::ServoHalf>());
+//	engine.addExistence(std::make_unique<Camera::ServoTray>());
+//	engine.addExistence(std::make_unique<External::Light>());
 
 	const auto hook = coreEventHandler.add_event_callback([&](const Core::Event * p) -> bool {
 		done = true;

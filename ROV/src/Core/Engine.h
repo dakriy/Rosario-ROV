@@ -12,6 +12,8 @@
 #include "../Sensors/Battery.h"
 #include "../Utilities/Existence.h"
 #include "../Sensors/Conductivity.h"
+#include <csv/writer.hpp>
+
 
 namespace Core
 {
@@ -34,7 +36,6 @@ namespace Core
 		// In milliseconds
 		const unsigned defaultTimeout = 50;
 
-
 		std::array<std::unique_ptr<Sensor::Sensor>, 4> sensors = {
 				std::make_unique<Sensor::Temperature>(),
 				std::make_unique<Sensor::Lux>(),
@@ -56,17 +57,24 @@ namespace Core
 		bool missionInProgress = false;
 		bool readyForConversion = true;
 
-		EVENT_FUNC_INDEX_CORE watchForRequest;
-		EVENT_FUNC_INDEX_CORE watchForRequestStop;
-		EVENT_FUNC_INDEX_CORE sensorRequest;
+		EVENT_FUNC_INDEX_CORE watchForRequest = nullptr;
+		EVENT_FUNC_INDEX_CORE watchForRequestStop = nullptr;
+		EVENT_FUNC_INDEX_CORE sensorRequest = nullptr;
+		EVENT_FUNC_INDEX_CORE connectHook = nullptr;
+
+		bool localInstance = false;
+
+		const std::string& localFile;
 
 	public:
 		/**
 		 * Engine Constructor
 		 *
 		 * @param cev core event handler to process core events off of
+		 * @param local Specifies whether to record local or not
+		 * @param file the name of the file to record local, empty string if not
 		 */
-		explicit Engine(EventHandler<Core::Event, Core::Event::EventType::Count> * cev);
+		explicit Engine(EventHandler<Core::Event, Core::Event::EventType::Count> * cev, bool local, const std::string& file);
 
 		/**
 		 *

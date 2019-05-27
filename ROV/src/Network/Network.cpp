@@ -47,6 +47,7 @@ void Network::Network::watch() {
 						// Watch the new socket
 						connected = true;
 						selector.add(connection);
+						GlobalContext::get_engine()->add_event(std::make_unique<Core::Event>(Core::Event::NewConnection));
 					}
 				}
 			}

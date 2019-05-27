@@ -37,21 +37,7 @@ bool Sensor::TSYS01::init() {
 }
 
 void Sensor::TSYS01::read() {
-
 	wiringPiI2CWrite(deviceHandle, TSYS01_ADC_TEMP_CONV);
-
-	delay(10); // Max conversion time per datasheet
-
-	auto result = I2CReadReg24(deviceHandle, TSYS01_ADC_READ);
-
-	if (result < 0) {
-		return;
-	}
-
-	// Endianness again.
-	D1 = __builtin_bswap32(result) >> 8;
-
-	calculate();
 }
 
 void Sensor::TSYS01::readTestCase() {
@@ -83,5 +69,16 @@ void Sensor::TSYS01::calculate() {
 }
 
 float Sensor::TSYS01::temperature() {
+	auto result = I2CReadReg24(deviceHandle, TSYS01_ADC_READ);
+
+	if (result < 0) {
+		return 0.f;
+	}
+
+	// Endianness again.
+	D1 = __builtin_bswap32(result) >> 8;
+
+	calculate();
+
 	return TEMP;
 }

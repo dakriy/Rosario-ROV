@@ -29,6 +29,7 @@ set(HEADER_DIR_7 src/Sensors/lib)
 set(HEADER_DIR_8 src/Existences)
 set(wiringPi_INCLUDE wiringPi/wiringPi)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
+set(CSV_PATH ../csv/include)
 
 ############## CMake Project ################
 #        The main options of project        #
@@ -75,7 +76,7 @@ find_package(OpenCV REQUIRED)
 find_package(SFML 2.5.1 COMPONENTS system network graphics REQUIRED)
 
 #include_directories(${wiringPi_INCLUDE})
-include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${OpenCV_INCLUDE_DIRS} ${CSV_PATH})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
