@@ -3,10 +3,11 @@
   <component name="Statistic">
     <option name="excludedDirectories">
       <list>
-        <option value="$PROJECT_DIR$/wiringPi" />
-        <option value="$PROJECT_DIR$/cmake-build-remote-debug" />
-        <option value="$PROJECT_DIR$/cmake-build-debug" />
         <option value="$PROJECT_DIR$/.idea" />
+        <option value="$PROJECT_DIR$/.vs" />
+        <option value="$PROJECT_DIR$/cmake-build-debug-remote" />
+        <option value="$PROJECT_DIR$/cmake-build-release-remote" />
+        <option value="$PROJECT_DIR$/wiringPi" />
       </list>
     </option>
   </component>
