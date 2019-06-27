@@ -6,29 +6,31 @@
 
 Mission::Mission() {
 	GlobalContext::get_engine()->addUpdateableEntitiy(this);
-	sensorHook = GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
-		for (auto &sensorInfo : std::get<std::vector<Core::SensorInfo>>(e->data))
-			sensorSelect.emplace_back(std::make_pair(sensorInfo, false));
-		return false;
-	}, Core::Event::SensorInfoReceived);
 
-	dataHook = GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event *e)->bool {
-		auto vals = std::get<std::pair<sf::Time, std::vector<float>>>(e->data);
+	hooks.push_back(GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
+		for (auto &sensorInfo : std::get<std::vector<Core::SensorInfo>>(e->data))
+			sensorSelectMap.emplace_back(std::make_pair(sensorInfo, false));
+		return false;
+	}, Core::Event::SensorInfoReceived));
+
+	hooks.push_back(GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event *e)->bool {
+		// I apologize for this madness....
+		auto vals = std::get<std::pair<sf::Time, std::vector<std::pair<sf::Uint8, float>>>>(e->data);
 		auto time = std::get<sf::Time>(vals);
-		auto vec = std::get<std::vector<float>>(vals);
+		auto vec = std::get<std::vector<std::pair<sf::Uint8, float>>>(vals);
 
 		std::vector<float> allVals;
+		// size + 1 to account for the time column
 		allVals.reserve(vec.size() + 1);
 		allVals.emplace_back((time - startTime).asSeconds());
-		allVals.insert(std::end(allVals), std::begin(vec), std::end(vec));
+		for (const auto & set : vec) {
+			allVals.emplace_back(std::get<float>(set));
+		}
 
+		// Doesn't necessarily clear currently allocated elements
 		lastVals.clear();
 		lastVals.reserve(vec.size());
-		for (auto [i, thing] : enumerate(vec)) {
-			if (i < sens.size()) {
-				lastVals.emplace_back(std::make_pair(sens[i], thing));
-			}
-		}
+		lastVals.insert(std::end(lastVals), std::begin(vec), std::end(vec));
 
 		if (localData && csv) {
 			std::vector<std::string> floatVals;
@@ -39,16 +41,35 @@ Mission::Mission() {
 			csv->write_row(floatVals);
 		}
 
-		recordedData.emplace_back(allVals.begin(), allVals.end());
+		if (inProgress) {
+			recordedData.emplace_back(allVals.begin(), allVals.end());
+		}
 
 		return false;
-	}, Core::Event::DataReceived);
+	}, Core::Event::DataReceived));
+
+	hooks.push_back(GlobalContext::get_core_event_handler()->add_event_callback([&](const Core::Event *e)->bool {
+		switch (std::get<Core::ROVState>(e->data)) {
+			case Core::ROVState::Idle:
+			case Core::ROVState::Connected:
+				inProgress = false;
+				break;
+			case Core::ROVState::MissionConnected:
+			case Core::ROVState::MissionDisconnected:
+				inProgress = true;
+				break;
+			default:
+				break;
+		}
+		return false;
+	}, Core::Event::ROVStateUpdate));
 }
 
 Mission::~Mission() {
 	GlobalContext::get_engine()->removeUpdateableEntity(this);
-	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(sensorHook);
-	GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(dataHook);
+	for (auto hookIndex : hooks) {
+		GlobalContext::get_core_event_handler()->unhook_event_callback_for_all_events(hookIndex);
+	}
 }
 
 void Mission::update(const sf::Time &) {
@@ -62,7 +83,7 @@ void Mission::update(const sf::Time &) {
 			{
 				ImGui::Text("Select the sensors you want to record");
 				maxFreq = 1000.f;
-				for (auto & s : sensorSelect) {
+				for (auto & s : sensorSelectMap) {
 					auto on = &std::get<bool>(s);
 					auto sensor = std::get<Core::SensorInfo>(s);
 					if (*on && sensor.maxFrequency < maxFreq)
@@ -83,9 +104,9 @@ void Mission::update(const sf::Time &) {
 				ImGui::Text("Select the wanted record settings");
 
 				ImGui::Checkbox("Record Local Data", &localData);
-				ImGui::Checkbox("Record Local Video", &localVideo);
+				ImGui::Checkbox("Record Local Video (Not yet Implemented)", &localVideo);
 				ImGui::Checkbox("Record Remote Data", &remoteData);
-				ImGui::Checkbox("Record Remote Video", &remoteVideo);
+				ImGui::Checkbox("Record Remote Video (Not yet Implemented)", &remoteVideo);
 
 				ImGui::EndTabItem();
 			}
@@ -93,14 +114,16 @@ void Mission::update(const sf::Time &) {
 		}
 		ImGui::Separator();
 
-		ImGui::InputText("Enter the file name for output csv", fileName, nameBuffSize);
+		ImGui::InputText("Enter the file name for output csv.\n"
+				   "If remote data recording is selected, the same filename will be used on the ROV",
+				   fileName, nameBuffSize);
 
 		if (!inProgress) {
-			if (ImGui::Button("Start Mission")) {
+			if (ImGui::Button("No mission active. Start Mission")) {
 				startMission();
 			}
 		} else {
-			if (ImGui::Button("Stop Mission")) {
+			if (ImGui::Button("Mission is active. Stop Mission")) {
 				stopMission();
 			}
 		}
@@ -111,27 +134,28 @@ void Mission::update(const sf::Time &) {
 
 void Mission::clearSensors()
 {
-	sensorSelect.clear();
+	sensorSelectMap.clear();
 }
 
 void Mission::startMission() {
-	if (localData) {
+	if (localData || remoteData) {
 		if (strcmp(fileName, "") == 0) {
 			strcpy(fileName, "default.csv");
 		}
-		csv = std::make_unique<csv::Writer>(fileName);
 	}
 
-	if (localData) {
-		csv->configure_dialect().column_names("Time (s)");
-	}
 	recordedDataNames.clear();
 	recordedDataNames.emplace_back("Time (s)");
 
-	for (auto & s : sensorSelect) {
+	if (localData) {
+		csv = std::make_unique<csv::Writer>(fileName);
+		csv->configure_dialect().column_names("Time (s)");
+	}
+
+	for (auto & s : sensorSelectMap) {
 		auto str = std::get<Core::SensorInfo>(s).name + ' ' + '(' + std::get<Core::SensorInfo>(s).units + ')';
 		if (std::get<bool>(s)) {
-			sens.emplace_back(std::get<Core::SensorInfo>(s).id);
+			selectedSensorIdList.emplace_back(std::get<Core::SensorInfo>(s).id);
 			recordedDataNames.emplace_back(str);
 			if (localData) {
 				csv->configure_dialect().column_names(str);
@@ -143,9 +167,14 @@ void Mission::startMission() {
 		csv->write_header();
 	}
 
-	if (!sens.empty()) {
-		GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_start_mission_packet(selectedFreq, sens));
+	if (!selectedSensorIdList.empty()) {
+		if (remoteData) {
+			GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_start_mission_packet(selectedFreq, selectedSensorIdList, fileName));
+		} else {
+			GlobalContext::get_network()->send_packet(Factory::PacketFactory::create_start_mission_packet(selectedFreq, selectedSensorIdList));
+		}
 	}
+
 	startTime = GlobalContext::get_clock()->getElapsedTime();
 	inProgress = true;
 }
@@ -159,7 +188,7 @@ void Mission::stopMission() {
 		csv.reset();
 	}
 
-	sens.clear();
+	selectedSensorIdList.clear();
 	lastVals.clear();
 
 	inProgress = false;
@@ -184,7 +213,7 @@ float Mission::getLastValForSens(sf::Uint8 id) {
 }
 
 std::string Mission::getUnitsForSens(sf::Uint8 id) {
-	for (auto & s : sensorSelect) {
+	for (auto & s : sensorSelectMap) {
 		if (std::get<Core::SensorInfo>(s).id == id) {
 			return std::get<Core::SensorInfo>(s).units;
 		}

@@ -33,6 +33,8 @@ void Device::setHooks() {
 	hooks.push_back(GlobalContext::get_core_event_handler()->add_event_callback([this](const Core::Event *e)->bool {
 		// Copy over the sensor info
 		// Yes we want a copy here
+		// This is so that we can dynamically get sensor information later
+		// instead of having to pull the last values off of the mission
 		sensors = std::get<std::vector<Core::SensorInfo>>(e->data);
 		return false;
 	}, Core::Event::SensorInfoReceived));

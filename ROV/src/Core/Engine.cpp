@@ -19,12 +19,18 @@ void Core::Engine::Events()
 	}
 }
 
-std::vector<float> Core::Engine::querySensors() {
+std::vector<std::pair<sf::Uint8, float>> Core::Engine::querySensors(bool allSensors) {
 	if (readyForConversion) {
 		// Don't want to immediately try to do another conversion on the sensors
 		readyForConversion = false;
-		for (auto sensor : requestedSensors) {
-			sensors[sensor]->initiateConversion();
+		if (allSensors) {
+			for (const auto & sensor : sensors) {
+				sensor->initiateConversion();
+			}
+		} else {
+			for (auto sensor : requestedSensors) {
+				sensors[sensor]->initiateConversion();
+			}
 		}
 	}
 
@@ -36,10 +42,16 @@ std::vector<float> Core::Engine::querySensors() {
 
 	dataTimer.restart();
 
-	std::vector<float> data;
+	std::vector<std::pair<sf::Uint8, float>> data;
 
-	for (auto sensor : requestedSensors) {
-		data.push_back(sensors[sensor]->queryDevice());
+	if (allSensors) {
+		for (auto & sensor : sensors) {
+			data.emplace_back(std::make_pair(sensor->getSensorInfo().id, sensor->queryDevice()));
+		}
+	} else {
+		for (auto sensor : requestedSensors) {
+			data.emplace_back(std::make_pair(sensors[sensor]->getSensorInfo().id, sensors[sensor]->queryDevice()));
+		}
 	}
 	// We are ready for another conversion
 	readyForConversion = true;
@@ -49,44 +61,53 @@ std::vector<float> Core::Engine::querySensors() {
 void Core::Engine::Update()
 {
 	// This is the state machine logic to actually figure out outputs.
-	switch (dataState) {
-
-		case ROVDataState::Idle:
+	switch (rovState) {
+		case ROVState::Idle:
 			std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
 			break;
-		case ROVDataState::Connected: {
-			auto data = querySensors();
+		case ROVState::Connected: {
+			if (sensorsInitialized) {
+				auto data = querySensors(true);
 
-			GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
-
+				GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
+			} else {
+				std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
+			}
 			break;
 		}
-		case ROVDataState::ConnectedPaused:
+		case ROVState::ConnectedPaused:
 			std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
 			break;
-		case ROVDataState::MissionConnected: {
-			auto data = querySensors();
+		case ROVState::MissionConnected: {
+			if (sensorsInitialized) {
+				auto data = querySensors();
 
-			GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
+				GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_data_packet(data));
 
-			if (!localFile.empty()) {
-				recordDataSet(data);
+				if (!localFile.empty()) {
+					recordDataSet(data);
+				}
+			} else {
+				std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
 			}
 
 			break;
 		}
-		case ROVDataState::MissionDisconnected: {
-			auto data = querySensors();
+		case ROVState::MissionDisconnected: {
+			if (sensorsInitialized) {
+				auto data = querySensors();
 
-			if (!localFile.empty()) {
-				recordDataSet(data);
+				if (!localFile.empty()) {
+					recordDataSet(data);
+				}
+			} else {
+				std::this_thread::sleep_for(std::chrono::milliseconds(defaultTimeout));
 			}
-
 			break;
 		}
-		case ROVDataState::COUNT:
+		case ROVState::COUNT:
 			// Shouldn't be here, go to idle state to get out of this state.
-			dataState = ROVDataState::Idle;
+			rovState = ROVState::Idle;
 			break;
 	}
 }
@@ -109,7 +130,7 @@ void Core::Engine::add_event(std::unique_ptr<Event> e)
 	}
 }
 
-void Core::Engine::Loop()
+void Core::Engine::Drive()
 {
 	Events();
 
@@ -118,11 +139,9 @@ void Core::Engine::Loop()
 
 Core::Engine::~Engine()
 {
-	cev_->unhook_event_callback_for_all_events(sensorRequest);
-	cev_->unhook_event_callback_for_all_events(watchForRequest);
-	cev_->unhook_event_callback_for_all_events(watchForRequestStop);
-	cev_->unhook_event_callback_for_all_events(connectHook);
-	cev_->unhook_event_callback_for_all_events(disconnectHook);
+	for (auto hook : hooks) {
+		cev_->unhook_event_callback_for_all_events(hook);
+	}
 	GlobalContext::clear_engine();
 }
 
@@ -137,50 +156,50 @@ void Core::Engine::log(const std::string &message) {
 void Core::Engine::setHooks() {
 	// These hooks modify the state, as such all states need to be covered.
 	// These lambdas basically contain the next state logic for the state machine, and get processed on the events
-	connectHook = cev_->add_event_callback([&](const Event * e) -> bool {
-		switch (dataState) {
-			case ROVDataState::Idle:
-				dataState = ROVDataState::Connected;
+	hooks.push_back(cev_->add_event_callback([&](const Event * e) -> bool {
+		switch (rovState) {
+			case ROVState::Idle:
+				rovState = ROVState::Connected;
 				break;
-			case ROVDataState::ConnectedPaused:
-				dataState = ROVDataState::Connected;
+			case ROVState::ConnectedPaused:
+				rovState = ROVState::Connected;
 				break;
-			case ROVDataState::MissionDisconnected:
-				dataState = ROVDataState::MissionConnected;
+			case ROVState::MissionDisconnected:
+				rovState = ROVState::MissionConnected;
+				break;
+			default:
+				break;
+		}
+
+		GlobalContext::get_network()->sendPacket(
+				Factory::PacketFactory::create_rov_state_packet(
+						static_cast<unsigned>(rovState)));
+
+		return false;
+	}, Core::Event::NewConnection));
+
+	hooks.push_back(cev_->add_event_callback([&](const Event * e) -> bool {
+		switch (rovState) {
+			case ROVState::Connected:
+				rovState = ROVState::Idle;
+				break;
+			case ROVState::ConnectedPaused:
+				rovState = ROVState::Idle;
+				break;
+			case ROVState::MissionConnected:
+				rovState = ROVState::MissionDisconnected;
 				break;
 			default:
 				break;
 		}
 
 		return false;
-	}, Core::Event::NewConnection);
+	}, Core::Event::Disconnected));
 
-	disconnectHook = cev_->add_event_callback([&](const Event * e) -> bool {
-		switch (dataState) {
-			case ROVDataState::Connected:
-				dataState = ROVDataState::Idle;
-				break;
-			case ROVDataState::ConnectedPaused:
-				dataState = ROVDataState::Idle;
-				break;
-			case ROVDataState::MissionConnected:
-				dataState = ROVDataState::MissionDisconnected;
-				break;
-			default:
-				break;
-		}
-
-		return false;
-	}, Core::Event::Disconnected);
-
-	watchForRequest = cev_->add_event_callback([&](const Event * e) -> bool {
+	hooks.push_back(cev_->add_event_callback([&](const Event * e) -> bool {
 		auto dat = std::get<Core::Event::SensorsRequested>(e->data);
 		sensorFrequency = dat.frequency;
 		localFile = dat.fileToRecord;
-
-		if (!localFile.empty()) {
-			initializeRecordFile(localFile);
-		}
 
 		// Clear sensors in case somehow we got here without them being cleared. This avoids sensor duplicates
 		requestedSensors.clear();
@@ -196,25 +215,31 @@ void Core::Engine::setHooks() {
 			}
 		}
 
-		switch (dataState) {
-			case ROVDataState::Connected:
-				dataState = ROVDataState::MissionConnected;
+		switch (rovState) {
+			case ROVState::Connected:
+				rovState = ROVState::MissionConnected;
 				break;
-			case ROVDataState::ConnectedPaused:
-				dataState = ROVDataState::MissionConnected;
+			case ROVState::ConnectedPaused:
+				rovState = ROVState::MissionConnected;
 				break;
-			case ROVDataState::MissionConnected:
-				dataState = ROVDataState::MissionConnected:
+			case ROVState::MissionConnected:
+				rovState = ROVState::MissionConnected;
 				break;
 			default:
 				break;
 		}
 
+		if (!localFile.empty()) {
+			initializeRecordFile(localFile);
+		}
+
+		startTime = GlobalContext::get_clock()->getElapsedTime().asSeconds();
+
 		// Don't think anything else needs to process this type of packet so go ahead and report it handled
 		return true;
-	}, Core::Event::MissionStart);
+	}, Core::Event::MissionStart));
 
-	watchForRequestStop = cev_->add_event_callback([&](const Event * e) -> bool {
+	hooks.push_back(cev_->add_event_callback([&](const Event * e) -> bool {
 		// Query one last time for devices that might be expecting it.
 		for (auto sensor : requestedSensors) {
 			sensors[sensor]->queryDevice();
@@ -225,39 +250,39 @@ void Core::Engine::setHooks() {
 		// Clear the requested sensors
 		requestedSensors.clear();
 
-		switch (dataState) {
-			case ROVDataState::MissionConnected:
-				dataState = ROVDataState::Connected;
+		switch (rovState) {
+			case ROVState::MissionConnected:
+				rovState = ROVState::Connected;
 				break;
-			case ROVDataState::MissionDisconnected:
-				dataState = ROVDataState::Idle;
+			case ROVState::MissionDisconnected:
+				rovState = ROVState::Idle;
 				break;
 			default:
 				break;
 		}
 		return true;
-	}, Core::Event::MissionStop);
+	}, Core::Event::MissionStop));
 
-	watchForRequestStop = cev_->add_event_callback([&](const Event * e) -> bool {
+	hooks.push_back(cev_->add_event_callback([&](const Event * e) -> bool {
 		auto state = std::get<bool>(e->data);
-		switch (dataState) {
-			case ROVDataState::Connected:
+		switch (rovState) {
+			case ROVState::Connected:
 				if (!state) {
-					dataState = ROVDataState::ConnectedPaused;
+					rovState = ROVState::ConnectedPaused;
 				}
 				break;
-			case ROVDataState::ConnectedPaused:
+			case ROVState::ConnectedPaused:
 				if (state) {
-					dataState = ROVDataState::Connected;
+					rovState = ROVState::Connected;
 				}
 				break;
 			default:
 				break;
 		}
 		return true;
-	}, Core::Event::DataSendState);
+	}, Core::Event::DataSendState));
 
-	sensorRequest = cev_->add_event_callback([&](const Event * e) -> bool {
+	hooks.push_back(cev_->add_event_callback([&](const Event * e) -> bool {
 		std::vector<Sensor::SensorInfo> sensorInformation;
 		sensorInformation.reserve(sensors.size());
 		for (auto & sensor : sensors) {
@@ -267,19 +292,22 @@ void Core::Engine::setHooks() {
 			}
 		}
 		GlobalContext::get_network()->sendPacket(Factory::PacketFactory::create_sensor_list_packet(sensorInformation));
+		sensorsInitialized = true;
 		return true;
-	}, Core::Event::SensorRequest);
+	}, Core::Event::SensorRequest));
 
 }
 
-void Core::Engine::recordDataSet(const std::vector<float> & data) {
+void Core::Engine::recordDataSet(const std::vector<std::pair<sf::Uint8, float>> & data) {
 	// Record data to csv
 	std::vector<float> allVals;
 	allVals.reserve(sensors.size() + 1);
 	// Add time to the columns
-	allVals.emplace_back(GlobalContext::get_clock()->getElapsedTime().asSeconds());
+	allVals.emplace_back((GlobalContext::get_clock()->getElapsedTime() - startTime).asSeconds());
 	// Add the rest
-	allVals.insert(std::end(allVals), std::begin(data), std::end(data));
+	for (const auto & d : data) {
+		allVals.emplace_back(std::get<float>(d));
+	}
 	std::vector<std::string> stringVals;
 	stringVals.reserve(allVals.size());
 	for (auto val : allVals) {

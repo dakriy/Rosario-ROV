@@ -6,6 +6,7 @@
 #include "../Core/Engine.h"
 #include "../Core/Event.h"
 #include <string>
+#include <vector>
 
 enum class SensorId {
 	Temperature,
@@ -21,9 +22,8 @@ enum class SensorId {
 
 class Mission : public Interfaces::IUpdateable {
 protected:
-	std::vector<std::pair<Core::SensorInfo, bool>> sensorSelect;
-	CORE_EVENT_FUNC_INDEX sensorHook;
-	CORE_EVENT_FUNC_INDEX dataHook;
+	std::vector<std::pair<Core::SensorInfo, bool>> sensorSelectMap;
+	std::vector<CORE_EVENT_FUNC_INDEX> hooks;
 	float selectedFreq = 1.f;
 	float maxFreq = 1000.f;
 	float minFreq = 1.f / 20.f; // One measurement every 20 seconds
@@ -36,7 +36,7 @@ protected:
 
 	std::vector<std::string> recordedDataNames;
 	std::vector<std::vector<float>> recordedData;
-	std::vector<sf::Uint8> sens;
+	std::vector<sf::Uint8> selectedSensorIdList;
 	std::vector<std::pair<sf::Uint8, float>> lastVals;
 
 	std::unique_ptr<csv::Writer> csv;

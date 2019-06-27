@@ -30,6 +30,8 @@ namespace Core
 		BatteryPercent,
 		LightUpdate,
 		VideoRecord,
+		PauseDataPacket,
+		ROVState,
 		Shutdown = 254,
 		Count
 	};

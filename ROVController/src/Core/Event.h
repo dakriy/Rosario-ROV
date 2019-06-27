@@ -20,6 +20,15 @@ namespace Core {
 		SensorInfo() = default;
     };
 
+	enum class ROVState {
+		Idle,
+		Connected,
+		ConnectedPaused,
+		MissionConnected,
+		MissionDisconnected,
+		COUNT
+	};
+
 	class Event
 	{
 	public:
@@ -28,11 +37,12 @@ namespace Core {
 			NewConnection, 				// data::std::string, name of device
 			PingReceived, 				// No info
 			SensorInfoReceived,			// data::std::vector<SensorInfo>
-			DataReceived,				// data::std::pair<sf::Time, std::vector<float>>, contains all measurements
+			DataReceived,				// data::std::pair<sf::Time, std::vector<std::pair<sf::Uint8, float>>, contains all measurements
 			VideoFrameReceived,			// data::std::vector<uint8_t>, contains jpeg data
 			Disconnected,				// No info
 			NewMessage,					// data::std::string, the message
 			BatteryUpdate,				// data::float, the battery percentage
+			ROVStateUpdate,				// data::ROVState, the updated rov state
 			Count						// don't use, placeholder for things.
 		};
 
@@ -40,9 +50,10 @@ namespace Core {
 
 		std::variant<
 		        std::vector<SensorInfo>,
-		        std::pair<sf::Time, std::vector<float>>,
+		        std::pair<sf::Time, std::vector<std::pair<sf::Uint8, float>>>,
 		        std::vector<uint8_t>,
 		        std::string,
+		        ROVState,
 		        float> data;
 		explicit Event(EventType t) : type(t){}
 	};

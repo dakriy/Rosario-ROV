@@ -18,7 +18,8 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_camera_move_packet(fl
 }
 
 std::unique_ptr<sf::Packet>
-Factory::PacketFactory::create_start_mission_packet(float frequency, const std::vector<sf::Uint8>& sensors) {
+Factory::PacketFactory::create_start_mission_packet(float frequency, const std::vector<sf::Uint8> &sensors,
+													const std::string &rovRecordFileName) {
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::MissionStart, p);
 	auto sensorNumber = static_cast<sf::Uint32>(sensors.size());
@@ -26,6 +27,7 @@ Factory::PacketFactory::create_start_mission_packet(float frequency, const std::
 	for (auto sensor : sensors) {
 		*p << sensor;
 	}
+	*p << rovRecordFileName;
 	return p;
 }
 
@@ -64,5 +66,12 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_video_record_packet(b
 	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
 	add_type_to_packet(Core::PacketTypes::VideoRecord, p);
 	*p << record;
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_set_incoming_data_packet(bool sendData) {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::PauseDataPacket, p);
+	*p << sendData;
 	return p;
 }

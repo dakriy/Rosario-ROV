@@ -17,7 +17,8 @@
 
 namespace Core
 {
-	enum class ROVDataState {
+	// There is a copy of this in the ROVController that needs to be kept up to date with this one
+	enum class ROVState {
 		Idle,
 		Connected,
 		ConnectedPaused,
@@ -60,17 +61,18 @@ namespace Core
 
 		// Requested sensor vars
 		sf::Clock dataTimer;
-		float sensorFrequency = .00000001;
+
+		sf::Time startTime = sf::Time::Zero;
+
+		// Set to one by default
+		float sensorFrequency = 1;
 		// Vector of indexes into the sensors vector of the wanted sensors...
 		// "By default, use vector when you need a container" - Bjarne Stroustrup.
 		std::vector<size_t> requestedSensors;
 		bool readyForConversion = true;
+		bool sensorsInitialized = false;
 
-		EVENT_FUNC_INDEX_CORE watchForRequest = nullptr;
-		EVENT_FUNC_INDEX_CORE watchForRequestStop = nullptr;
-		EVENT_FUNC_INDEX_CORE sensorRequest = nullptr;
-		EVENT_FUNC_INDEX_CORE connectHook = nullptr;
-		EVENT_FUNC_INDEX_CORE disconnectHook = nullptr;
+		std::vector<EVENT_FUNC_INDEX_CORE> hooks;
 
 		std::string localFile = "";
 
@@ -78,14 +80,14 @@ namespace Core
 
 		// If called when sensors are not ready, it will block until they sensors are ready
 		// determined by sensorFrequency
-		std::vector<float> querySensors();
-		void recordDataSet(const std::vector<float> & data);
+		std::vector<std::pair<sf::Uint8, float>> querySensors(bool allSensors = false);
+		void recordDataSet(const std::vector<std::pair<sf::Uint8, float>> & data);
 
 		// Requires requestedSensors to be set first
 		void initializeRecordFile(const std::string &fileName);
 
 		// State keeping variables
-		ROVDataState dataState = ROVDataState::Idle;
+		ROVState rovState = ROVState::Idle;
 	public:
 		/**
 		 * Engine Constructor
@@ -101,7 +103,7 @@ namespace Core
 		 */
 		void add_event(std::unique_ptr<Event> e);
 
-		void Loop();
+		void Drive();
 
 		void addExistence(std::unique_ptr<Existence> ex);
 

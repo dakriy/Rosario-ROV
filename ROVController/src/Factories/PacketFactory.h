@@ -19,17 +19,19 @@ namespace Factory {
 		 * frequency (Hz)			| float
 		 * Number of Sensors		| size_t prolly
 		 * list of sensors			| Core::SensorInfo::SensorID[]
+		 * local file name if one   | std::string
 		 *
 		 * @param frequency
 		 * @param sensors
 		 * @return
 		 */
-		static std::unique_ptr<sf::Packet> create_start_mission_packet(float frequency,const std::vector<sf::Uint8> &sensors);
+		static std::unique_ptr<sf::Packet> create_start_mission_packet(float frequency,const std::vector<sf::Uint8> &sensors, const std::string & rovRecordFileName = "");
 		static std::unique_ptr<sf::Packet> create_sensor_request_packet();
 		static std::unique_ptr<sf::Packet> create_stop_mission_packet();
 		static std::unique_ptr<sf::Packet> create_start_video_stream_packet();
 		static std::unique_ptr<sf::Packet> create_stop_video_stream_packet();
 		static std::unique_ptr<sf::Packet> create_light_packet(bool state, float percent);
 		static std::unique_ptr<sf::Packet> create_video_record_packet(bool record);
+		static std::unique_ptr<sf::Packet> create_set_incoming_data_packet(bool sendData);
 	};
 }

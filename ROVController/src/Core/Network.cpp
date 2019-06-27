@@ -291,17 +291,18 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			}
 
 
-			auto data = std::vector<float>();
+			auto data = std::vector<std::pair<sf::Uint8, float>>();
 
 			data.reserve(sensorsNumber);
 
 			// Get each piece of data.
 			for (unsigned i = 0; i < sensorsNumber; ++i) {
+				sf::Uint8 sensorId = 0;
 				float val = 0.f;
-				if (!(p >> val)) {
+				if (!(p >> sensorId >> val)) {
 					return nullptr;
 				}
-				data.emplace_back(val);
+				data.emplace_back(std::make_pair(sensorId, val));
 			}
 			event = std::make_unique<Core::Event>(Core::Event::DataReceived);
 			event->data = std::make_pair(convertRemoteTime(sf::microseconds(us)), std::move(data));
@@ -350,8 +351,24 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			event->data = percent;
 			break;
 		}
+    	case PacketTypes::ROVState:
+		{
+			unsigned state;
+			if (!(p >> state)) {
+				return nullptr;
+			}
+
+			// Invalid state
+			if (state >= static_cast<int>(Core::ROVState::COUNT)) {
+				return nullptr;
+			}
+
+			event = std::make_unique<Core::Event>(Core::Event::ROVStateUpdate);
+			event->data = static_cast<Core::ROVState>(state);
+			break;
+		}
         default: //unknown packet type
-        	event = nullptr;
+        	event.reset();
         	break;
     }
     return event;
