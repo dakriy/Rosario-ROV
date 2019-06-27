@@ -27,6 +27,7 @@ namespace Network {
 		BatteryPercent,
 		LightUpdate,
 		VideoRecord,
+		PauseDataPacket,
 		Shutdown = 254,
 		Count
 	};

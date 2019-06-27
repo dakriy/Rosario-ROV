@@ -188,17 +188,22 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			sensors.reserve(sensorNum);
 
 			for (auto i = 0; i < sensorNum; ++i) {
-				sf::Uint8 sensorType = static_cast<sf::Uint8>(Sensor::SensorId::Count);
+				auto sensorType = static_cast<sf::Uint8>(Sensor::SensorId::Count);
 				if (!(p >> sensorType)) {
 					return nullptr;
 				}
 				sensors.push_back(sensorType);
 			}
+			std::string localFileName;
+			if (!(p >> localFileName)) {
+				return nullptr;
+			}
 
 			pEvent = std::make_unique<Core::Event>(Core::Event::MissionStart);
 			pEvent->data = Core::Event::SensorsRequested {
 					.frequency = frequency,
-					.sensors = std::move(sensors)
+					.sensors = std::move(sensors),
+					.fileToRecord = std::move(localFileName)
 			};
 
 			break;
@@ -251,6 +256,16 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			}
 			pEvent = std::make_unique<Core::Event>(Core::Event::VideoRecord);
 			pEvent->data = record;
+			break;
+		}
+		case PacketTypes::PauseDataPacket:
+		{
+			bool pauseState;
+			if (!(p >> pauseState)) {
+				return nullptr;
+			}
+			pEvent = std::make_unique<Core::Event>(Core::Event::DataSendState);
+			pEvent->data = pauseState;
 			break;
 		}
 		default: //unknown packet type

@@ -11,6 +11,7 @@ namespace Core {
 		{
 			float frequency = 0.f;
 			std::vector<sf::Uint8> sensors;
+			std::string fileToRecord = "";
 		};
 
 		struct CameraMovement
@@ -39,12 +40,12 @@ namespace Core {
 			VideoRecord,			// Data in bool
 			Shutdown,				// No extra data
 			TemperatureTaken,		// Data in float
+			DataSendState,			// Data in bool, 0 means no send, 1 means send
 
 			Count
 		};
 
 		EventType type = Count;
-
 
 		std::variant<CameraMovement, SensorsRequested, LightChangeDetails, bool, float> data;
 

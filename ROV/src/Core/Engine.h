@@ -17,21 +17,31 @@
 
 namespace Core
 {
+	enum class ROVDataState {
+		Idle,
+		Connected,
+		ConnectedPaused,
+		MissionConnected,
+		MissionDisconnected,
+		COUNT
+	};
+
 	class Engine
 	{
 	protected:
-
+		// Event system variables
 		std::queue<std::unique_ptr<Core::Event>> core_events_;
+
+		EventHandler<Core::Event, Core::Event::EventType::Count>* cev_;
+
+		std::mutex coreEventHandlerLock;
+
 
 		// Event processor
 		void Events();
 
 		// Frame updater
 		void Update();
-
-		EventHandler<Core::Event, Core::Event::EventType::Count>* cev_;
-
-		std::mutex coreEventHandlerLock;
 
 		// In milliseconds
 		const unsigned defaultTimeout = 50;
@@ -50,22 +60,32 @@ namespace Core
 
 		// Requested sensor vars
 		sf::Clock dataTimer;
-		float sensorFrequency;
+		float sensorFrequency = .00000001;
 		// Vector of indexes into the sensors vector of the wanted sensors...
 		// "By default, use vector when you need a container" - Bjarne Stroustrup.
 		std::vector<size_t> requestedSensors;
-		bool missionInProgress = false;
 		bool readyForConversion = true;
 
 		EVENT_FUNC_INDEX_CORE watchForRequest = nullptr;
 		EVENT_FUNC_INDEX_CORE watchForRequestStop = nullptr;
 		EVENT_FUNC_INDEX_CORE sensorRequest = nullptr;
 		EVENT_FUNC_INDEX_CORE connectHook = nullptr;
+		EVENT_FUNC_INDEX_CORE disconnectHook = nullptr;
 
-		bool localInstance = false;
+		std::string localFile = "";
 
-		const std::string& localFile;
+		void setHooks();
 
+		// If called when sensors are not ready, it will block until they sensors are ready
+		// determined by sensorFrequency
+		std::vector<float> querySensors();
+		void recordDataSet(const std::vector<float> & data);
+
+		// Requires requestedSensors to be set first
+		void initializeRecordFile(const std::string &fileName);
+
+		// State keeping variables
+		ROVDataState dataState = ROVDataState::Idle;
 	public:
 		/**
 		 * Engine Constructor
@@ -74,7 +94,7 @@ namespace Core
 		 * @param local Specifies whether to record local or not
 		 * @param file the name of the file to record local, empty string if not
 		 */
-		explicit Engine(EventHandler<Core::Event, Core::Event::EventType::Count> * cev, bool local, const std::string& file);
+		explicit Engine(EventHandler<Core::Event, Core::Event::EventType::Count> * cev);
 
 		/**
 		 *
