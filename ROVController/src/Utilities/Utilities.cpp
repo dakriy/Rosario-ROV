@@ -1,6 +1,7 @@
 #include "Utilities.h"
 #include "../Core/GlobalContext.h"
 #include <imgui.h>
+#include <ctime>
 
 unsigned GetSeed(const std::string& seed) {
     return static_cast<unsigned>(std::hash<std::string>{}(seed));
@@ -109,4 +110,25 @@ void HelpMarker(const char* desc)
 		ImGui::PopTextWrapPos();
 		ImGui::EndTooltip();
 	}
+}
+
+//int tm_sec;   // seconds after the minute - [0, 60] including leap second
+//int tm_min;   // minutes after the hour - [0, 59]
+//int tm_hour;  // hours since midnight - [0, 23]
+//int tm_mday;  // day of the month - [1, 31]
+//int tm_mon;   // months since January - [0, 11]
+//int tm_year;  // years since 1900
+//int tm_wday;  // days since Sunday - [0, 6]
+//int tm_yday;  // days since January 1 - [0, 365]
+//int tm_isdst; // daylight savings time flag
+std::string currentDateTime() {
+	std::time_t t = std::time(nullptr);   // get time now
+	std::tm* now = std::localtime(&t);
+	std::string timeStr = std::to_string(now->tm_year + 1900) + '-'
+			  + std::to_string(now->tm_mon + 1) + '-'
+			  + std::to_string(now->tm_mday) + '-'
+			  + std::to_string(now->tm_hour) + '-'
+			  + std::to_string(now->tm_min) + '-'
+			  + std::to_string(now->tm_sec);
+	return timeStr;
 }

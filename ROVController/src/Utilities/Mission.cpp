@@ -119,6 +119,12 @@ void Mission::update(const sf::Time &) {
 				   fileName, nameBuffSize);
 
 		if (!inProgress) {
+			if (ImGui::Button("Use Current Time and Start")) {
+				memset(fileName, 0, sizeof fileName);
+				auto time = currentDateTime() + ".csv";
+				strncpy(fileName, time.c_str(), sizeof fileName - 1);
+				startMission();
+			}
 			if (ImGui::Button("START")) {
 				startMission();
 			}
