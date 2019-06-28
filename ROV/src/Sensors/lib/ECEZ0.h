@@ -10,6 +10,7 @@ namespace Sensor {
 		const unsigned char CALIBRATION_REQUEST_REGISTER = 0x0E;
 		const unsigned char CALIBRATION_CONFIRMATION_REGISTER = 0x0F;
 		const unsigned char TEMP_REGISTER_START = 0x10;
+		const unsigned char LED_REGISTER = 0x05;
 		const unsigned char MODE_REGISTER = 0x06;
 		// 4 bytes long
 		const unsigned char EC_REGISTER_START = 0x18;
@@ -34,5 +35,6 @@ namespace Sensor {
 		float getEC();
 		float getTDS();
 		float getPSS();
+		void setLedState(unsigned char on);
 	};
 }

@@ -268,6 +268,26 @@ std::unique_ptr<Core::Event> Network::Network::decode(sf::Packet &p) {
 			pEvent->data = pauseState;
 			break;
 		}
+		case PacketTypes::MissionFileListRequest:
+		{
+			pEvent = std::make_unique<Core::Event>(Core::Event::MissionFileListRequested);
+			break;
+		}
+		case PacketTypes::MissionFileRequest:
+		{
+			std::string fileName;
+			if (!(p >> fileName)) {
+				return nullptr;
+			}
+			pEvent = std::make_unique<Core::Event>(Core::Event::MissionFileRequested);
+			pEvent->data = std::move(fileName);
+			break;
+		}
+		case PacketTypes::DeleteMissionFiles:
+		{
+			pEvent = std::make_unique<Core::Event>(Core::Event::DeleteMissionFiles);
+			break;
+		}
 		default: //unknown packet type
 			pEvent.reset();
 			break;

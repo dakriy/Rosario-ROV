@@ -4,6 +4,7 @@
 #include <cassert>
 #include "../Factories/PacketFactory.h"
 #include "../Utilities/Utilities.h"
+#include <filesystem>
 
 void Core::Engine::Events()
 {
@@ -112,7 +113,7 @@ void Core::Engine::Update()
 	}
 }
 
-Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* cev)
+Core::Engine::Engine(EventHandler<Core::Event, Core::Event::EventType::Count>* cev, const std::string& missionDirectory) : missionDir(missionDirectory)
 {
 	assert(cev);
 	cev_ = cev;
@@ -199,7 +200,11 @@ void Core::Engine::setHooks() {
 	hooks.push_back(cev_->add_event_callback([&](const Event * e) -> bool {
 		auto dat = std::get<Core::Event::SensorsRequested>(e->data);
 		sensorFrequency = dat.frequency;
-		localFile = dat.fileToRecord;
+		if (!dat.fileToRecord.empty()) {
+			localFile = missionDir + '/' + dat.fileToRecord;
+		} else {
+			localFile = "";
+		}
 
 		// Clear sensors in case somehow we got here without them being cleared. This avoids sensor duplicates
 		requestedSensors.clear();
@@ -229,11 +234,13 @@ void Core::Engine::setHooks() {
 				break;
 		}
 
+		std::filesystem::create_directory(missionDir);
+
 		if (!localFile.empty()) {
 			initializeRecordFile(localFile);
 		}
 
-		startTime = GlobalContext::get_clock()->getElapsedTime().asSeconds();
+		startTime = GlobalContext::get_clock()->getElapsedTime();
 
 		// Don't think anything else needs to process this type of packet so go ahead and report it handled
 		return true;
@@ -319,8 +326,7 @@ void Core::Engine::recordDataSet(const std::vector<std::pair<sf::Uint8, float>> 
 }
 
 void Core::Engine::initializeRecordFile(const std::string &fileName) {
-	localFile = fileName;
-	auto csv = csv::Writer(localFile);
+	auto csv = csv::Writer(fileName);
 
 	// Configure dialect
 	csv.configure_dialect().column_names("Time (s)");

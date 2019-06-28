@@ -32,6 +32,11 @@ namespace Core
 		VideoRecord,
 		PauseDataPacket,
 		ROVState,
+		MissionFileListRequest,
+		MissionFileList,
+		MissionFileRequest,
+		MissionFile,
+		DeleteMissionFiles,
 		Shutdown = 254,
 		Count
 	};

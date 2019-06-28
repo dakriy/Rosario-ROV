@@ -43,7 +43,9 @@ namespace Core {
 			NewMessage,					// data::std::string, the message
 			BatteryUpdate,				// data::float, the battery percentage
 			ROVStateUpdate,				// data::ROVState, the updated rov state
-			Count						// don't use, placeholder for things.
+			MissionFileListReceived,	// data::std::vector<std::string>
+			MissionFileReceived,		// data::std::vector<uint8_t> contains the bytes of the file
+			Count						// don't use, placeholder for things, also keep last.
 		};
 
 		EventType type = Count;
@@ -54,6 +56,7 @@ namespace Core {
 		        std::vector<uint8_t>,
 		        std::string,
 		        ROVState,
+				std::vector<std::string>,
 		        float> data;
 		explicit Event(EventType t) : type(t){}
 	};

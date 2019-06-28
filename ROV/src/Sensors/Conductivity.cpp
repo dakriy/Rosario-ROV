@@ -14,7 +14,10 @@ const Sensor::SensorInfo &Sensor::Conductivity::getSensorInfo() {
 }
 
 bool Sensor::Conductivity::setup() {
-	return conductivity.init();
+	auto returnCode = conductivity.init();
+	// Make sure the lED is off so as not to mess with lux sensor readings when attempting to take light profiles
+	conductivity.setLedState(0x00);
+	return returnCode;
 }
 
 void Sensor::Conductivity::initiateConversion() {

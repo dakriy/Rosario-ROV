@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include <tuple>
+#include <vector>
 
 /**
  * @brief
@@ -52,3 +54,5 @@ template<typename T> map_init_helper<T> map_init(T& item)
 {
 	return map_init_helper<T>(item);
 }
+
+std::vector<uint8_t> yeetFileIntoByteVector(std::ifstream & file);

@@ -111,4 +111,4 @@ add_executable(${PROJECT_NAME}
    ${SRC_FILES}
 )
 
-target_link_libraries(${PROJECT_NAME} ${wiringPi_LIB} ${sfml_network_LIB} ${sfml_system_LIB} Threads::Threads ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} ${wiringPi_LIB} ${sfml_network_LIB} ${sfml_system_LIB} Threads::Threads ${OpenCV_LIBS} stdc++fs)

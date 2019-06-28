@@ -3,10 +3,12 @@
 #include "Core/GlobalContext.h"
 #include <stdio.h>
 #include "Utilities/InputParser.h"
+#include "Existences/FileTransfer.h"
 #include <string>
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
+	const std::string missionFileDir = "missionData";
 	// Main Thread
 	wiringPiSetup();
 
@@ -17,7 +19,7 @@ int main(int argc, char **argv) {
 	Core::EventHandler<Core::Event, Core::Event::EventType::Count> coreEventHandler;
 	GlobalContext::set_core_event_handler(&coreEventHandler);
 
-	Core::Engine engine(&coreEventHandler);
+	Core::Engine engine(&coreEventHandler, missionFileDir);
 
 	Network::Network network;
 	GlobalContext::set_network(&network);
@@ -30,6 +32,7 @@ int main(int argc, char **argv) {
 //	engine.addExistence(std::make_unique<Camera::ServoHalf>());
 //	engine.addExistence(std::make_unique<Camera::ServoTray>());
 //	engine.addExistence(std::make_unique<External::Light>());
+	engine.addExistence(std::make_unique<FileTransfer>(missionFileDir));
 
 	const auto hook = coreEventHandler.add_event_callback([&](const Core::Event * p) -> bool {
 		done = true;

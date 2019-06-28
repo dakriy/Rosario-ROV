@@ -11,6 +11,10 @@ protected:
 
 	std::vector<Core::SensorInfo> sensors;
 
+	int selectedFile = 0;
+	std::vector<const char*> missionFilesOnROV;
+	std::vector<std::string> missionFilesOnROVString;
+
 	bool connected = false;
 
 	std::string name;
@@ -18,6 +22,14 @@ protected:
 	void setHooks();
 
 	Mission m;
+
+	bool updateWhenNoMission = true;
+	bool updateWhenNoMissionLast = true;
+
+	bool showFileSystemManagementWindowLast = false;
+	bool showFileSystemManagementWindow = false;
+
+	bool finishedDownload = false;
 public:
 	Device();
 	const std::vector<Core::SensorInfo>& getSensorList();

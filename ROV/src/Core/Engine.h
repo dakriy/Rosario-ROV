@@ -88,6 +88,9 @@ namespace Core
 
 		// State keeping variables
 		ROVState rovState = ROVState::Idle;
+
+		const std::string& missionDir;
+
 	public:
 		/**
 		 * Engine Constructor
@@ -96,7 +99,7 @@ namespace Core
 		 * @param local Specifies whether to record local or not
 		 * @param file the name of the file to record local, empty string if not
 		 */
-		explicit Engine(EventHandler<Core::Event, Core::Event::EventType::Count> * cev);
+		explicit Engine(EventHandler<Core::Event, Core::Event::EventType::Count> * cev, const std::string& missionDirectory);
 
 		/**
 		 *

@@ -113,17 +113,17 @@ void Mission::update(const sf::Time &) {
 			ImGui::EndTabBar();
 		}
 		ImGui::Separator();
-
-		ImGui::InputText("Enter the file name for output csv.\n"
-				   "If remote data recording is selected, the same filename will be used on the ROV",
+		ImGui::Text("Enter the file name for output csv.\n"
+						 "If remote data recording is selected, the same filename will be used on the ROV");
+		ImGui::InputText("File Name",
 				   fileName, nameBuffSize);
 
 		if (!inProgress) {
-			if (ImGui::Button("No mission active. Start Mission")) {
+			if (ImGui::Button("START")) {
 				startMission();
 			}
 		} else {
-			if (ImGui::Button("Mission is active. Stop Mission")) {
+			if (ImGui::Button("STOP")) {
 				stopMission();
 			}
 		}

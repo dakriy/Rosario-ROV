@@ -75,3 +75,22 @@ std::unique_ptr<sf::Packet> Factory::PacketFactory::create_set_incoming_data_pac
 	*p << sendData;
 	return p;
 }
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_mission_file_list_request_packet() {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::MissionFileListRequest, p);
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_delete_mission_files_packet() {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::DeleteMissionFiles, p);
+	return p;
+}
+
+std::unique_ptr<sf::Packet> Factory::PacketFactory::create_mission_file_request_packet(const std::string &file) {
+	std::unique_ptr<sf::Packet> p = std::make_unique<sf::Packet>();
+	add_type_to_packet(Core::PacketTypes::MissionFileRequest, p);
+	*p << file;
+	return p;
+}

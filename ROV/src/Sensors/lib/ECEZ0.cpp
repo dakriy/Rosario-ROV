@@ -172,3 +172,7 @@ float Sensor::ECEZ0::getPSS() {
 
 	return read4Reg(PSS_REGISTER_START);
 }
+
+void Sensor::ECEZ0::setLedState(unsigned char on) {
+	writeReg(LED_REGISTER, on);
+}

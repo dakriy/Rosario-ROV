@@ -367,6 +367,54 @@ std::unique_ptr<Core::Event> Core::Network::decode(sf::Packet &p) {
 			event->data = static_cast<Core::ROVState>(state);
 			break;
 		}
+    	case PacketTypes::MissionFileList:
+		{
+			sf::Uint16 numberOfFiles;
+			if (!(p >> numberOfFiles)) {
+				return nullptr;
+			}
+
+			std::vector<std::string> fileList;
+			fileList.reserve(numberOfFiles);
+
+			for (unsigned i = 0; i < numberOfFiles; ++i) {
+				std::string fileName;
+				if (!(p >> fileName)) {
+					return nullptr;
+				}
+				fileList.emplace_back(std::move(fileName));
+			}
+			event = std::make_unique<Core::Event>(Core::Event::MissionFileListReceived);
+			event->data = std::move(fileList);
+			break;
+		}
+    	case PacketTypes::MissionFile:
+		{
+			sf::Uint32 byteCountInMissionFile;
+			if (!(p >> byteCountInMissionFile)) {
+				return nullptr;
+			}
+
+			// Total size is the file data + size of file data size number + size of the packet type data type
+			if (p.getDataSize() == byteCountInMissionFile + sizeof(byteCountInMissionFile) + 1) {
+				std::vector<uint8_t> fileData;
+				fileData.reserve(byteCountInMissionFile);
+				event = std::make_unique<Core::Event>(Core::Event::MissionFileReceived);
+				event->data = std::vector<uint8_t>(
+						// Start at where the file starts
+						static_cast<const uint8_t*>(p.getData()) + sizeof(byteCountInMissionFile) + 1,
+						// go to the end of the file data
+						static_cast<const uint8_t*>(p.getData()) +
+						sizeof(byteCountInMissionFile) +
+						1 +
+						byteCountInMissionFile
+				);
+			} else {
+				// Invalid format, drop it
+				return nullptr;
+			}
+			break;
+		}
         default: //unknown packet type
         	event.reset();
         	break;

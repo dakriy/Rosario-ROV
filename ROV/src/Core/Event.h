@@ -27,27 +27,36 @@ namespace Core {
 
 		enum EventType
 		{
-			NewConnection,			// No info
-			PingReceived,			// No info
-			MissionStart,			// Data in SensorsRequested
-			MissionStop,			// No extra data
-			SensorRequest,			// No extra data
-			Disconnected,			// No extra data
-			StartCamera,			// No extra data
-			StopCamera,				// No extra data
-			CameraMove,				// Data in CameraMovement
-			LightChange,			// Data in LightChangeDetails
-			VideoRecord,			// Data in bool
-			Shutdown,				// No extra data
-			TemperatureTaken,		// Data in float
-			DataSendState,			// Data in bool, 0 means no send, 1 means send
+			NewConnection,				// No info
+			PingReceived,				// No info
+			MissionStart,				// Data in SensorsRequested
+			MissionStop,				// No extra data
+			SensorRequest,				// No extra data
+			Disconnected,				// No extra data
+			StartCamera,				// No extra data
+			StopCamera,					// No extra data
+			CameraMove,					// Data in CameraMovement
+			LightChange,				// Data in LightChangeDetails
+			VideoRecord,				// Data in bool
+			Shutdown,					// No extra data
+			TemperatureTaken,			// Data in float
+			DataSendState,				// Data in bool, 0 means no send, 1 means send
+			MissionFileListRequested,	// No extra data
+			MissionFileRequested,		// Data in std string
+			DeleteMissionFiles,			// No extra data
 
 			Count
 		};
 
 		EventType type = Count;
 
-		std::variant<CameraMovement, SensorsRequested, LightChangeDetails, bool, float> data;
+		std::variant<
+		        CameraMovement,
+		        SensorsRequested,
+		        LightChangeDetails,
+		        bool,
+		        float,
+		        std::string> data;
 
 		explicit Event(EventType t) : type(t) {}
 	};
