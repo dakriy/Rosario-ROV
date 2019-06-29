@@ -67,6 +67,10 @@ int main(int argc, char* argv[])
 
 	sf::RenderWindow Window(vidmode, APP_NAME, vidstyle, settings);
 
+	sf::Image icon;
+	icon.loadFromFile("Resources/lester.png");
+	Window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
 	ImGui::SFML::Init(Window);
 
 	GlobalContext::set_window(&Window);
