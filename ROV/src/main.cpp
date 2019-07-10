@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	const std::string missionFileDir = "missionData";
+	const std::string missionFileDir = "/home/pi/missionData";
 	// Main Thread
 	wiringPiSetup();
 
